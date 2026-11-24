@@ -5,7 +5,7 @@
  *   users/{uid}        { data: <progress JSON string>, updatedAt }   — owner only
  *   members/{uid}      { name, email, photo, provider, createdAt, lastSeen }     — owner only (site owner reads in the console)
  */
-import { firebaseConfig, firebaseEnabled } from '../firebase.config';
+import { firebaseConfig, firebaseEnabled, isLocalhost } from '../firebase.config';
 
 type AuthMod = typeof import('firebase/auth');
 type StoreMod = typeof import('firebase/firestore');
@@ -74,7 +74,8 @@ export async function signInGoogle(): Promise<void> {
     await authMod.signInWithPopup(auth, provider);
   } catch (e) {
     const code = (e as { code?: string }).code;
-    if (code === 'auth/popup-blocked' || code === 'auth/operation-not-supported-in-this-environment') {
+    // Redirect sign-in can't finish on localhost (cross-site storage), so there the popup must be allowed.
+    if ((code === 'auth/popup-blocked' || code === 'auth/operation-not-supported-in-this-environment') && !isLocalhost()) {
       await authMod.signInWithRedirect(auth, provider);
       return;
     }
@@ -166,6 +167,7 @@ export function authErrorText(e: unknown): string {
     'auth/popup-closed-by-user': 'ปิดหน้าต่างล็อกอินก่อนเสร็จ ลองใหม่อีกครั้ง',
     'auth/cancelled-popup-request': 'ปิดหน้าต่างล็อกอินก่อนเสร็จ ลองใหม่อีกครั้ง',
     'auth/network-request-failed': 'เชื่อมต่ออินเทอร์เน็ตไม่ได้ ลองใหม่อีกครั้ง',
+    'auth/popup-blocked': 'เบราว์เซอร์บล็อกหน้าต่างล็อกอิน กดอนุญาตป๊อปอัปให้เว็บนี้แล้วลองใหม่',
     'auth/unauthorized-domain': 'เว็บนี้ยังไม่ได้รับอนุญาตใน Firebase (ต้องเพิ่มโดเมนใน Authorized domains)',
     'auth/operation-not-allowed': 'วิธีล็อกอินนี้ยังไม่ได้เปิดใช้ใน Firebase',
   };
