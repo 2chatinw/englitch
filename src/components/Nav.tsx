@@ -5,6 +5,24 @@ import { Bar } from './ui';
 import { PAGES, ROUTES, type Route } from '../lib/router';
 import { useProgress } from '../state/progress';
 import { prefersReducedMotion } from '../lib/util';
+import { useAuth } from '../state/auth';
+import { Avatar } from './Account';
+
+function AccountButton({ onAccount, compact }: { onAccount: () => void; compact?: boolean }) {
+  const { status, user } = useAuth();
+  if (status === 'disabled') return null;
+  if (user) {
+    return (
+      <button type="button" className={compact ? 'icon-btn avatar-btn' : 'side-account'} onClick={onAccount} aria-label={'บัญชีของ ' + user.name}>
+        <Avatar name={user.name} photo={user.photo} size={compact ? 30 : 32} />
+        {compact ? null : <span className="side-account-name">{user.name}</span>}
+      </button>
+    );
+  }
+  return compact
+    ? <button type="button" className="btn btn-primary btn-sm login-btn" onClick={onAccount}>เข้าสู่ระบบ</button>
+    : <button type="button" className="btn btn-primary btn-block" onClick={onAccount}>เข้าสู่ระบบ / สมัคร</button>;
+}
 
 /** Plays a floating "+N XP" over the given anchor whenever XP is gained. */
 function useXpPop(anchor: RefObject<HTMLElement | null>) {
@@ -58,7 +76,7 @@ function useIndicator(route: Route, axis: 'x' | 'y') {
   return { list, ind };
 }
 
-export function Sidebar({ route, onSettings }: { route: Route; onSettings: () => void }) {
+export function Sidebar({ route, onSettings, onAccount }: { route: Route; onSettings: () => void; onAccount: () => void }) {
   const { level, levelXp, streak } = useProgress();
   const { list, ind } = useIndicator(route, 'y');
   const hud = useRef<HTMLDivElement>(null);
@@ -88,14 +106,17 @@ export function Sidebar({ route, onSettings }: { route: Route; onSettings: () =>
           ))}
         </div>
       </nav>
+      <div className="side-foot">
+      <AccountButton onAccount={onAccount} />
       <button type="button" className="side-settings" onClick={onSettings}>
         <Icon name="sliders" /> ตั้งค่า
       </button>
+      </div>
     </aside>
   );
 }
 
-export function TopBar({ onSettings }: { onSettings: () => void }) {
+export function TopBar({ onSettings, onAccount }: { onSettings: () => void; onAccount: () => void }) {
   const { level, levelXp, streak } = useProgress();
   const hud = useRef<HTMLDivElement>(null);
   useXpPop(hud);
@@ -110,6 +131,7 @@ export function TopBar({ onSettings }: { onSettings: () => void }) {
         <span className="top-xp"><Bar value={levelXp / 100} tone="hot" label="XP ในเลเวลนี้" /></span>
         <Streak n={streak} />
       </div>
+      <AccountButton onAccount={onAccount} compact />
       <button type="button" className="icon-btn" onClick={onSettings} aria-label="ตั้งค่า">
         <Icon name="sliders" />
       </button>
