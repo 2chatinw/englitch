@@ -40,6 +40,8 @@ export interface CloudUser {
   email: string | null;
   photo: string | null;
   provider: 'google' | 'password' | 'other';
+  /** False when the account has no display name yet (name falls back to the email). */
+  named: boolean;
 }
 
 function toUser(u: import('firebase/auth').User): CloudUser {
@@ -50,6 +52,7 @@ function toUser(u: import('firebase/auth').User): CloudUser {
     email: u.email,
     photo: u.photoURL,
     provider: p === 'google.com' ? 'google' : p === 'password' ? 'password' : 'other',
+    named: !!u.displayName,
   };
 }
 

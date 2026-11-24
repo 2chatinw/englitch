@@ -6,12 +6,12 @@
  * Leave apiKey empty to run the site without accounts (progress stays on each device).
  */
 export const firebaseConfig = {
-  apiKey: '',
-  authDomain: '',
-  projectId: '',
-  storageBucket: '',
-  messagingSenderId: '',
-  appId: '',
+  apiKey: 'AIzaSyBB8zOGSBIiPp5zFAG0QmbUQwuEOdi_BFQ',
+  authDomain: 'englitch-da50c.firebaseapp.com',
+  projectId: 'englitch-da50c',
+  storageBucket: 'englitch-da50c.firebasestorage.app',
+  messagingSenderId: '662219245733',
+  appId: '1:662219245733:web:f714a0b1dbdbfb8215254c',
 };
 
 export const firebaseEnabled = firebaseConfig.apiKey.length > 0 && firebaseConfig.projectId.length > 0;

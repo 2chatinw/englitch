@@ -35,12 +35,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [status, setStatus] = useState<AuthStatus>(firebaseEnabled ? (hasHint() ? 'loading' : 'idle') : 'disabled');
   const [user, setUser] = useState<CloudUser | null>(null);
   const started = useRef(false);
+  // The auth listener can report a brand-new email account before its nickname is saved; remember it.
+  const signupName = useRef<{ email: string; name: string } | null>(null);
 
   const start = useCallback(() => {
     if (!firebaseEnabled || started.current) return;
     started.current = true;
     setStatus((s) => (s === 'in' ? s : 'loading'));
     watchAuth((u) => {
+      const pending = signupName.current;
+      if (u && !u.named && pending && u.email?.toLowerCase() === pending.email) u = { ...u, name: pending.name, named: true };
       setUser(u);
       setStatus(u ? 'in' : 'out');
       setHint(!!u);
@@ -55,7 +59,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     ensure: start,
     google: async () => { start(); setHint(true); await signInGoogle(); },
     emailIn: async (email, password) => { start(); await signInEmail(email, password); },
-    emailUp: async (name, email, password) => { start(); const u = await signUpEmail(name, email, password); setUser(u); },
+    emailUp: async (name, email, password) => {
+      start();
+      signupName.current = { email: email.trim().toLowerCase(), name: name.trim().slice(0, 40) };
+      const u = await signUpEmail(name, email, password);
+      setUser(u.named ? u : { ...u, name: signupName.current.name, named: true });
+    },
     reset: async (email) => { await resetPassword(email); },
     rename: async (name) => { const u = await renameUser(name); if (u) setUser(u); },
     signOut: async () => { await signOutUser(); setHint(false); },

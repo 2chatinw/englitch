@@ -1,4 +1,4 @@
-/* GG English — "match lobby" look: condensed scoreboard numerals, team-blue accent, signal-orange XP.
+/* Englitch — "match lobby" look: condensed scoreboard numerals, team-blue accent, signal-orange XP.
    Layout: desktop = fixed sidebar (brand, HUD, nav) + centered content column;
            phone   = top HUD bar + content + thumb-reach bottom tab bar. */
 :root {
@@ -92,7 +92,7 @@ img, svg { max-width: 100%; }
 }
 
 /* Brand */
-.brand { display: inline-flex; align-items: baseline; gap: 6px; text-decoration: none; }
+.brand { display: inline-flex; align-items: baseline; gap: 3px; text-decoration: none; }
 .brand-mark {
   font-family: var(--f-display); font-weight: 800; font-size: 2.4rem; line-height: .8;
   color: var(--accent-ink); background: var(--accent); padding: 6px 8px 4px; border-radius: 8px;
@@ -484,3 +484,5 @@ input[type="email"]:focus, input[type="password"]:focus { outline: none; border-
 .board-streak { display: inline-flex; align-items: center; gap: 2px; color: var(--hot); font-size: .9rem; }
 .board-xp { font-size: 1.25rem; font-weight: 800; white-space: nowrap; }
 .board-xp small { font-size: .8rem; color: var(--muted); }
+/* Brand: "EN" block + "GLITCH" with a slight RGB-split, the glitch nod */
+.brand-word { text-shadow: 1.5px 0 color-mix(in srgb, var(--hot) 70%, transparent), -1.5px 0 color-mix(in srgb, var(--accent) 60%, transparent); }
