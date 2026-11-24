@@ -7,7 +7,8 @@
  */
 export const firebaseConfig = {
   apiKey: 'AIzaSyBB8zOGSBIiPp5zFAG0QmbUQwuEOdi_BFQ',
-  authDomain: 'englitch-da50c.firebaseapp.com',
+  // The site's own domain: /__/auth/* is proxied to Firebase by functions/_middleware.ts (same-origin sign-in).
+  authDomain: 'englitch.pages.dev',
   projectId: 'englitch-da50c',
   storageBucket: 'englitch-da50c.firebasestorage.app',
   messagingSenderId: '662219245733',
