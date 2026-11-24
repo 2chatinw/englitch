@@ -4,7 +4,6 @@ import { Bar, SpeakButton } from '../components/ui';
 import { useProgress } from '../state/progress';
 import { today } from '../lib/util';
 import { PAGES, navigate } from '../lib/router';
-import { Leaderboard } from '../components/Leaderboard';
 
 const isIOS = typeof navigator !== 'undefined' && /iPhone|iPad|iPod/.test(navigator.userAgent);
 const isStandalone = typeof window !== 'undefined' &&
@@ -98,8 +97,6 @@ export default function Today() {
         <div className="stat"><b className="num">{solid}</b><span>คำที่จำได้แม่น</span></div>
         <div className={'stat' + (due > 0 ? ' stat-alert' : '')}><b className="num">{due}</b><span>การ์ดรอทบทวน</span></div>
       </section>
-
-      <Leaderboard />
 
       <section className="card pod" data-reveal>
         <span className="kicker">Phrase of the day</span>

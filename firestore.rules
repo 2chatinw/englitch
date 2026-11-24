@@ -19,18 +19,5 @@ service cloud.firestore {
         && request.resource.data.createdAt is int && request.resource.data.lastSeen is int
         && (resource == null || request.resource.data.createdAt == resource.data.createdAt);
     }
-
-    // Public-to-friends scoreboard: any signed-in player reads, each player writes only their own row.
-    match /leaderboard/{uid} {
-      allow read: if request.auth != null;
-      allow delete: if request.auth != null && request.auth.uid == uid;
-      allow create, update: if request.auth != null && request.auth.uid == uid
-        && request.resource.data.keys().hasOnly(['name', 'photo', 'xp', 'level', 'streak', 'lastActive', 'updatedAt'])
-        && request.resource.data.name is string && request.resource.data.name.size() <= 40
-        && request.resource.data.photo is string && request.resource.data.photo.size() <= 500
-        && request.resource.data.xp is int && request.resource.data.xp >= 0 && request.resource.data.xp < 10000000
-        && request.resource.data.level is int && request.resource.data.streak is int
-        && request.resource.data.lastActive is string && request.resource.data.updatedAt is int;
-    }
   }
 }

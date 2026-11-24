@@ -470,20 +470,6 @@ input[type="email"], input[type="password"] {
 input[type="email"]:focus, input[type="password"]:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
 .form-error { color: var(--bad); background: var(--bad-soft); border-radius: 10px; padding: 10px 12px; font-size: .92rem; }
 
-/* Leaderboard */
-.board-cta { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; }
-.board { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
-.board-row { display: flex; align-items: center; gap: 12px; padding: 10px 8px; border-radius: var(--r-sm); }
-.board-row + .board-row { border-top: 1px solid var(--line); }
-.board-row.is-me { background: var(--accent-soft); border-top-color: transparent; }
-.board-row.is-me + .board-row { border-top-color: transparent; }
-.board-rank { width: 1.6em; text-align: center; font-size: 1.35rem; font-weight: 800; color: var(--muted); }
-.board-rank.top { color: var(--hot); }
-.board-name { flex: 1; min-width: 0; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.board-name small { font-weight: 400; color: var(--muted); }
-.board-streak { display: inline-flex; align-items: center; gap: 2px; color: var(--hot); font-size: .9rem; }
-.board-xp { font-size: 1.25rem; font-weight: 800; white-space: nowrap; }
-.board-xp small { font-size: .8rem; color: var(--muted); }
 /* Brand: "EN" block + "GLITCH" with a slight RGB-split, the glitch nod */
 .brand-word { text-shadow: 1.5px 0 color-mix(in srgb, var(--hot) 70%, transparent), -1.5px 0 color-mix(in srgb, var(--accent) 60%, transparent); }
 

@@ -18,7 +18,7 @@ const PROVIDER: Record<string, string> = { discord: 'Discord', google: 'Google',
 
 export function AccountSheet({ open, onClose }: { open: boolean; onClose: () => void }) {
   const auth = useAuth();
-  const { state, setSettings, sync } = useProgress();
+  const { sync } = useProgress();
   const toast = useToast();
   const [rename, setRename] = useState('');
   const [busy, setBusy] = useState(false);
@@ -38,7 +38,7 @@ export function AccountSheet({ open, onClose }: { open: boolean; onClose: () => 
             </div>
           </section>
           <section className="field">
-            <span className="field-label">ชื่อที่เพื่อนเห็น</span>
+            <span className="field-label">ชื่อที่แสดงในแอป</span>
             <form className="row" onSubmit={async (e) => {
               e.preventDefault();
               const n = rename.trim();
@@ -53,13 +53,9 @@ export function AccountSheet({ open, onClose }: { open: boolean; onClose: () => 
                 onChange={(e) => setRename(e.target.value)} style={{ width: 'auto', flex: '1 1 160px' }} />
               <button type="submit" className="btn btn-ghost btn-sm" disabled={busy || !rename.trim()}>บันทึก</button>
             </form>
-            <label className="switch">
-              <input type="checkbox" checked={state.settings.showOnBoard} onChange={(e) => setSettings({ showOnBoard: e.target.checked })} />
-              <span>แสดงชื่อและ XP ของฉันในอันดับเพื่อน</span>
-            </label>
           </section>
           <section className="field">
-            <p className="muted small">ความคืบหน้าของคุณเก็บอยู่ในบัญชีครบ เข้าสู่ระบบใหม่เมื่อไหร่ก็เล่นต่อได้</p>
+            <p className="muted small">ความคืบหน้าของคุณเป็นส่วนตัว เห็นได้เฉพาะคุณ และเก็บอยู่ในบัญชีครบ เข้าสู่ระบบใหม่เมื่อไหร่ก็เล่นต่อได้</p>
             <button type="button" className="btn btn-ghost" disabled={busy} onClick={async () => {
               setBusy(true);
               try { await auth.signOut(); onClose(); toast('ออกจากระบบแล้ว'); }

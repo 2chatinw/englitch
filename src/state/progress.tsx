@@ -4,7 +4,7 @@ import { addDays, today } from '../lib/util';
 import { setVoiceSettings } from '../lib/speech';
 import { useToast } from './toast';
 import { useAuth } from './auth';
-import { removeBoard, saveBoard, saveProgress, watchProgress } from '../lib/cloud';
+import { saveProgress, watchProgress } from '../lib/cloud';
 
 export interface DayStats { cards: number; listen: number; speak: number; quiz: number; chat: number; xp: number; newCards: number }
 export interface Settings {
@@ -14,7 +14,6 @@ export interface Settings {
   theme: 'system' | 'light' | 'dark';
   onboarded: boolean;
   installHintDismissed: boolean;
-  showOnBoard: boolean;
 }
 export interface SrsItem { b: number; d: string }
 export interface State {
@@ -37,7 +36,7 @@ const OLD_KEY = 'gg-english-v1'; // before the rename; read once so earlier prog
 const emptyDay = (): DayStats => ({ cards: 0, listen: 0, speak: 0, quiz: 0, chat: 0, xp: 0, newCards: 0 });
 const fresh = (): State => ({
   v: 1, xp: 0, streak: 0, lastActive: null, days: {}, srs: {}, updatedAt: 0, owner: null,
-  settings: { voiceURI: '', rate: 0.9, autoPlay: true, theme: 'system', onboarded: false, installHintDismissed: false, showOnBoard: true },
+  settings: { voiceURI: '', rate: 0.9, autoPlay: true, theme: 'system', onboarded: false, installHintDismissed: false },
 });
 
 /** Combine two copies of the same player's progress without losing work done on either device. */
@@ -168,8 +167,8 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
     return stop;
   }, [uid]);
 
+  // Progress is private: it is written only to users/{uid}, which no one but its owner can read.
   const saveTimer = useRef<number | undefined>(undefined);
-  const boardKey = useRef('');
   const flush = useCallback(() => {
     window.clearTimeout(saveTimer.current);
     const s = ref.current;
@@ -179,17 +178,7 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
       lastCloud.current = json;
       saveProgress(uid, json, s.updatedAt).then(() => setSync('synced'), () => { lastCloud.current = null; setSync('error'); });
     }
-    const t = today();
-    const streak = s.lastActive === t || s.lastActive === addDays(t, -1) ? s.streak : 0;
-    const key = s.settings.showOnBoard ? [user?.name, user?.photo, s.xp, streak, s.lastActive].join('|') : 'hidden';
-    if (key !== boardKey.current) {
-      boardKey.current = key;
-      const p = s.settings.showOnBoard
-        ? saveBoard({ uid, name: user?.name || 'ผู้เล่น', photo: user?.photo || '', xp: s.xp, level: Math.floor(s.xp / 100) + 1, streak, lastActive: s.lastActive || '' })
-        : removeBoard(uid);
-      p.catch(() => { boardKey.current = ''; });
-    }
-  }, [uid, user?.name, user?.photo]);
+  }, [uid]);
 
   useEffect(() => {
     if (!uid) return;

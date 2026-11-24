@@ -3,7 +3,7 @@
  *
  * Firestore layout:
  *   users/{uid}        { data: <progress JSON string>, updatedAt }   — owner only
- *   leaderboard/{uid}  { name, photo, xp, level, streak, lastActive, updatedAt } — any signed-in user reads, owner writes
+ *   members/{uid}      { name, email, photo, provider, createdAt, lastSeen }     — owner only (site owner reads in the console)
  */
 import { firebaseConfig, firebaseEnabled } from '../firebase.config';
 
@@ -150,42 +150,6 @@ export function watchProgress(uid: string, cb: (json: string | null) => void, on
 export async function saveProgress(uid: string, json: string, updatedAt: number): Promise<void> {
   const { store, db } = await sdk();
   await store.setDoc(store.doc(db, 'users', uid), { data: json, updatedAt });
-}
-
-/* ---- Leaderboard ---- */
-export interface BoardEntry { uid: string; name: string; photo: string; xp: number; level: number; streak: number; lastActive: string }
-
-export async function saveBoard(e: BoardEntry): Promise<void> {
-  const { store, db } = await sdk();
-  await store.setDoc(store.doc(db, 'leaderboard', e.uid), {
-    name: e.name.slice(0, 40), photo: (e.photo || '').slice(0, 500),
-    xp: Math.max(0, Math.floor(e.xp)), level: Math.max(1, Math.floor(e.level)),
-    streak: Math.max(0, Math.floor(e.streak)), lastActive: e.lastActive || '', updatedAt: Date.now(),
-  });
-}
-
-export async function removeBoard(uid: string): Promise<void> {
-  const { store, db } = await sdk();
-  await store.deleteDoc(store.doc(db, 'leaderboard', uid));
-}
-
-export function watchBoard(cb: (rows: BoardEntry[]) => void, onError: () => void, max = 20): () => void {
-  let stop: (() => void) | null = null;
-  let cancelled = false;
-  sdk().then(({ store, db }) => {
-    if (cancelled) return;
-    const q = store.query(store.collection(db, 'leaderboard'), store.orderBy('xp', 'desc'), store.limit(max));
-    stop = store.onSnapshot(q, (snap) => {
-      cb(snap.docs.map((d) => {
-        const v = d.data();
-        return {
-          uid: d.id, name: String(v.name || 'ผู้เล่น'), photo: String(v.photo || ''),
-          xp: Number(v.xp) || 0, level: Number(v.level) || 1, streak: Number(v.streak) || 0, lastActive: String(v.lastActive || ''),
-        };
-      }));
-    }, onError);
-  }).catch(onError);
-  return () => { cancelled = true; stop?.(); };
 }
 
 export function authErrorText(e: unknown): string {
