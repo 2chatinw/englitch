@@ -1,0 +1,141 @@
+/* =========================================================================
+   Logo: ENGLITCH wordmark, a light sweep across it and twinkling stars
+   ========================================================================= */
+.brand { display: inline-flex; align-items: center; text-decoration: none; color: inherit; }
+.brandmark {
+  --logo-h: 46px; position: relative; display: inline-block; line-height: 0;
+  transition: transform .35s cubic-bezier(.34, 1.56, .64, 1);
+}
+.brandmark-logo { display: block; height: var(--logo-h); width: auto; filter: drop-shadow(0 4px 8px rgba(21, 39, 92, .18)); }
+.brandmark-sm { --logo-h: 36px; }
+.brandmark-lg { --logo-h: clamp(72px, 18vw, 110px); }
+.brand:hover .brandmark, .brand:focus-visible .brandmark { transform: scale(1.05) rotate(-1.5deg); }
+
+.brand-shine {
+  position: absolute; inset: 0; pointer-events: none;
+  -webkit-mask-size: 100% 100%; mask-size: 100% 100%; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+  background: linear-gradient(105deg, transparent 0 40%, rgba(255, 255, 255, .75) 50%, transparent 60% 100%);
+  background-size: 300% 100%; background-repeat: no-repeat; background-position: 130% 0;
+  animation: brand-shine 4.8s ease-in-out 1s infinite;
+}
+.brand:hover .brand-shine { animation-duration: 1.4s; animation-delay: 0s; }
+@keyframes brand-shine { 0% { background-position: 130% 0; } 30%, 100% { background-position: -30% 0; } }
+
+.brand-spark {
+  position: absolute; display: block; width: calc(var(--logo-h) * .3); aspect-ratio: 1; pointer-events: none;
+  background: radial-gradient(circle, #FFFFFF 0 18%, #FFC53D 40%, #FFB01F 100%);
+  clip-path: polygon(50% 0, 61% 39%, 100% 50%, 61% 61%, 50% 100%, 39% 61%, 0 50%, 39% 39%);
+  opacity: 0; transform: scale(0); animation: brand-twinkle 2.6s ease-in-out infinite;
+}
+.brand-spark.s1 { left: -3%; top: -8%; animation-delay: .2s; width: calc(var(--logo-h) * .26); }
+.brand-spark.s2 { left: 40%; top: -16%; animation-delay: 1.1s; width: calc(var(--logo-h) * .22); background: #FFFFFF; }
+.brand-spark.s3 { right: -4%; bottom: 2%; animation-delay: 1.7s; }
+.brand-spark.s4 { left: 16%; bottom: -10%; animation-delay: .6s; width: calc(var(--logo-h) * .2); background: #FFFFFF; }
+@keyframes brand-twinkle {
+  0%, 100% { opacity: 0; transform: scale(0) rotate(0deg); }
+  45% { opacity: 1; transform: scale(1) rotate(90deg); }
+  70% { opacity: 0; transform: scale(.2) rotate(160deg); }
+}
+.brand:hover .brand-spark { animation-duration: 1.2s; }
+
+/* =========================================================================
+   Navbar: clear over the hero, frosted glass once the page scrolls
+   ========================================================================= */
+html { scroll-padding-top: 88px; }
+.lp-nav {
+  --nav-h: 76px; --nav-glass: rgba(255, 255, 255, .82);
+  position: fixed; top: 0; left: 0; right: 0; z-index: 40;
+  background: transparent; border-bottom: 0; box-shadow: none;
+  backdrop-filter: none; -webkit-backdrop-filter: none;
+  transition: background-color .45s, box-shadow .45s, backdrop-filter .45s, -webkit-backdrop-filter .45s;
+}
+.lp-nav[data-scrolled="true"] {
+  background: var(--nav-glass);
+  backdrop-filter: saturate(1.5) blur(16px); -webkit-backdrop-filter: saturate(1.5) blur(16px);
+  box-shadow: 0 1px 0 color-mix(in srgb, var(--line) 80%, transparent), 0 10px 30px rgba(21, 39, 92, .08);
+}
+:root[data-theme="dark"] .lp-nav { --nav-glass: rgba(10, 24, 56, .78); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .lp-nav { --nav-glass: rgba(10, 24, 56, .78); } }
+.lp-nav-in {
+  max-width: none; height: calc(var(--nav-h) + env(safe-area-inset-top));
+  display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: center; column-gap: 24px;
+  padding: env(safe-area-inset-top) max(clamp(16px, 3.2vw, 56px), env(safe-area-inset-right)) 0 max(clamp(16px, 3.2vw, 56px), env(safe-area-inset-left));
+}
+.lp-nav-in > .brand { justify-self: start; }
+.lp-links { margin-left: 0; justify-self: center; gap: clamp(4px, 1.6vw, 26px); }
+.lp-links a { padding: 8px 12px; font-weight: 500; color: var(--ink); opacity: .78; transition: opacity .2s; }
+.lp-links a:hover { opacity: 1; color: var(--ink); }
+.lp-act { margin-left: 0; justify-self: end; }
+@media (max-width: 640px) {
+  .lp-nav { --nav-h: 64px; }
+  .lp-nav-in { grid-template-columns: auto minmax(0, 1fr); column-gap: 10px; }
+  .lp-nav .brandmark { --logo-h: 38px; }
+  .lp-act { gap: 6px; }
+}
+.lp > main { padding-top: calc(76px + env(safe-area-inset-top)); }
+@media (max-width: 640px) { .lp > main { padding-top: calc(64px + env(safe-area-inset-top)); } }
+
+/* App top bar (phone): the same clear to glass change */
+.topbar {
+  background: transparent; border-bottom-color: transparent; box-shadow: none;
+  backdrop-filter: none; -webkit-backdrop-filter: none;
+  transition: background-color .45s, box-shadow .45s, border-color .45s, backdrop-filter .45s;
+}
+.topbar[data-scrolled="true"] {
+  background: color-mix(in srgb, var(--surface) 82%, transparent);
+  backdrop-filter: saturate(1.5) blur(16px); -webkit-backdrop-filter: saturate(1.5) blur(16px);
+  border-bottom-color: color-mix(in srgb, var(--line) 80%, transparent);
+  box-shadow: 0 10px 30px rgba(21, 39, 92, .08);
+}
+
+/* =========================================================================
+   Sign-in pill: clear at rest, a puffy cloud pops in behind the text on hover
+   ========================================================================= */
+.glass-cta { --cloud: #FFFFFF; overflow: visible; }
+.glass-cta:hover, .glass-cta:focus-visible,
+:root[data-theme="dark"] .glass-cta:hover, :root[data-theme="dark"] .glass-cta:focus-visible {
+  background-color: transparent; box-shadow: none; transform: translateY(-1px);
+  backdrop-filter: none; -webkit-backdrop-filter: none;
+  --cta-a: #15275C; --cta-b: #1E6BFF;
+}
+.glass-cta:hover::before, .glass-cta:hover::after, .glass-cta:focus-visible::before, .glass-cta:focus-visible::after { opacity: 0; }
+.glass-cta:hover > span, .glass-cta:focus-visible > span { filter: none; }
+.glass-cta:active { transform: translateY(1px) scale(.98); }
+:root[data-theme="dark"] .glass-cta { --cloud: #E6F0FF; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .glass-cta { --cloud: #E6F0FF; }
+  :root:not([data-theme="light"]) .glass-cta:hover, :root:not([data-theme="light"]) .glass-cta:focus-visible {
+    background-color: transparent; box-shadow: none; --cta-a: #15275C; --cta-b: #1E6BFF;
+  }
+}
+
+.cta-cloud {
+  position: absolute; inset: 0; z-index: 0; pointer-events: none; display: block;
+  border-radius: 999px; background: var(--cloud);
+  filter: drop-shadow(0 0 1px rgba(30, 107, 255, .4)) drop-shadow(0 8px 12px rgba(30, 107, 255, .28));
+  opacity: 0; transform: translateY(8px) scale(.6);
+  transition: opacity .3s ease, transform .55s cubic-bezier(.34, 1.56, .64, 1);
+}
+/* the puffs: a small one and a big one on top, one at each end */
+.cta-cloud::before, .cta-cloud::after, .cta-cloud > i {
+  content: ""; position: absolute; display: block; border-radius: 50%; background: var(--cloud);
+}
+.cta-cloud::before { width: 26px; height: 26px; left: 15%; top: -10px; box-shadow: 27px -4px 0 6px var(--cloud); }
+.cta-cloud::after { width: 26px; height: 26px; right: -9px; top: 7px; }
+.cta-cloud > i { width: 24px; height: 24px; left: -9px; top: 10px; }
+.glass-cta:hover .cta-cloud, .glass-cta:focus-visible .cta-cloud {
+  opacity: 1; transform: none;
+  animation: cta-bob 1.8s ease-in-out .55s infinite alternate;
+}
+@keyframes cta-bob { from { translate: 0 0; } to { translate: 0 -3px; } }
+/* the stars around the cloud: sun yellow and white, like the logo */
+.glass-cta .glass-stars::before {
+  box-shadow: -58px -16px #FFE27A, -30px -24px #FFFFFF, 4px -30px 0 -.4px #FFC53D, 36px -26px #FFFFFF, 62px -12px 0 -.3px #FFC53D,
+    -66px 6px 0 -.4px #BAE6FD, 70px 8px #FFE27A, -44px 22px 0 -.3px #7DD3FC, -8px 24px #FFFFFF, 26px 23px 0 -.4px #FFC53D, 54px 18px #BAE6FD;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .brand-shine, .brand-spark { animation: none; }
+  .brand-spark { opacity: .9; transform: scale(.8); }
+  .glass-cta:hover .cta-cloud { animation: none; }
+}

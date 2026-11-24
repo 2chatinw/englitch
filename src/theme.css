@@ -13,27 +13,7 @@ h1, h2, h3, .lp-hero h1, .page-head h1, .lp-head h2, .lp-final h2, .sheet-head h
 .lp-hero h1, .page-head h1 { font-weight: 600; }
 .kicker, .field-label { font-weight: 700; }
 
-/* ---------- Brand mark ---------- */
-.brand { display: inline-flex; align-items: center; text-decoration: none; color: inherit; }
-.brandmark { display: inline-flex; align-items: center; gap: 10px; line-height: 1; }
-.brandmark-icon {
-  width: 44px; height: 44px; border-radius: 14px; object-fit: cover; flex: none;
-  box-shadow: 0 4px 0 -1px color-mix(in srgb, var(--navy) 30%, transparent), 0 8px 18px -8px rgba(30, 107, 255, .55);
-}
-.wordmark {
-  font-family: "Fredoka", var(--f-display); font-weight: 700; font-size: 1.75rem; letter-spacing: .005em;
-  -webkit-text-stroke: .16em var(--navy); paint-order: stroke fill;
-  filter: drop-shadow(0 2px 0 color-mix(in srgb, var(--navy) 35%, transparent));
-}
-.wm-eng { color: #FFFFFF; }
-.wm-litch { color: var(--sun); }
-.brandmark-sm .brandmark-icon, .brand-sm .brandmark-icon { width: 34px; height: 34px; border-radius: 11px; }
-.brandmark-sm .wordmark, .brand-sm .wordmark { font-size: 1.35rem; }
-.brandmark-lg { flex-direction: column; gap: 14px; }
-.brandmark-lg .brandmark-icon { width: 132px; height: 132px; border-radius: 34px; }
-.brandmark-lg .wordmark { font-size: 3rem; }
-:root[data-theme="dark"] .wordmark { --navy: #0A1838; }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .wordmark { --navy: #0A1838; } }
+/* Logo, navbar and sign-in cloud: see nav.css */
 
 /* ---------- Buttons: glossy sun-yellow, chunky like the logo letters ---------- */
 .btn-primary {

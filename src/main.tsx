@@ -14,6 +14,7 @@ import './landing.css';
 import './backdrops.css';
 import './backdrops-more.css';
 import './theme.css';
+import './nav.css';
 import App from './App.tsx';
 
 gsap.registerPlugin(useGSAP);

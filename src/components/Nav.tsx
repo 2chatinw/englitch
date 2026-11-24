@@ -7,7 +7,7 @@ import { useProgress } from '../state/progress';
 import { prefersReducedMotion } from '../lib/util';
 import { useAuth } from '../state/auth';
 import { Avatar } from './Account';
-import { Brand } from './Brand';
+import { Brand, useScrolled } from './Brand';
 
 function AccountButton({ onAccount, compact }: { onAccount: () => void; compact?: boolean }) {
   const { user } = useAuth();
@@ -114,11 +114,12 @@ export function Sidebar({ route, onSettings, onAccount }: { route: Route; onSett
 export function TopBar({ onSettings, onAccount }: { onSettings: () => void; onAccount: () => void }) {
   const { level, levelXp, streak } = useProgress();
   const hud = useRef<HTMLDivElement>(null);
+  const scrolled = useScrolled();
   useXpPop(hud);
   return (
-    <header className="topbar">
+    <header className="topbar" data-scrolled={scrolled ? 'true' : 'false'}>
       <a className="brand brand-sm" href="#today" aria-label="Englitch หน้าแรก">
-        <Brand />
+        <Brand size="sm" />
       </a>
       <div className="top-hud" ref={hud}>
         <span className="hud-level hud-level-sm"><small>LV</small><b className="num">{level}</b></span>

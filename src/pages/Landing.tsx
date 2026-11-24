@@ -4,7 +4,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
 import { Icon, type IconName } from '../components/Icon';
 import { Sheet } from '../components/Sheet';
-import { Brand, LOGO_URL } from '../components/Brand';
+import { Brand, LOGO_URL, useScrolled } from '../components/Brand';
 import { SignInOptions } from '../components/Login';
 import { useAuth } from '../state/auth';
 import { useProgress } from '../state/progress';
@@ -39,10 +39,11 @@ const STEPS = [
 
 const TICKER = PHRASES.filter((p) => p.c === 'callout' || p.c === 'game' || p.c === 'help').slice(0, 18);
 
-/** The glass pill sign-in button (top-right), styled after the owner's other site. */
+/** The sign-in pill (top-right): clear at rest, turns into a little puffy cloud on hover. */
 function GlassCta({ onClick, children }: { onClick: () => void; children: string }) {
   return (
     <button type="button" className="glass-cta" onClick={onClick}>
+      <i className="cta-cloud" aria-hidden="true"><i /></i>
       <i className="glass-stars" aria-hidden="true" />
       <span>{children}</span>
     </button>
@@ -68,6 +69,7 @@ export default function Landing() {
   const [bd] = useState(initialBackdrop);
   const [kind, setKind] = useState<BackdropKind | null>(bd.kind);
   const root = useRef<HTMLDivElement>(null);
+  const scrolled = useScrolled();
 
   // A failed Discord sign-in comes back with a message; show it where the buttons are.
   useEffect(() => { if (error) setOpen(true); }, [error]);
@@ -98,7 +100,7 @@ export default function Landing() {
   return (
     <div className={'lp' + (kind ? ' has-bd' : '')} ref={root}>
       {kind ? <Backdrop kind={kind} /> : null}
-      <header className="lp-nav">
+      <header className="lp-nav" data-scrolled={scrolled ? 'true' : 'false'}>
         <div className="lp-nav-in">
           <a className="brand" href="#top" aria-label="Englitch">
             <Brand />
