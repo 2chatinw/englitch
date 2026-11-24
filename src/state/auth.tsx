@@ -1,20 +1,21 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
+import { createContext, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { firebaseEnabled } from '../firebase.config';
 import {
-  renameUser, resetPassword, signInEmail, signInGoogle, signOutUser, signUpEmail, watchAuth, type CloudUser,
+  authErrorText, recordMember, renameUser, signInDiscordToken, signInGoogle, signOutUser, watchAuth, type CloudUser,
 } from '../lib/cloud';
 
-export type AuthStatus = 'disabled' | 'idle' | 'loading' | 'in' | 'out';
+/** 'loading' until Firebase says who is signed in; the app itself only renders for 'in'. */
+export type AuthStatus = 'disabled' | 'loading' | 'in' | 'out';
 
 interface AuthApi {
   status: AuthStatus;
   user: CloudUser | null;
-  /** Load the SDK and start listening (called when the account sheet opens). */
-  ensure: () => void;
+  /** Message from a sign-in attempt that failed (shown on the sign-in screen). */
+  error: string;
+  /** True while a Discord sign-in is being finished after the redirect back. */
+  finishing: boolean;
   google: () => Promise<void>;
-  emailIn: (email: string, password: string) => Promise<void>;
-  emailUp: (name: string, email: string, password: string) => Promise<void>;
-  reset: (email: string) => Promise<void>;
+  discord: () => void;
   rename: (name: string) => Promise<void>;
   signOut: () => Promise<void>;
 }
@@ -26,49 +27,79 @@ export function useAuth(): AuthApi {
   return v;
 }
 
-// Visitors who have never signed in don't download the Firebase SDK until they open the account sheet.
-const HINT = 'englitch-auth';
-const hasHint = () => { try { return localStorage.getItem(HINT) === '1'; } catch { return false; } };
-const setHint = (on: boolean) => { try { if (on) localStorage.setItem(HINT, '1'); else localStorage.removeItem(HINT); } catch { /* storage blocked */ } };
+/** What /api/auth/discord/callback leaves in sessionStorage before sending the browser back to the app. */
+const DISCORD_KEY = 'englitch-discord';
+interface DiscordHandoff { token?: string; name?: string; photo?: string; email?: string; error?: string }
+
+function takeDiscordHandoff(): DiscordHandoff | null {
+  try {
+    const raw = sessionStorage.getItem(DISCORD_KEY);
+    if (!raw) return null;
+    sessionStorage.removeItem(DISCORD_KEY);
+    return JSON.parse(raw) as DiscordHandoff;
+  } catch {
+    return null;
+  }
+}
+
+const DISCORD_ERRORS: Record<string, string> = {
+  access_denied: 'ยกเลิกการเข้าสู่ระบบด้วย Discord แล้ว',
+  not_configured: 'ระบบล็อกอินด้วย Discord ยังตั้งค่าไม่เสร็จ ใช้ Google ไปก่อนได้',
+  state: 'การเข้าสู่ระบบหมดเวลา ลองกดใหม่อีกครั้ง',
+};
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [status, setStatus] = useState<AuthStatus>(firebaseEnabled ? (hasHint() ? 'loading' : 'idle') : 'disabled');
+  const [status, setStatus] = useState<AuthStatus>(firebaseEnabled ? 'loading' : 'disabled');
   const [user, setUser] = useState<CloudUser | null>(null);
-  const started = useRef(false);
-  // The auth listener can report a brand-new email account before its nickname is saved; remember it.
-  const signupName = useRef<{ email: string; name: string } | null>(null);
+  const [error, setError] = useState('');
+  const [finishing, setFinishing] = useState(false);
+  const recorded = useRef<string | null>(null);
+  const memberEmail = useRef<string | null>(null);
 
-  const start = useCallback(() => {
-    if (!firebaseEnabled || started.current) return;
-    started.current = true;
-    setStatus((s) => (s === 'in' ? s : 'loading'));
-    watchAuth((u) => {
-      const pending = signupName.current;
-      if (u && !u.named && pending && u.email?.toLowerCase() === pending.email) u = { ...u, name: pending.name, named: true };
-      setUser(u);
+  useEffect(() => {
+    if (!firebaseEnabled) return;
+    const handoff = takeDiscordHandoff();
+    if (handoff?.error) setError(DISCORD_ERRORS[handoff.error] || 'เข้าสู่ระบบด้วย Discord ไม่สำเร็จ ลองใหม่อีกครั้ง');
+    if (handoff?.token) {
+      setFinishing(true);
+      memberEmail.current = handoff.email || null;
+      signInDiscordToken(handoff.token, handoff.name || '', handoff.photo || '')
+        .then((u) => setUser(u))
+        .catch((e) => setError(authErrorText(e)))
+        .finally(() => setFinishing(false));
+    }
+    return watchAuth((u) => {
+      setUser((prev) => (u && prev && prev.uid === u.uid && prev.named && !u.named ? prev : u));
       setStatus(u ? 'in' : 'out');
-      setHint(!!u);
     });
   }, []);
 
-  useEffect(() => { if (hasHint()) start(); }, [start]);
+  // Keep the member list current: one write per sign-in session.
+  useEffect(() => {
+    if (!user || finishing || recorded.current === user.uid) return; // wait for a Discord sign-in to set its name first
+    recorded.current = user.uid;
+    recordMember(user, memberEmail.current).catch(() => { recorded.current = null; });
+  }, [user, finishing]);
 
   const api = useMemo<AuthApi>(() => ({
     status,
     user,
-    ensure: start,
-    google: async () => { start(); setHint(true); await signInGoogle(); },
-    emailIn: async (email, password) => { start(); await signInEmail(email, password); },
-    emailUp: async (name, email, password) => {
-      start();
-      signupName.current = { email: email.trim().toLowerCase(), name: name.trim().slice(0, 40) };
-      const u = await signUpEmail(name, email, password);
-      setUser(u.named ? u : { ...u, name: signupName.current.name, named: true });
+    error,
+    finishing,
+    google: async () => {
+      setError('');
+      try { await signInGoogle(); } catch (e) { setError(authErrorText(e)); }
     },
-    reset: async (email) => { await resetPassword(email); },
-    rename: async (name) => { const u = await renameUser(name); if (u) setUser(u); },
-    signOut: async () => { await signOutUser(); setHint(false); },
-  }), [status, user, start]);
+    discord: () => {
+      setError('');
+      window.location.assign('/api/auth/discord/start');
+    },
+    rename: async (name) => {
+      const u = await renameUser(name);
+      if (u) { setUser(u); recorded.current = null; }
+    },
+    signOut: async () => { await signOutUser(); recorded.current = null; memberEmail.current = null; },
+  }), [status, user, error, finishing]);
 
   return <Ctx.Provider value={api}>{children}</Ctx.Provider>;
 }

@@ -9,19 +9,14 @@ import { useAuth } from '../state/auth';
 import { Avatar } from './Account';
 
 function AccountButton({ onAccount, compact }: { onAccount: () => void; compact?: boolean }) {
-  const { status, user } = useAuth();
-  if (status === 'disabled') return null;
-  if (user) {
-    return (
-      <button type="button" className={compact ? 'icon-btn avatar-btn' : 'side-account'} onClick={onAccount} aria-label={'บัญชีของ ' + user.name}>
-        <Avatar name={user.name} photo={user.photo} size={compact ? 30 : 32} />
-        {compact ? null : <span className="side-account-name">{user.name}</span>}
-      </button>
-    );
-  }
-  return compact
-    ? <button type="button" className="btn btn-primary btn-sm login-btn" onClick={onAccount}>เข้าสู่ระบบ</button>
-    : <button type="button" className="btn btn-primary btn-block" onClick={onAccount}>เข้าสู่ระบบ / สมัคร</button>;
+  const { user } = useAuth();
+  if (!user) return null; // the app only shows after sign-in
+  return (
+    <button type="button" className={compact ? 'icon-btn avatar-btn' : 'side-account'} onClick={onAccount} aria-label={'บัญชีของ ' + user.name}>
+      <Avatar name={user.name} photo={user.photo} size={compact ? 30 : 32} />
+      {compact ? null : <span className="side-account-name">{user.name}</span>}
+    </button>
+  );
 }
 
 /** Plays a floating "+N XP" over the given anchor whenever XP is gained. */

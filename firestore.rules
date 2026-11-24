@@ -7,6 +7,19 @@ service cloud.firestore {
       allow read, write: if request.auth != null && request.auth.uid == uid;
     }
 
+    // Member list: each player keeps their own entry; the site owner reads all entries in the Firebase console.
+    match /members/{uid} {
+      allow read: if request.auth != null && request.auth.uid == uid;
+      allow create, update: if request.auth != null && request.auth.uid == uid
+        && request.resource.data.keys().hasOnly(['name', 'email', 'photo', 'provider', 'createdAt', 'lastSeen'])
+        && request.resource.data.name is string && request.resource.data.name.size() <= 40
+        && request.resource.data.email is string && request.resource.data.email.size() <= 200
+        && request.resource.data.photo is string && request.resource.data.photo.size() <= 500
+        && request.resource.data.provider is string && request.resource.data.provider.size() <= 20
+        && request.resource.data.createdAt is int && request.resource.data.lastSeen is int
+        && (resource == null || request.resource.data.createdAt == resource.data.createdAt);
+    }
+
     // Public-to-friends scoreboard: any signed-in player reads, each player writes only their own row.
     match /leaderboard/{uid} {
       allow read: if request.auth != null;

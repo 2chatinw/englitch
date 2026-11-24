@@ -6,7 +6,8 @@ import { BottomBar, Sidebar, TopBar } from './components/Nav';
 import { PageStage } from './components/PageStage';
 import { SettingsSheet } from './components/Settings';
 import { AccountSheet } from './components/Account';
-import { AuthProvider } from './state/auth';
+import { AuthProvider, useAuth } from './state/auth';
+import { LoginScreen } from './components/Login';
 import Today from './pages/Today';
 import Cards from './pages/Cards';
 import Listen from './pages/Listen';
@@ -44,12 +45,19 @@ function Shell() {
   );
 }
 
+/** Members only: the app opens after a Discord or Google sign-in (runs open when Firebase isn't configured). */
+function Gate() {
+  const { status } = useAuth();
+  if (status === 'in' || status === 'disabled') return <Shell />;
+  return <LoginScreen />;
+}
+
 export default function App() {
   return (
     <ToastProvider>
       <AuthProvider>
         <ProgressProvider>
-          <Shell />
+          <Gate />
         </ProgressProvider>
       </AuthProvider>
     </ToastProvider>

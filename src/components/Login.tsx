@@ -1,0 +1,69 @@
+import { useRef, useState } from 'react';
+import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
+import { useAuth } from '../state/auth';
+import { prefersReducedMotion } from '../lib/util';
+
+const DiscordMark = () => (
+  <svg className="icon" viewBox="0 0 24 24" aria-hidden="true">
+    <path fill="currentColor" d="M20.3 4.4A19.6 19.6 0 0 0 15.4 3l-.6 1.3a18.2 18.2 0 0 0-5.6 0L8.6 3a19.5 19.5 0 0 0-4.9 1.4C.6 9 0 13.6.3 18.1a19.7 19.7 0 0 0 6 3l1.3-2a12.7 12.7 0 0 1-2-1l.5-.4a14 14 0 0 0 11.9 0l.5.4c-.6.4-1.3.7-2 1l1.3 2a19.6 19.6 0 0 0 6-3c.4-5.2-.7-9.8-3.5-13.7zM8.5 15.3c-1.2 0-2.1-1.1-2.1-2.4s.9-2.4 2.1-2.4 2.2 1.1 2.1 2.4c0 1.3-.9 2.4-2.1 2.4zm7 0c-1.2 0-2.1-1.1-2.1-2.4s.9-2.4 2.1-2.4 2.2 1.1 2.1 2.4c0 1.3-.9 2.4-2.1 2.4z" />
+  </svg>
+);
+
+const GoogleMark = () => (
+  <svg className="icon" viewBox="0 0 24 24" aria-hidden="true">
+    <path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.5h6.5a5.6 5.6 0 0 1-2.4 3.6v3h3.9c2.2-2.1 3.5-5.2 3.5-8.8z" />
+    <path fill="#34A853" d="M12 24c3.2 0 6-1.1 8-2.9l-3.9-3c-1.1.7-2.5 1.2-4.1 1.2-3.1 0-5.8-2.1-6.7-5H1.3v3.1A12 12 0 0 0 12 24z" />
+    <path fill="#FBBC05" d="M5.3 14.3a7.2 7.2 0 0 1 0-4.6V6.6H1.3a12 12 0 0 0 0 10.8z" />
+    <path fill="#EA4335" d="M12 4.8c1.8 0 3.3.6 4.6 1.8l3.4-3.4A12 12 0 0 0 1.3 6.6l4 3.1c.9-2.9 3.6-4.9 6.7-4.9z" />
+  </svg>
+);
+
+/** Full-screen gate: Englitch is members-only, so everyone signs in with Discord or Google first. */
+export function LoginScreen() {
+  const { status, error, finishing, google, discord } = useAuth();
+  const [busy, setBusy] = useState<'' | 'google' | 'discord'>('');
+  const root = useRef<HTMLDivElement>(null);
+  const waiting = status === 'loading' || finishing;
+
+  useGSAP(() => {
+    if (prefersReducedMotion() || !root.current) return;
+    gsap.timeline()
+      .from('.login-mark', { y: 30, autoAlpha: 0, duration: 0.6, ease: 'power3.out' })
+      .from('.login-word', { x: -24, autoAlpha: 0, duration: 0.5, ease: 'power3.out' }, '-=0.35')
+      .from('.login-copy > *', { y: 16, autoAlpha: 0, duration: 0.45, stagger: 0.07, ease: 'power3.out' }, '-=0.25');
+  }, { scope: root });
+
+  return (
+    <div className="login" ref={root}>
+      <div className="login-card">
+        <div className="login-brand" aria-label="Englitch">
+          <span className="login-mark">EN</span>
+          <span className="login-word">glitch</span>
+        </div>
+        <div className="login-copy">
+          <h1>ฝึกภาษาอังกฤษ ไว้คุยกับเพื่อนต่างชาติในเกม</h1>
+          <p className="muted">การ์ดคำศัพท์ ฝึกฟัง ฝึกพูด ควิซสถานการณ์ และอันดับ XP กับเพื่อน ฟรีทั้งหมด</p>
+          {waiting ? (
+            <p className="login-wait" role="status">{finishing ? 'กำลังเข้าสู่ระบบด้วย Discord…' : 'กำลังโหลด…'}</p>
+          ) : (
+            <div className="login-actions">
+              <button type="button" className="btn btn-lg btn-block btn-discord" disabled={!!busy}
+                onClick={() => { setBusy('discord'); discord(); }}>
+                <DiscordMark /> {busy === 'discord' ? 'กำลังไปที่ Discord…' : 'เข้าสู่ระบบด้วย Discord'}
+              </button>
+              <button type="button" className="btn btn-lg btn-block btn-ghost btn-google" disabled={!!busy}
+                onClick={async () => { setBusy('google'); await google(); setBusy(''); }}>
+                <GoogleMark /> {busy === 'google' ? 'กำลังเปิดหน้าต่าง Google…' : 'เข้าสู่ระบบด้วย Google (Gmail)'}
+              </button>
+            </div>
+          )}
+          {error ? <p className="form-error" role="alert">{error}</p> : null}
+          <p className="login-note">
+            เมื่อเข้าสู่ระบบ เราเก็บชื่อ อีเมล และรูปโปรไฟล์ไว้เป็นรายชื่อสมาชิก และใช้บันทึกความคืบหน้าให้เล่นต่อได้ทุกเครื่อง
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}

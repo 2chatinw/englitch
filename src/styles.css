@@ -486,3 +486,32 @@ input[type="email"]:focus, input[type="password"]:focus { outline: none; border-
 .board-xp small { font-size: .8rem; color: var(--muted); }
 /* Brand: "EN" block + "GLITCH" with a slight RGB-split, the glitch nod */
 .brand-word { text-shadow: 1.5px 0 color-mix(in srgb, var(--hot) 70%, transparent), -1.5px 0 color-mix(in srgb, var(--accent) 60%, transparent); }
+
+/* ---------- Sign-in gate ---------- */
+.login {
+  min-height: 100vh; min-height: 100dvh; display: grid; place-items: center;
+  padding: max(24px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(24px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
+  background:
+    repeating-linear-gradient(-55deg, transparent 0 22px, color-mix(in srgb, var(--accent) 6%, transparent) 22px 24px),
+    var(--bg);
+}
+.login-card {
+  width: 100%; max-width: 440px; background: var(--surface); border: 1px solid var(--line); border-radius: 22px;
+  padding: 32px 26px 26px; display: flex; flex-direction: column; gap: 22px; box-shadow: var(--shadow);
+}
+.login-brand { display: flex; align-items: baseline; gap: 4px; }
+.login-mark {
+  font-family: var(--f-display); font-weight: 800; font-size: 3.6rem; line-height: .8; color: var(--accent-ink);
+  background: var(--accent); padding: 8px 10px 6px; border-radius: 10px; transform: skewX(-8deg); display: inline-block;
+}
+.login-word {
+  font-family: var(--f-display); font-weight: 800; font-size: 2.7rem; text-transform: uppercase; letter-spacing: .02em;
+  text-shadow: 2px 0 color-mix(in srgb, var(--hot) 70%, transparent), -2px 0 color-mix(in srgb, var(--accent) 60%, transparent);
+}
+.login-copy { display: flex; flex-direction: column; gap: 12px; }
+.login-copy h1 { font-size: 1.45rem; font-weight: 700; }
+.login-actions { display: flex; flex-direction: column; gap: 10px; margin-top: 6px; }
+.btn-discord { background: #5865F2; color: #fff; box-shadow: 0 8px 18px -10px #5865F2; }
+.btn-discord:hover:not(:disabled) { filter: brightness(1.08); }
+.login-wait { padding: 16px; text-align: center; border-radius: var(--r-sm); background: var(--surface-2); color: var(--muted); }
+.login-note { font-size: .8rem; color: var(--muted); line-height: 1.5; }

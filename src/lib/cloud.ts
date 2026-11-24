@@ -39,7 +39,7 @@ export interface CloudUser {
   name: string;
   email: string | null;
   photo: string | null;
-  provider: 'google' | 'password' | 'other';
+  provider: 'google' | 'discord' | 'password' | 'other';
   /** False when the account has no display name yet (name falls back to the email). */
   named: boolean;
 }
@@ -51,7 +51,7 @@ function toUser(u: import('firebase/auth').User): CloudUser {
     name: u.displayName || (u.email ? u.email.split('@')[0] : 'ผู้เล่น'),
     email: u.email,
     photo: u.photoURL,
-    provider: p === 'google.com' ? 'google' : p === 'password' ? 'password' : 'other',
+    provider: u.uid.startsWith('discord:') ? 'discord' : p === 'google.com' ? 'google' : p === 'password' ? 'password' : 'other',
     named: !!u.displayName,
   };
 }
@@ -80,6 +80,28 @@ export async function signInGoogle(): Promise<void> {
     }
     throw e;
   }
+}
+
+/** Finish a Discord sign-in: the Cloudflare function hands back a Firebase custom token for this Discord user. */
+export async function signInDiscordToken(token: string, name: string, photo: string): Promise<CloudUser> {
+  const { authMod, auth } = await sdk();
+  const cred = await authMod.signInWithCustomToken(auth, token);
+  const patch: { displayName?: string; photoURL?: string } = {};
+  if (name && cred.user.displayName !== name) patch.displayName = name.slice(0, 40);
+  if (photo && cred.user.photoURL !== photo) patch.photoURL = photo;
+  if (Object.keys(patch).length) await authMod.updateProfile(cred.user, patch);
+  return toUser(cred.user);
+}
+
+/* ---- Member list (members/{uid}); the site owner reads it in the Firebase console ---- */
+export async function recordMember(u: CloudUser, email: string | null): Promise<void> {
+  const { store, db } = await sdk();
+  const ref = store.doc(db, 'members', u.uid);
+  const snap = await store.getDoc(ref);
+  const now = Date.now();
+  const base = { name: u.name.slice(0, 40), email: (email || u.email || '').slice(0, 200), photo: (u.photo || '').slice(0, 500), provider: u.provider, lastSeen: now };
+  if (!snap.exists()) await store.setDoc(ref, { ...base, createdAt: now });
+  else await store.setDoc(ref, { ...base, createdAt: snap.data().createdAt ?? now });
 }
 
 export async function signInEmail(email: string, password: string): Promise<void> {
