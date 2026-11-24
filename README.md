@@ -46,3 +46,22 @@ npm run build    # สร้างไฟล์เว็บใน dist/
 
 ค่าใน `firebaseConfig` ไม่ใช่ความลับ (ใช้ระบุโปรเจกต์) ความปลอดภัยของข้อมูลมาจาก `firestore.rules`:
 แต่ละคนอ่าน/เขียนได้เฉพาะความคืบหน้าของตัวเอง ส่วนกระดานอันดับทุกคนที่ล็อกอินอ่านได้ แต่แก้ได้เฉพาะแถวของตัวเอง
+
+## สมาชิกและการเข้าสู่ระบบ
+
+ต้องเข้าสู่ระบบด้วย **Discord** หรือ **Google** ก่อนใช้งาน ทุกคนที่ล็อกอินจะถูกบันทึกใน Firestore คอลเลกชัน `members`
+(ชื่อ, อีเมล, รูป, ช่องทาง, วันที่สมัคร, เข้าล่าสุด) เจ้าของเว็บดูได้ใน Firebase console
+
+Discord ไม่มีใน Firebase โดยตรง จึงใช้ Cloudflare Pages Functions (`functions/api/auth/discord/*`)
+แลก code จาก Discord แล้วออก Firebase custom token ให้
+
+ตั้งค่าใน Cloudflare → Workers & Pages → englitch → Settings → Variables and secrets:
+
+| ชื่อ | ประเภท | ที่มา |
+|---|---|---|
+| `DISCORD_CLIENT_ID` | Text | Discord Developer Portal → แอป Englitch → OAuth2 |
+| `DISCORD_CLIENT_SECRET` | Secret | หน้าเดียวกัน → Reset Secret |
+| `FIREBASE_SERVICE_ACCOUNT` | Secret | Firebase → Project settings → Service accounts → Generate new private key (วางทั้งไฟล์) |
+
+Redirect URL ในแอป Discord: `https://englitch.pages.dev/api/auth/discord/callback`
+แก้ค่าเหล่านี้แล้วต้อง deploy ใหม่ (push หรือกด Retry deployment) ถึงจะมีผล
