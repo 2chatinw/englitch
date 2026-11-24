@@ -1,0 +1,11 @@
+/* Thai text: "Friendly" by Panisara Chatdechachai.
+   Loaded only from a copy installed on the viewer's device (local()), so the font file is not shipped with the site.
+   It covers Thai only (unicode-range); English stays Fredoka/Mitr. Devices without it fall back to Mitr. */
+@font-face {
+  font-family: "Friendly TH";
+  src: local("Friendly"), local("Friendly Regular"), local("Friendly-Regular");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0E00-0E7F;
+}

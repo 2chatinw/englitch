@@ -9,6 +9,7 @@ import '@fontsource/mitr/600';
 import '@fontsource/fredoka/500';
 import '@fontsource/fredoka/600';
 import '@fontsource/fredoka/700';
+import './fonts.css';
 import './styles.css';
 import './landing.css';
 import './backdrops.css';
