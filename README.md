@@ -20,7 +20,14 @@ npm run build    # สร้างไฟล์เว็บใน dist/
 ```
 
 สร้างด้วย React + Vite + TypeScript และ GSAP (page transitions)
-ทุกครั้งที่ push ไปที่ `main` GitHub Actions จะ build และ deploy ขึ้น GitHub Pages ให้อัตโนมัติ
+
+## Deploy (Cloudflare Pages)
+
+เว็บโฮสต์บน Cloudflare Pages ที่เชื่อมกับ repo นี้ ทุกครั้งที่ push ไปที่ `main` Cloudflare จะ build และ deploy ให้อัตโนมัติ
+
+- Build command: `npm run build`
+- Build output directory: `dist`
+- Environment variable: `NODE_VERSION` = `22`
 
 ## ระบบบัญชี (Firebase)
 
@@ -31,11 +38,11 @@ npm run build    # สร้างไฟล์เว็บใน dist/
 
 1. ไปที่ https://console.firebase.google.com → **Create a project** (ปิด Google Analytics ได้)
 2. **Build → Authentication → Get started** → แท็บ Sign-in method → เปิด **Google** และ **Email/Password**
-3. Authentication → **Settings → Authorized domains** → Add domain → `2chatinw.github.io`
+3. Authentication → **Settings → Authorized domains** → Add domain → โดเมนของเว็บบน Cloudflare (เช่น `englitch.pages.dev`)
 4. **Build → Firestore Database → Create database** → เลือก location `asia-southeast1 (Singapore)` → Production mode
 5. Firestore → แท็บ **Rules** → วางเนื้อหาจากไฟล์ `firestore.rules` แล้วกด Publish
 6. **Project settings (รูปเฟือง) → Your apps → Web (`</>`)** → ตั้งชื่อแอป → คัดลอกค่า `firebaseConfig` มาใส่ใน `src/firebase.config.ts`
-7. push ขึ้น `main` เว็บจะอัปเดตเอง
+7. push ขึ้น `main` Cloudflare จะ build และอัปเดตเว็บเอง
 
 ค่าใน `firebaseConfig` ไม่ใช่ความลับ (ใช้ระบุโปรเจกต์) ความปลอดภัยของข้อมูลมาจาก `firestore.rules`:
 แต่ละคนอ่าน/เขียนได้เฉพาะความคืบหน้าของตัวเอง ส่วนกระดานอันดับทุกคนที่ล็อกอินอ่านได้ แต่แก้ได้เฉพาะแถวของตัวเอง
