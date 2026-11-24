@@ -9,6 +9,7 @@ import '@fontsource/bai-jamjuree/700.css';
 import '@fontsource/big-shoulders-display/600';
 import '@fontsource/big-shoulders-display/800';
 import './styles.css';
+import './landing.css';
 import App from './App.tsx';
 
 gsap.registerPlugin(useGSAP);

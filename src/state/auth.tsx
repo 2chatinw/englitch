@@ -27,6 +27,11 @@ export function useAuth(): AuthApi {
   return v;
 }
 
+/** Remembered per device so a returning member sees a short splash instead of the landing page while Firebase restores the session. */
+const MEMBER_HINT = 'englitch-member';
+export function wasSignedIn(): boolean { try { return localStorage.getItem(MEMBER_HINT) === '1'; } catch { return false; } }
+function setMemberHint(on: boolean) { try { if (on) localStorage.setItem(MEMBER_HINT, '1'); else localStorage.removeItem(MEMBER_HINT); } catch { /* storage blocked */ } }
+
 /** What /api/auth/discord/callback leaves in sessionStorage before sending the browser back to the app. */
 const DISCORD_KEY = 'englitch-discord';
 interface DiscordHandoff { token?: string; name?: string; photo?: string; email?: string; error?: string }
@@ -71,6 +76,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return watchAuth((u) => {
       setUser((prev) => (u && prev && prev.uid === u.uid && prev.named && !u.named ? prev : u));
       setStatus(u ? 'in' : 'out');
+      setMemberHint(!!u);
     });
   }, []);
 

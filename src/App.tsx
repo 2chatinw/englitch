@@ -6,8 +6,9 @@ import { BottomBar, Sidebar, TopBar } from './components/Nav';
 import { PageStage } from './components/PageStage';
 import { SettingsSheet } from './components/Settings';
 import { AccountSheet } from './components/Account';
-import { AuthProvider, useAuth } from './state/auth';
-import { LoginScreen } from './components/Login';
+import { AuthProvider, useAuth, wasSignedIn } from './state/auth';
+import { Splash } from './components/Login';
+import Landing from './pages/Landing';
 import Today from './pages/Today';
 import Cards from './pages/Cards';
 import Listen from './pages/Listen';
@@ -45,11 +46,13 @@ function Shell() {
   );
 }
 
-/** Members only: the app opens after a Discord or Google sign-in (runs open when Firebase isn't configured). */
+/** Visitors see the landing page; members (Discord or Google sign-in) get the app. */
 function Gate() {
-  const { status } = useAuth();
+  const { status, finishing } = useAuth();
+  if (finishing) return <Splash text="กำลังเข้าสู่ระบบด้วย Discord…" />;
   if (status === 'in' || status === 'disabled') return <Shell />;
-  return <LoginScreen />;
+  if (status === 'loading' && wasSignedIn()) return <Splash text="กำลังโหลด…" />;
+  return <Landing />;
 }
 
 export default function App() {

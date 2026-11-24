@@ -1,8 +1,5 @@
-import { useRef, useState } from 'react';
-import gsap from 'gsap';
-import { useGSAP } from '@gsap/react';
+import { useState } from 'react';
 import { useAuth } from '../state/auth';
-import { prefersReducedMotion } from '../lib/util';
 
 const DiscordMark = () => (
   <svg className="icon" viewBox="0 0 24 24" aria-hidden="true">
@@ -19,51 +16,40 @@ const GoogleMark = () => (
   </svg>
 );
 
-/** Full-screen gate: Englitch is members-only, so everyone signs in with Discord or Google first. */
-export function LoginScreen() {
-  const { status, error, finishing, google, discord } = useAuth();
+/** The two sign-in buttons plus the note on what we keep; used inside the landing page's sign-in dialog. */
+export function SignInOptions() {
+  const { error, google, discord } = useAuth();
   const [busy, setBusy] = useState<'' | 'google' | 'discord'>('');
-  const root = useRef<HTMLDivElement>(null);
-  const waiting = status === 'loading' || finishing;
-
-  useGSAP(() => {
-    if (prefersReducedMotion() || !root.current) return;
-    gsap.timeline()
-      .from('.login-mark', { y: 30, autoAlpha: 0, duration: 0.6, ease: 'power3.out' })
-      .from('.login-word', { x: -24, autoAlpha: 0, duration: 0.5, ease: 'power3.out' }, '-=0.35')
-      .from('.login-copy > *', { y: 16, autoAlpha: 0, duration: 0.45, stagger: 0.07, ease: 'power3.out' }, '-=0.25');
-  }, { scope: root });
-
   return (
-    <div className="login" ref={root}>
-      <div className="login-card">
-        <div className="login-brand" aria-label="Englitch">
-          <span className="login-mark">EN</span>
-          <span className="login-word">glitch</span>
-        </div>
-        <div className="login-copy">
-          <h1>ฝึกภาษาอังกฤษ ไว้คุยกับเพื่อนต่างชาติในเกม</h1>
-          <p className="muted">การ์ดคำศัพท์ ฝึกฟัง ฝึกพูด ควิซสถานการณ์ และอันดับ XP กับเพื่อน ฟรีทั้งหมด</p>
-          {waiting ? (
-            <p className="login-wait" role="status">{finishing ? 'กำลังเข้าสู่ระบบด้วย Discord…' : 'กำลังโหลด…'}</p>
-          ) : (
-            <div className="login-actions">
-              <button type="button" className="btn btn-lg btn-block btn-discord" disabled={!!busy}
-                onClick={() => { setBusy('discord'); discord(); }}>
-                <DiscordMark /> {busy === 'discord' ? 'กำลังไปที่ Discord…' : 'เข้าสู่ระบบด้วย Discord'}
-              </button>
-              <button type="button" className="btn btn-lg btn-block btn-ghost btn-google" disabled={!!busy}
-                onClick={async () => { setBusy('google'); await google(); setBusy(''); }}>
-                <GoogleMark /> {busy === 'google' ? 'กำลังเปิดหน้าต่าง Google…' : 'เข้าสู่ระบบด้วย Google (Gmail)'}
-              </button>
-            </div>
-          )}
-          {error ? <p className="form-error" role="alert">{error}</p> : null}
-          <p className="login-note">
-            เมื่อเข้าสู่ระบบ เราเก็บชื่อ อีเมล และรูปโปรไฟล์ไว้เป็นรายชื่อสมาชิก และใช้บันทึกความคืบหน้าให้เล่นต่อได้ทุกเครื่อง
-          </p>
-        </div>
+    <div className="signin">
+      <p className="muted">เข้าสู่ระบบเพื่อเริ่มฝึก ความคืบหน้าจะเก็บในบัญชี เล่นต่อได้ทุกเครื่อง</p>
+      <div className="login-actions">
+        <button type="button" className="btn btn-lg btn-block btn-discord" disabled={!!busy}
+          onClick={() => { setBusy('discord'); discord(); }}>
+          <DiscordMark /> {busy === 'discord' ? 'กำลังไปที่ Discord…' : 'เข้าสู่ระบบด้วย Discord'}
+        </button>
+        <button type="button" className="btn btn-lg btn-block btn-ghost btn-google" disabled={!!busy}
+          onClick={async () => { setBusy('google'); await google(); setBusy(''); }}>
+          <GoogleMark /> {busy === 'google' ? 'กำลังเปิดหน้า Google…' : 'เข้าสู่ระบบด้วย Google (Gmail)'}
+        </button>
       </div>
+      {error ? <p className="form-error" role="alert">{error}</p> : null}
+      <p className="login-note">
+        เมื่อเข้าสู่ระบบ เราเก็บชื่อ อีเมล และรูปโปรไฟล์ไว้เป็นรายชื่อสมาชิก และใช้บันทึกความคืบหน้าของคุณเท่านั้น
+      </p>
+    </div>
+  );
+}
+
+/** Shown while Firebase restores a returning member's session or finishes a Discord sign-in. */
+export function Splash({ text }: { text: string }) {
+  return (
+    <div className="splash" role="status">
+      <div className="login-brand" aria-label="Englitch">
+        <span className="login-mark">EN</span>
+        <span className="login-word">glitch</span>
+      </div>
+      <p className="muted">{text}</p>
     </div>
   );
 }
