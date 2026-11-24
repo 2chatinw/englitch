@@ -26,8 +26,8 @@
   --near: #A86A00;
   --near-soft: #FFF1CC;
   --shadow: 0 1px 0 rgba(21, 39, 92, .05), 0 12px 30px -12px rgba(30, 107, 255, .28);
-  --f-display: "Fredoka", "Friendly TH", "Mitr", system-ui, sans-serif;
-  --f-body: "Friendly TH", "Mitr", "Fredoka", "Noto Sans Thai", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-display: "Fredoka", "Kanit", system-ui, sans-serif;
+  --f-body: "Kanit", "Fredoka", "Noto Sans Thai", system-ui, -apple-system, "Segoe UI", sans-serif;
   --r: 22px;
   --r-sm: 14px;
   --side-w: 264px;

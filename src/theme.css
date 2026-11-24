@@ -9,7 +9,7 @@ h1, h2, h3, .lp-hero h1, .page-head h1, .lp-head h2, .lp-final h2, .sheet-head h
   font-weight: 700;
   letter-spacing: 0;
 }
-/* Thai text inside headings falls through to Mitr, which reads best at 500-600 */
+/* Thai text inside headings falls through to Kanit, which reads best at 500-600 */
 .lp-hero h1, .page-head h1 { font-weight: 600; }
 .kicker, .field-label { font-weight: 700; }
 
