@@ -158,3 +158,22 @@ function useParallax(root: RefObject<HTMLDivElement | null>, selector: string, s
     return () => window.removeEventListener('pointermove', onMove);
   }, [root, selector, strength]);
 }
+
+/** 0 · Logo sky: bright blue sky, puffy clouds drifting, little sun-yellow stars (the app logo's scene). */
+export function Sky() {
+  const [stars] = useState(() => Array.from({ length: 14 }, (_, i) => ({
+    id: i, left: rand(2, 98), top: rand(4, 70), size: rand(12, 22), delay: -rand(0, 4), dur: rand(2.6, 4.2),
+  })));
+  return (
+    <div className="bd bd-sky">
+      <span className="sky-cloud c1" />
+      <span className="sky-cloud c2" />
+      <span className="sky-cloud c3" />
+      <span className="sky-cloud c4" />
+      <span className="sky-cloud c5" />
+      {stars.map((s) => (
+        <span key={s.id} className="sky-star" style={{ left: s.left + '%', top: s.top + '%', width: s.size, height: s.size, animationDelay: s.delay + 's', animationDuration: s.dur + 's' }} />
+      ))}
+    </div>
+  );
+}

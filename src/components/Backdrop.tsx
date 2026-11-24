@@ -1,13 +1,14 @@
 import { useEffect, useRef, useState, type RefObject } from 'react';
 import gsap from 'gsap';
 import { prefersReducedMotion } from '../lib/util';
-import { Confetti, Cotton, DotWave, Gingham, Keycaps, Morph, Planes, Stars, Talk, Waves } from './BackdropsMore';
+import { Confetti, Cotton, DotWave, Gingham, Keycaps, Morph, Planes, Sky, Stars, Talk, Waves } from './BackdropsMore';
 
 /** Pastel page backgrounds (fifteen candidates). Each sits fixed behind the content and has one small moving detail. */
-export type BackdropKind = 'aurora' | 'shapes' | 'pixel' | 'bubbles' | 'stickers'
+export type BackdropKind = 'sky' | 'aurora' | 'shapes' | 'pixel' | 'bubbles' | 'stickers'
   | 'cotton' | 'waves' | 'confetti' | 'stars' | 'gingham' | 'keys' | 'talk' | 'morph' | 'dotwave' | 'planes';
 
 export const BACKDROPS: { id: BackdropKind; name: string; note: string }[] = [
+  { id: 'sky', name: 'ฟ้าใสจากโลโก้', note: 'ท้องฟ้าสีฟ้าสด เมฆปุยลอยช้า ๆ ดาวสีเหลืองกะพริบ เหมือนฉากในโลโก้' },
   { id: 'aurora', name: 'ออโรร่าพาสเทล', note: 'ก้อนสีชมพู ม่วง มิ้นต์ ลอยช้า ๆ และขยับตามเมาส์' },
   { id: 'shapes', name: 'ตารางกับรูปทรง', note: 'กระดาษตาราง มีรูปทรงสีพาสเทลหมุนลอยแบบพารัลแลกซ์' },
   { id: 'pixel', name: 'เมฆพิกเซล', note: 'ฟ้าพาสเทล เมฆพิกเซลแบบเกมย้อนยุคลอยผ่าน' },
@@ -151,6 +152,7 @@ function Stickers() {
 
 export function Backdrop({ kind }: { kind: BackdropKind }) {
   switch (kind) {
+    case 'sky': return <Sky />;
     case 'aurora': return <Aurora />;
     case 'shapes': return <Shapes />;
     case 'pixel': return <Pixel />;

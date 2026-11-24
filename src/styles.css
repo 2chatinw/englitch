@@ -1,49 +1,57 @@
-/* Englitch — "match lobby" look: condensed scoreboard numerals, team-blue accent, signal-orange XP.
+/* Englitch — taken from the app logo: bright sky blue, cloud white, sunny yellow ("litch"), the mascot's orange,
+   navy outlines, and chunky rounded type. Dark theme = the same sky at night.
    Layout: desktop = fixed sidebar (brand, HUD, nav) + centered content column;
            phone   = top HUD bar + content + thumb-reach bottom tab bar. */
 :root {
-  --bg: #EEF0F4;
+  --bg: #EAF4FF;
   --surface: #FFFFFF;
-  --surface-2: #E4E8EF;
-  --ink: #0C1322;
-  --muted: #586179;
-  --line: #D6DBE4;
-  --accent: #2344D6;
+  --surface-2: #E3EFFF;
+  --ink: #15275C;
+  --muted: #5A6B98;
+  --line: #CFE0F7;
+  --accent: #1E6BFF;
   --accent-ink: #FFFFFF;
-  --accent-soft: #DEE4FA;
-  --hot: #F2541B;
-  --hot-soft: #FFE5D9;
-  --good: #0B7A50;
-  --good-soft: #D8F1E5;
-  --bad: #C42F2A;
-  --bad-soft: #FADFDC;
-  --near: #9A6200;
-  --near-soft: #FAEFD2;
-  --shadow: 0 1px 0 rgba(12, 19, 34, .04), 0 10px 30px -12px rgba(12, 19, 34, .18);
-  --f-display: "Big Shoulders Display", "Bai Jamjuree", "Arial Narrow", sans-serif;
-  --f-body: "Bai Jamjuree", "Noto Sans Thai", system-ui, -apple-system, "Segoe UI", sans-serif;
-  --r: 18px;
-  --r-sm: 12px;
+  --accent-soft: #DCEAFF;
+  --navy: #1B3A8C;
+  --sun: #FFC53D;
+  --sun-2: #FFB01F;
+  --sun-edge: #DE8F00;
+  --sun-ink: #1B2A5E;
+  --hot: #FF7A1A;
+  --hot-soft: #FFE8D4;
+  --good: #14965A;
+  --good-soft: #D6F5E5;
+  --bad: #E0434A;
+  --bad-soft: #FFE1E2;
+  --near: #A86A00;
+  --near-soft: #FFF1CC;
+  --shadow: 0 1px 0 rgba(21, 39, 92, .05), 0 12px 30px -12px rgba(30, 107, 255, .28);
+  --f-display: "Fredoka", "Mitr", system-ui, sans-serif;
+  --f-body: "Mitr", "Fredoka", "Noto Sans Thai", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --r: 22px;
+  --r-sm: 14px;
   --side-w: 264px;
   --bottom-h: 64px;
   color-scheme: light;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #0B0F19; --surface: #131927; --surface-2: #1C2436; --ink: #E9EDF6; --muted: #98A1B8; --line: #263049;
-    --accent: #8098FF; --accent-ink: #0B0F19; --accent-soft: #1D2850;
-    --hot: #FF7840; --hot-soft: #3B1E12; --good: #3FCB8E; --good-soft: #10342A; --bad: #F4857C; --bad-soft: #3B1A19;
-    --near: #F2B54A; --near-soft: #382A10;
-    --shadow: 0 1px 0 rgba(0,0,0,.3), 0 14px 34px -14px rgba(0,0,0,.6);
+    --bg: #0A1838; --surface: #12234D; --surface-2: #1A2F63; --ink: #EEF4FF; --muted: #A2B5DE; --line: #24407E;
+    --accent: #6FA8FF; --accent-ink: #0A1838; --accent-soft: #1B356F; --navy: #0A1838;
+    --sun: #FFD25A; --sun-2: #FFBE2E; --sun-edge: #C98200; --sun-ink: #1B2A5E;
+    --hot: #FF9A4D; --hot-soft: #3D2313; --good: #3FD08F; --good-soft: #0F3A2A; --bad: #FF7C80; --bad-soft: #43181C;
+    --near: #FFCB5C; --near-soft: #3A2C10;
+    --shadow: 0 1px 0 rgba(0,0,0,.3), 0 14px 34px -14px rgba(0,0,0,.65);
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
-  --bg: #0B0F19; --surface: #131927; --surface-2: #1C2436; --ink: #E9EDF6; --muted: #98A1B8; --line: #263049;
-  --accent: #8098FF; --accent-ink: #0B0F19; --accent-soft: #1D2850;
-  --hot: #FF7840; --hot-soft: #3B1E12; --good: #3FCB8E; --good-soft: #10342A; --bad: #F4857C; --bad-soft: #3B1A19;
-  --near: #F2B54A; --near-soft: #382A10;
-  --shadow: 0 1px 0 rgba(0,0,0,.3), 0 14px 34px -14px rgba(0,0,0,.6);
+  --bg: #0A1838; --surface: #12234D; --surface-2: #1A2F63; --ink: #EEF4FF; --muted: #A2B5DE; --line: #24407E;
+  --accent: #6FA8FF; --accent-ink: #0A1838; --accent-soft: #1B356F; --navy: #0A1838;
+  --sun: #FFD25A; --sun-2: #FFBE2E; --sun-edge: #C98200; --sun-ink: #1B2A5E;
+  --hot: #FF9A4D; --hot-soft: #3D2313; --good: #3FD08F; --good-soft: #0F3A2A; --bad: #FF7C80; --bad-soft: #43181C;
+  --near: #FFCB5C; --near-soft: #3A2C10;
+  --shadow: 0 1px 0 rgba(0,0,0,.3), 0 14px 34px -14px rgba(0,0,0,.65);
   color-scheme: dark;
 }
 
@@ -90,17 +98,6 @@ img, svg { max-width: 100%; }
 @media (min-width: 900px) {
   .main { margin-left: var(--side-w); padding: 40px 40px 64px; }
 }
-
-/* Brand */
-.brand { display: inline-flex; align-items: baseline; gap: 3px; text-decoration: none; }
-.brand-mark {
-  font-family: var(--f-display); font-weight: 800; font-size: 2.4rem; line-height: .8;
-  color: var(--accent-ink); background: var(--accent); padding: 6px 8px 4px; border-radius: 8px;
-  transform: skewX(-8deg);
-}
-.brand-word { font-family: var(--f-display); font-weight: 800; font-size: 1.6rem; letter-spacing: .02em; text-transform: uppercase; }
-.brand-sm .brand-mark { font-size: 1.45rem; padding: 4px 6px 3px; border-radius: 6px; }
-.brand-sm .brand-word { font-size: 1.1rem; }
 
 /* Sidebar (desktop) */
 .sidebar { display: none; }
@@ -470,9 +467,6 @@ input[type="email"], input[type="password"] {
 input[type="email"]:focus, input[type="password"]:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
 .form-error { color: var(--bad); background: var(--bad-soft); border-radius: 10px; padding: 10px 12px; font-size: .92rem; }
 
-/* Brand: "EN" block + "GLITCH" with a slight RGB-split, the glitch nod */
-.brand-word { text-shadow: 1.5px 0 color-mix(in srgb, var(--hot) 70%, transparent), -1.5px 0 color-mix(in srgb, var(--accent) 60%, transparent); }
-
 /* ---------- Sign-in gate ---------- */
 .login {
   min-height: 100vh; min-height: 100dvh; display: grid; place-items: center;
@@ -484,15 +478,6 @@ input[type="email"]:focus, input[type="password"]:focus { outline: none; border-
 .login-card {
   width: 100%; max-width: 440px; background: var(--surface); border: 1px solid var(--line); border-radius: 22px;
   padding: 32px 26px 26px; display: flex; flex-direction: column; gap: 22px; box-shadow: var(--shadow);
-}
-.login-brand { display: flex; align-items: baseline; gap: 4px; }
-.login-mark {
-  font-family: var(--f-display); font-weight: 800; font-size: 3.6rem; line-height: .8; color: var(--accent-ink);
-  background: var(--accent); padding: 8px 10px 6px; border-radius: 10px; transform: skewX(-8deg); display: inline-block;
-}
-.login-word {
-  font-family: var(--f-display); font-weight: 800; font-size: 2.7rem; text-transform: uppercase; letter-spacing: .02em;
-  text-shadow: 2px 0 color-mix(in srgb, var(--hot) 70%, transparent), -2px 0 color-mix(in srgb, var(--accent) 60%, transparent);
 }
 .login-copy { display: flex; flex-direction: column; gap: 12px; }
 .login-copy h1 { font-size: 1.45rem; font-weight: 700; }

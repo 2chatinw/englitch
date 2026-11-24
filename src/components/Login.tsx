@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { useAuth } from '../state/auth';
+import { Brand } from './Brand';
+import { Backdrop } from './Backdrop';
 
 const DiscordMark = () => (
   <svg className="icon" viewBox="0 0 24 24" aria-hidden="true">
@@ -44,12 +46,12 @@ export function SignInOptions() {
 /** Shown while Firebase restores a returning member's session or finishes a Discord sign-in. */
 export function Splash({ text }: { text: string }) {
   return (
-    <div className="splash" role="status">
-      <div className="login-brand" aria-label="Englitch">
-        <span className="login-mark">EN</span>
-        <span className="login-word">glitch</span>
+    <>
+      <Backdrop kind="sky" />
+      <div className="splash" role="status">
+        <Brand size="lg" />
+        <p className="muted">{text}</p>
       </div>
-      <p className="muted">{text}</p>
-    </div>
+    </>
   );
 }

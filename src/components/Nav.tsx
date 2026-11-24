@@ -7,6 +7,7 @@ import { useProgress } from '../state/progress';
 import { prefersReducedMotion } from '../lib/util';
 import { useAuth } from '../state/auth';
 import { Avatar } from './Account';
+import { Brand } from './Brand';
 
 function AccountButton({ onAccount, compact }: { onAccount: () => void; compact?: boolean }) {
   const { user } = useAuth();
@@ -79,8 +80,7 @@ export function Sidebar({ route, onSettings, onAccount }: { route: Route; onSett
   return (
     <aside className="sidebar">
       <a className="brand" href="#today" aria-label="Englitch หน้าแรก">
-        <span className="brand-mark">EN</span>
-        <span className="brand-word">glitch</span>
+        <Brand />
       </a>
       <div className="hud" ref={hud}>
         <div className="hud-row">
@@ -118,8 +118,7 @@ export function TopBar({ onSettings, onAccount }: { onSettings: () => void; onAc
   return (
     <header className="topbar">
       <a className="brand brand-sm" href="#today" aria-label="Englitch หน้าแรก">
-        <span className="brand-mark">EN</span>
-        <span className="brand-word">glitch</span>
+        <Brand />
       </a>
       <div className="top-hud" ref={hud}>
         <span className="hud-level hud-level-sm"><small>LV</small><b className="num">{level}</b></span>

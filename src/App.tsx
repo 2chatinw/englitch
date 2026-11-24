@@ -9,6 +9,7 @@ import { AccountSheet } from './components/Account';
 import { AuthProvider, useAuth, wasSignedIn } from './state/auth';
 import { Splash } from './components/Login';
 import Landing from './pages/Landing';
+import { Backdrop } from './components/Backdrop';
 import Today from './pages/Today';
 import Cards from './pages/Cards';
 import Listen from './pages/Listen';
@@ -32,7 +33,8 @@ function Shell() {
     return () => window.removeEventListener('gg:account', onOpen);
   }, []);
   return (
-    <div className="shell">
+    <div className="shell has-bd">
+      <Backdrop kind="sky" />
       <a className="skip" href="#main">ข้ามไปที่เนื้อหา</a>
       <Sidebar route={route} onSettings={openSettings} onAccount={openAccount} />
       <TopBar onSettings={openSettings} onAccount={openAccount} />

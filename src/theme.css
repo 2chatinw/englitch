@@ -1,0 +1,157 @@
+/* =========================================================================
+   Englitch theme, taken from the logo: sky blue, puffy clouds, sun yellow,
+   chunky rounded letters with a navy outline. Loaded last, so it wins.
+   ========================================================================= */
+
+/* ---------- Type ---------- */
+h1, h2, h3, .lp-hero h1, .page-head h1, .lp-head h2, .lp-final h2, .sheet-head h2 {
+  font-family: var(--f-display);
+  font-weight: 700;
+  letter-spacing: 0;
+}
+/* Thai text inside headings falls through to Mitr, which reads best at 500-600 */
+.lp-hero h1, .page-head h1 { font-weight: 600; }
+.kicker, .field-label { font-weight: 700; }
+
+/* ---------- Brand mark ---------- */
+.brand { display: inline-flex; align-items: center; text-decoration: none; color: inherit; }
+.brandmark { display: inline-flex; align-items: center; gap: 10px; line-height: 1; }
+.brandmark-icon {
+  width: 44px; height: 44px; border-radius: 14px; object-fit: cover; flex: none;
+  box-shadow: 0 4px 0 -1px color-mix(in srgb, var(--navy) 30%, transparent), 0 8px 18px -8px rgba(30, 107, 255, .55);
+}
+.wordmark {
+  font-family: "Fredoka", var(--f-display); font-weight: 700; font-size: 1.75rem; letter-spacing: .005em;
+  -webkit-text-stroke: .16em var(--navy); paint-order: stroke fill;
+  filter: drop-shadow(0 2px 0 color-mix(in srgb, var(--navy) 35%, transparent));
+}
+.wm-eng { color: #FFFFFF; }
+.wm-litch { color: var(--sun); }
+.brandmark-sm .brandmark-icon, .brand-sm .brandmark-icon { width: 34px; height: 34px; border-radius: 11px; }
+.brandmark-sm .wordmark, .brand-sm .wordmark { font-size: 1.35rem; }
+.brandmark-lg { flex-direction: column; gap: 14px; }
+.brandmark-lg .brandmark-icon { width: 132px; height: 132px; border-radius: 34px; }
+.brandmark-lg .wordmark { font-size: 3rem; }
+:root[data-theme="dark"] .wordmark { --navy: #0A1838; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .wordmark { --navy: #0A1838; } }
+
+/* ---------- Buttons: glossy sun-yellow, chunky like the logo letters ---------- */
+.btn-primary {
+  background: linear-gradient(180deg, #FFE27A 0%, var(--sun) 45%, var(--sun-2) 100%);
+  color: var(--sun-ink); font-weight: 600;
+  border: 2px solid var(--sun-edge);
+  box-shadow: 0 4px 0 var(--sun-edge), 0 10px 20px -10px rgba(222, 143, 0, .7), inset 0 2px 0 rgba(255, 255, 255, .6);
+  transform: translateY(0); transition: transform .12s ease, box-shadow .12s ease, filter .15s ease;
+}
+.btn-primary:hover:not(:disabled) { filter: brightness(1.04) saturate(1.05); transform: translateY(-1px); box-shadow: 0 5px 0 var(--sun-edge), 0 14px 24px -12px rgba(222, 143, 0, .75), inset 0 2px 0 rgba(255, 255, 255, .6); }
+.btn-primary:active:not(:disabled) { transform: translateY(3px); box-shadow: 0 1px 0 var(--sun-edge), inset 0 2px 0 rgba(255, 255, 255, .5); }
+.btn-primary:disabled { filter: grayscale(.4); opacity: .6; }
+
+/* ---------- Nav accents ---------- */
+.side-ind { background: var(--accent); box-shadow: 0 6px 14px -8px var(--accent); }
+.sidebar, .topbar, .bottombar {
+  background: color-mix(in srgb, var(--surface) 86%, transparent);
+  backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+}
+
+/* ---------- Page wipe: blue sky with a cloud band ---------- */
+.wipe { background: linear-gradient(180deg, #4D9BFF 0%, var(--accent) 60%, #1756D6 100%); color: #FFFFFF; }
+.wipe::after {
+  background:
+    radial-gradient(60px 38px at 12% 88%, rgba(255,255,255,.95) 98%, transparent),
+    radial-gradient(90px 54px at 22% 96%, rgba(255,255,255,.95) 98%, transparent),
+    radial-gradient(70px 44px at 34% 92%, rgba(255,255,255,.95) 98%, transparent),
+    radial-gradient(110px 60px at 62% 98%, rgba(255,255,255,.9) 98%, transparent),
+    radial-gradient(70px 40px at 76% 92%, rgba(255,255,255,.9) 98%, transparent),
+    radial-gradient(90px 52px at 90% 97%, rgba(255,255,255,.95) 98%, transparent);
+}
+.wipe-en {
+  font-family: "Fredoka", var(--f-display); font-weight: 700; text-transform: none; letter-spacing: 0;
+  color: #FFFFFF; -webkit-text-stroke: .09em var(--navy); paint-order: stroke fill;
+  filter: drop-shadow(0 6px 0 rgba(10, 24, 56, .35));
+}
+.wipe-th { color: #FFFFFF; opacity: 1; }
+
+/* ---------- Landing hero: the logo as a floating mascot ---------- */
+.lp-visual { min-height: 460px; }
+.lp-mascot {
+  position: absolute; left: 50%; top: 50%; width: min(78%, 360px); height: auto; translate: -50% -52%;
+  border-radius: 28%; z-index: 0;
+  filter: drop-shadow(0 22px 30px rgba(30, 107, 255, .35));
+}
+.lp-visual .lp-float { z-index: 1; }
+.lp-card-flash { left: -2%; top: 0; width: 58%; padding: 16px 18px; rotate: -4deg; border-width: 3px; }
+.lp-card-flash b { font-size: clamp(1.15rem, 2.6vw, 1.45rem); }
+.lp-bubble-in { left: -4%; top: 58%; }
+.lp-bubble-out { right: -2%; top: 18%; background: var(--sun); color: var(--sun-ink); border: 2px solid var(--sun-edge); }
+.lp-xp { left: auto; right: 0; bottom: 0; min-width: 0; width: 56%; }
+@media (max-width: 880px) {
+  .lp-visual { min-height: 400px; }
+  .lp-mascot { width: min(70%, 300px); }
+}
+@media (max-width: 420px) {
+  .lp-visual { min-height: 420px; }
+  .lp-mascot { width: 62%; top: 53%; }
+  .lp-card-flash { width: 62%; left: 0; padding: 12px 14px; }
+  .lp-card-flash b { font-size: 1.05rem; }
+  .lp-bubble { font-size: .85rem; padding: 8px 12px; max-width: 60%; }
+  .lp-bubble-out { top: 27%; right: 0; }
+  .lp-bubble-in { top: 72%; left: 0; }
+  .lp-xp { width: 50%; padding: 8px 12px; }
+}
+
+/* Headline highlight: a yellow swoosh under the key word, like the logo */
+.lp-hero h1 em, .lp-hero h1 mark {
+  font-style: normal; background: none; color: inherit;
+  background-image: linear-gradient(transparent 62%, color-mix(in srgb, var(--sun) 85%, transparent) 62% 92%, transparent 92%);
+}
+
+/* ---------- Splash ---------- */
+.splash { background: transparent; position: relative; z-index: 1; }
+
+/* =========================================================================
+   Sky backdrop (default): the logo's scene. Gradient sky, clouds, stars.
+   ========================================================================= */
+.bd-sky { background: linear-gradient(180deg, #BFE0FF 0%, #DDEEFF 46%, #F3F9FF 100%); --bd-base: #DDEEFF; }
+:root:has(.bd-sky) body { background: #DDEEFF; }
+.sky-cloud {
+  position: absolute; display: block; width: 220px; height: 70px; border-radius: 999px;
+  background: #FFFFFF; opacity: .92;
+  box-shadow: 0 10px 0 -2px rgba(160, 196, 245, .45);
+  animation: sky-drift linear infinite;
+}
+.sky-cloud::before, .sky-cloud::after { content: ""; position: absolute; background: inherit; border-radius: 50%; }
+.sky-cloud::before { width: 96px; height: 96px; left: 30px; top: -48px; }
+.sky-cloud::after { width: 130px; height: 130px; left: 88px; top: -70px; }
+.sky-cloud.c1 { top: 14%; left: -10%; scale: 1.1; animation-duration: 90s; animation-delay: -10s; }
+.sky-cloud.c2 { top: 40%; left: -10%; scale: .7; opacity: .8; animation-duration: 120s; animation-delay: -70s; }
+.sky-cloud.c3 { top: 72%; left: -10%; scale: 1.35; animation-duration: 140s; animation-delay: -40s; }
+.sky-cloud.c4 { top: 26%; left: -10%; scale: .55; opacity: .75; animation-duration: 110s; animation-delay: -95s; }
+.sky-cloud.c5 { top: 88%; left: -10%; scale: .9; animation-duration: 100s; animation-delay: -20s; }
+@keyframes sky-drift { from { translate: 0 0; } to { translate: 130vw 0; } }
+
+.sky-star {
+  position: absolute; display: block; background: var(--sun);
+  clip-path: polygon(50% 0, 61% 36%, 100% 38%, 69% 60%, 80% 100%, 50% 76%, 20% 100%, 31% 60%, 0 38%, 39% 36%);
+  filter: drop-shadow(0 0 0 var(--sun-edge));
+  animation: sky-twinkle ease-in-out infinite alternate;
+}
+@keyframes sky-twinkle { from { scale: .55; opacity: .35; rotate: -12deg; } to { scale: 1; opacity: .95; rotate: 10deg; } }
+
+/* Dark: night sky, dim clouds */
+:root[data-theme="dark"] .bd-sky { background: linear-gradient(180deg, #071330 0%, #0C1D46 55%, #12275A 100%); }
+:root[data-theme="dark"]:has(.bd-sky) body { background: #0C1D46; }
+:root[data-theme="dark"] .sky-cloud { background: #1C3570; opacity: .55; box-shadow: none; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .bd-sky { background: linear-gradient(180deg, #071330 0%, #0C1D46 55%, #12275A 100%); }
+  :root:not([data-theme="light"]):has(.bd-sky) body { background: #0C1D46; }
+  :root:not([data-theme="light"]) .sky-cloud { background: #1C3570; opacity: .55; box-shadow: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sky-cloud, .sky-star { animation: none; }
+  .sky-cloud { translate: 20vw 0; }
+}
+
+/* Cards sit on the sky: keep them solid and readable */
+.has-bd .card { background: var(--surface); }

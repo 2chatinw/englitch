@@ -4,6 +4,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
 import { Icon, type IconName } from '../components/Icon';
 import { Sheet } from '../components/Sheet';
+import { Brand, LOGO_URL } from '../components/Brand';
 import { SignInOptions } from '../components/Login';
 import { useAuth } from '../state/auth';
 import { useProgress } from '../state/progress';
@@ -14,9 +15,9 @@ import { Backdrop, BACKDROPS, type BackdropKind } from '../components/Backdrop';
 // Background preview: open the site with ?bg=preview (or ?bg=aurora|shapes|pixel|bubbles|stickers).
 function initialBackdrop(): { kind: BackdropKind | null; picker: boolean } {
   const q = new URLSearchParams(window.location.search).get('bg');
-  if (!q) return { kind: null, picker: false };
+  if (!q) return { kind: 'sky', picker: false };
   const known = BACKDROPS.find((b) => b.id === q);
-  return { kind: known ? known.id : 'aurora', picker: q === 'preview' || !!known };
+  return { kind: known ? known.id : 'sky', picker: q === 'preview' || !!known };
 }
 
 gsap.registerPlugin(ScrollTrigger);
@@ -75,7 +76,9 @@ export default function Landing() {
     if (prefersReducedMotion()) return;
     gsap.timeline()
       .from('.lp-hero-copy > *', { y: 28, autoAlpha: 0, duration: 0.7, stagger: 0.08, ease: 'power3.out' })
-      .from('.lp-visual .lp-float', { y: 40, autoAlpha: 0, rotate: -4, duration: 0.8, stagger: 0.12, ease: 'back.out(1.6)' }, '-=0.5');
+      .from('.lp-mascot', { scale: 0.6, rotate: -8, autoAlpha: 0, duration: 0.9, ease: 'back.out(1.7)' }, '-=0.45')
+      .from('.lp-visual .lp-float', { y: 40, autoAlpha: 0, rotate: -4, duration: 0.8, stagger: 0.12, ease: 'back.out(1.6)' }, '-=0.55');
+    gsap.to('.lp-mascot', { y: -14, rotate: 2, duration: 3.2, repeat: -1, yoyo: true, ease: 'sine.inOut', delay: 1.2 });
     gsap.utils.toArray<HTMLElement>('.lp-visual .lp-float').forEach((el, i) => {
       gsap.to(el, { y: i % 2 ? 10 : -10, duration: 2.4 + i * 0.4, repeat: -1, yoyo: true, ease: 'sine.inOut', delay: 1 });
     });
@@ -98,8 +101,7 @@ export default function Landing() {
       <header className="lp-nav">
         <div className="lp-nav-in">
           <a className="brand" href="#top" aria-label="Englitch">
-            <span className="brand-mark">EN</span>
-            <span className="brand-word">glitch</span>
+            <Brand />
           </a>
           <nav className="lp-links" aria-label="หัวข้อ">
             <a href="#features">ฟีเจอร์</a>
@@ -133,6 +135,7 @@ export default function Landing() {
           </div>
 
           <div className="lp-visual" aria-hidden="true">
+            <img className="lp-mascot" src={LOGO_URL} alt="" width={720} height={720} />
             <div className="lp-float lp-card-flash">
               <span className="tag">คอลในเกม</span>
               <b>Enemy behind you!</b>
