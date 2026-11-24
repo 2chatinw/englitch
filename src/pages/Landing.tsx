@@ -9,6 +9,15 @@ import { useAuth } from '../state/auth';
 import { useProgress } from '../state/progress';
 import { PHRASES } from '../data/content';
 import { prefersReducedMotion } from '../lib/util';
+import { Backdrop, BACKDROPS, type BackdropKind } from '../components/Backdrop';
+
+// Background preview: open the site with ?bg=preview (or ?bg=aurora|shapes|pixel|bubbles|stickers).
+function initialBackdrop(): { kind: BackdropKind | null; picker: boolean } {
+  const q = new URLSearchParams(window.location.search).get('bg');
+  if (!q) return { kind: null, picker: false };
+  const known = BACKDROPS.find((b) => b.id === q);
+  return { kind: known ? known.id : 'aurora', picker: q === 'preview' || !!known };
+}
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -55,6 +64,8 @@ function ThemeToggle() {
 export default function Landing() {
   const { error } = useAuth();
   const [open, setOpen] = useState(false);
+  const [bd] = useState(initialBackdrop);
+  const [kind, setKind] = useState<BackdropKind | null>(bd.kind);
   const root = useRef<HTMLDivElement>(null);
 
   // A failed Discord sign-in comes back with a message; show it where the buttons are.
@@ -82,7 +93,8 @@ export default function Landing() {
   const toFeatures = () => document.getElementById('features')?.scrollIntoView({ behavior: prefersReducedMotion() ? 'auto' : 'smooth' });
 
   return (
-    <div className="lp" ref={root}>
+    <div className={'lp' + (kind ? ' has-bd' : '')} ref={root}>
+      {kind ? <Backdrop kind={kind} /> : null}
       <header className="lp-nav">
         <div className="lp-nav-in">
           <a className="brand" href="#top" aria-label="Englitch">
@@ -192,6 +204,14 @@ export default function Landing() {
       <footer className="lp-foot">
         <span><b>Englitch</b> · ฝึกภาษาอังกฤษไว้คุยกับเพื่อนต่างชาติในเกม</span>
       </footer>
+
+      {bd.picker ? (
+        <div className="bd-picker" role="group" aria-label="เลือกพื้นหลัง">
+          {BACKDROPS.map((b, i) => (
+            <button key={b.id} type="button" aria-pressed={kind === b.id} title={b.note} onClick={() => setKind(b.id)}>{i + 1}. {b.name}</button>
+          ))}
+        </div>
+      ) : null}
 
       <Sheet open={open} onClose={() => setOpen(false)} title="เข้าสู่ระบบ">
         <SignInOptions />

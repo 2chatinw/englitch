@@ -1,0 +1,96 @@
+/* ---------- Pastel backdrops (fixed, behind content) ---------- */
+.bd { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
+.has-bd { position: relative; background: transparent !important; }
+.has-bd > main, .has-bd > footer { position: relative; z-index: 1; }
+.has-bd .lp-ticker { background: color-mix(in srgb, var(--surface) 70%, transparent); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+.has-bd .lp-feature, .has-bd .lp-step { background: color-mix(in srgb, var(--surface) 84%, transparent); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+:root:has(.has-bd) body { background: var(--bd-base, var(--bg)); }
+
+/* 1 · Aurora — soft blurred colour clouds drifting, nudged by the mouse */
+.bd-aurora { background: #FBF8FF; }
+.bd-blob { position: absolute; border-radius: 50%; filter: blur(70px); opacity: .8; animation: bd-drift 22s ease-in-out infinite alternate; }
+.bd-blob.b1 { width: 46vw; height: 46vw; left: -8vw; top: -10vw; background: #FFD3E2; }
+.bd-blob.b2 { width: 40vw; height: 40vw; right: -6vw; top: 6vh; background: #D9D3FF; animation-duration: 26s; }
+.bd-blob.b3 { width: 38vw; height: 38vw; left: 22vw; bottom: -14vw; background: #C8F1E4; animation-duration: 30s; }
+.bd-blob.b4 { width: 26vw; height: 26vw; right: 18vw; bottom: 8vh; background: #FFE7C2; animation-duration: 24s; }
+@keyframes bd-drift { to { translate: 6vw 4vh; scale: 1.12; } }
+
+/* 2 · Grid paper with floating pastel shapes */
+.bd-shapes {
+  background-color: #F5F7FF;
+  background-image: linear-gradient(rgba(120, 132, 230, .10) 1px, transparent 1px), linear-gradient(90deg, rgba(120, 132, 230, .10) 1px, transparent 1px);
+  background-size: 34px 34px;
+}
+.bd-shape { position: absolute; width: 96px; height: 96px; opacity: .9; animation: bd-spin 18s linear infinite; }
+.bd-shape.small { width: 54px; height: 54px; }
+.s-circle { border-radius: 50%; background: #FFB8CF; }
+.s-ring { border-radius: 50%; border: 16px solid #A8E9D3; width: 120px; height: 120px; }
+.s-square { border-radius: 18px; background: #FFD59E; }
+.s-tri { width: 0 !important; height: 0 !important; border-left: 52px solid transparent; border-right: 52px solid transparent; border-bottom: 90px solid #BFB3FF; background: none; }
+.s-tri.small { border-left-width: 30px; border-right-width: 30px; border-bottom-width: 52px; }
+.s-plus { background: linear-gradient(#A9D2FF 0 0) center / 100% 30% no-repeat, linear-gradient(#A9D2FF 0 0) center / 30% 100% no-repeat; border-radius: 8px; }
+@keyframes bd-spin { to { rotate: 360deg; } }
+
+/* 3 · Pastel sky with drifting pixel-art clouds */
+.bd-pixel { background: linear-gradient(180deg, #B9DCFF 0%, #DCCBFF 55%, #FFD9E6 100%); }
+.bd-cloud {
+  position: absolute; width: 8px; height: 8px; background: transparent; image-rendering: pixelated;
+  box-shadow:
+    16px 0 #fff, 24px 0 #fff, 32px 0 #fff,
+    8px 8px #fff, 16px 8px #fff, 24px 8px #fff, 32px 8px #fff, 40px 8px #fff, 48px 8px #fff,
+    0 16px #fff, 8px 16px #fff, 16px 16px #fff, 24px 16px #fff, 32px 16px #fff, 40px 16px #fff, 48px 16px #fff, 56px 16px #fff,
+    0 24px #E6EEFF, 8px 24px #E6EEFF, 16px 24px #E6EEFF, 24px 24px #E6EEFF, 32px 24px #E6EEFF, 40px 24px #E6EEFF, 48px 24px #E6EEFF, 56px 24px #E6EEFF;
+  animation: bd-float-x 60s linear infinite;
+}
+.bd-cloud.c1 { top: 12%; scale: 4; animation-duration: 70s; animation-delay: -10s; }
+.bd-cloud.c2 { top: 48%; scale: 3; animation-duration: 90s; animation-delay: -45s; }
+.bd-cloud.c3 { top: 78%; scale: 5; animation-duration: 110s; animation-delay: -70s; }
+.bd-cloud.c4 { top: 30%; scale: 3.5; animation-duration: 80s; animation-delay: -62s; }
+.bd-cloud.c5 { top: 62%; scale: 2.5; animation-duration: 65s; animation-delay: -20s; }
+@keyframes bd-float-x { from { left: -20%; } to { left: 110%; } }
+.bd-spark { position: absolute; width: 6px; height: 6px; scale: 1.6; background: #FFC6D9; box-shadow: 6px 0 #FFC6D9, -6px 0 #FFC6D9, 0 6px #FFC6D9, 0 -6px #FFC6D9; animation: bd-blink 2.6s steps(2) infinite; }
+.bd-spark.k1 { left: 22%; top: 30%; }
+.bd-spark.k2 { left: 74%; top: 22%; background: #C9BFFF; box-shadow: 6px 0 #C9BFFF, -6px 0 #C9BFFF, 0 6px #C9BFFF, 0 -6px #C9BFFF; animation-delay: -.9s; }
+.bd-spark.k3 { left: 60%; top: 70%; background: #B8EDD9; box-shadow: 6px 0 #B8EDD9, -6px 0 #B8EDD9, 0 6px #B8EDD9, 0 -6px #B8EDD9; animation-delay: -1.7s; }
+@keyframes bd-blink { 50% { opacity: .2; } }
+
+/* 4 · Rising bubbles; click empty space to pop one */
+.bd-bubbles { background: linear-gradient(160deg, #FFF1F6 0%, #F1EEFF 50%, #ECF8FF 100%); }
+.bd-bubble {
+  position: absolute; bottom: -80px; border-radius: 50%;
+  background: radial-gradient(circle at 32% 30%, rgba(255, 255, 255, .95) 0 12%, transparent 13%), color-mix(in srgb, var(--tint) 70%, transparent);
+  box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, .8);
+  animation-name: bd-rise; animation-timing-function: linear; animation-iteration-count: infinite;
+}
+.bd-bubble.pop { animation: bd-pop .35s ease-out forwards; }
+@keyframes bd-rise { to { transform: translateY(-120vh) translateX(30px); } }
+@keyframes bd-pop { to { scale: 1.8; opacity: 0; } }
+
+/* 5 · Polka dots with tilted vocabulary stickers */
+.bd-stickers {
+  background-color: #FFFBF4;
+  background-image: radial-gradient(#FFD3E2 2.2px, transparent 2.6px), radial-gradient(#D9D3FF 2.2px, transparent 2.6px);
+  background-size: 44px 44px; background-position: 0 0, 22px 22px;
+}
+.bd-sticker {
+  position: absolute; padding: 8px 16px; border-radius: 999px; font-family: var(--f-display); font-weight: 800; font-size: 1.3rem;
+  color: #3B3355; box-shadow: 0 0 0 4px #fff, 0 8px 18px rgba(80, 60, 140, .12); animation: bd-bob 4s ease-in-out infinite alternate;
+}
+@keyframes bd-bob { to { transform: translateY(-10px); } }
+
+/* Dark theme: keep the motif, dim it onto the dark canvas */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .bd { filter: brightness(.32) saturate(1.4); }
+}
+:root[data-theme="dark"] .bd { filter: brightness(.32) saturate(1.4); }
+@media (prefers-reduced-motion: reduce) { .bd * { animation: none !important; } }
+
+/* Temporary picker for comparing the five backdrops */
+.bd-picker {
+  position: fixed; left: 50%; translate: -50% 0; bottom: calc(16px + env(safe-area-inset-bottom)); z-index: 70;
+  display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; padding: 8px; max-width: calc(100vw - 24px);
+  border-radius: 18px; background: color-mix(in srgb, var(--surface) 88%, transparent); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  box-shadow: var(--shadow);
+}
+.bd-picker button { border: 1px solid var(--line); background: var(--surface); border-radius: 999px; padding: 6px 12px; font: inherit; font-size: .85rem; cursor: pointer; }
+.bd-picker button[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }

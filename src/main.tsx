@@ -10,6 +10,7 @@ import '@fontsource/big-shoulders-display/600';
 import '@fontsource/big-shoulders-display/800';
 import './styles.css';
 import './landing.css';
+import './backdrops.css';
 import App from './App.tsx';
 
 gsap.registerPlugin(useGSAP);
