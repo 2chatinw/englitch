@@ -195,6 +195,7 @@ export default function Landing() {
 
       <footer className="lp-foot">
         <span><b>Englitch</b> · ฝึกภาษาอังกฤษไว้คุยกับเพื่อนต่างชาติในเกม</span>
+        <a href="./privacy.html">นโยบายความเป็นส่วนตัว</a>
       </footer>
 
       {bd.picker ? (

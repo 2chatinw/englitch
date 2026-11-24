@@ -9,7 +9,7 @@ service cloud.firestore {
 
     // Member list: each player keeps their own entry; the site owner reads all entries in the Firebase console.
     match /members/{uid} {
-      allow read: if request.auth != null && request.auth.uid == uid;
+      allow read, delete: if request.auth != null && request.auth.uid == uid;
       allow create, update: if request.auth != null && request.auth.uid == uid
         && request.resource.data.keys().hasOnly(['name', 'email', 'photo', 'provider', 'createdAt', 'lastSeen'])
         && request.resource.data.name is string && request.resource.data.name.size() <= 40

@@ -14,7 +14,7 @@ export function Avatar({ name, photo, size = 36 }: { name: string; photo?: strin
   return <span className="avatar avatar-letter" style={{ width: size, height: size, fontSize: size * 0.45 }} aria-hidden="true">{initial}</span>;
 }
 
-const PROVIDER: Record<string, string> = { discord: 'Discord', google: 'Google', password: 'อีเมล', other: 'บัญชี' };
+const PROVIDER: Record<string, string> = { discord: 'Discord', google: 'Google', facebook: 'Facebook', password: 'อีเมล', other: 'บัญชี' };
 
 export function AccountSheet({ open, onClose }: { open: boolean; onClose: () => void }) {
   const auth = useAuth();
@@ -22,6 +22,7 @@ export function AccountSheet({ open, onClose }: { open: boolean; onClose: () => 
   const toast = useToast();
   const [rename, setRename] = useState('');
   const [busy, setBusy] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
   const u = auth.user;
   const syncText = { off: '', syncing: 'กำลังซิงก์…', synced: 'ซิงก์แล้ว', error: 'ซิงก์ไม่สำเร็จ จะลองใหม่อัตโนมัติ' }[sync];
 
@@ -62,6 +63,25 @@ export function AccountSheet({ open, onClose }: { open: boolean; onClose: () => 
               catch { toast('ออกจากระบบไม่สำเร็จ ลองใหม่อีกครั้ง'); }
               finally { setBusy(false); }
             }}>ออกจากระบบ</button>
+          </section>
+          <section className="field danger-zone">
+            <span className="field-label">ลบบัญชี</span>
+            {confirmDelete ? (
+              <div className="stack">
+                <p className="small">ลบบัญชีนี้ ความคืบหน้าทั้งหมด และชื่อในรายชื่อสมาชิกแบบถาวร ย้อนกลับไม่ได้</p>
+                <div className="row">
+                  <button type="button" className="btn btn-danger btn-sm" disabled={busy} onClick={async () => {
+                    setBusy(true);
+                    try { await auth.remove(); onClose(); toast('ลบบัญชีแล้ว'); }
+                    catch (e) { toast((e as Error).message); }
+                    finally { setBusy(false); setConfirmDelete(false); }
+                  }}>{busy ? 'กำลังลบ…' : 'ลบถาวร'}</button>
+                  <button type="button" className="btn btn-ghost btn-sm" disabled={busy} onClick={() => setConfirmDelete(false)}>ยกเลิก</button>
+                </div>
+              </div>
+            ) : (
+              <button type="button" className="btn btn-ghost btn-sm danger-link" onClick={() => setConfirmDelete(true)}>ลบบัญชีและข้อมูลของฉัน</button>
+            )}
           </section>
         </>
       ) : (

@@ -484,5 +484,11 @@ input[type="email"]:focus, input[type="password"]:focus { outline: none; border-
 .login-actions { display: flex; flex-direction: column; gap: 10px; margin-top: 6px; }
 .btn-discord { background: #5865F2; color: #fff; box-shadow: 0 8px 18px -10px #5865F2; }
 .btn-discord:hover:not(:disabled) { filter: brightness(1.08); }
+.btn-facebook { background: #1877F2; color: #fff; box-shadow: 0 8px 18px -10px #1877F2; }
+.btn-facebook:hover:not(:disabled) { filter: brightness(1.08); }
+.btn-danger { background: var(--bad); color: #fff; }
+.btn-danger:hover:not(:disabled) { filter: brightness(1.08); }
+.danger-zone { border-top: 1px solid var(--line); padding-top: 14px; }
+.danger-link { color: var(--bad); align-self: flex-start; }
 .login-wait { padding: 16px; text-align: center; border-radius: var(--r-sm); background: var(--surface-2); color: var(--muted); }
 .login-note { font-size: .8rem; color: var(--muted); line-height: 1.5; }

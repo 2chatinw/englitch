@@ -39,7 +39,7 @@ export interface CloudUser {
   name: string;
   email: string | null;
   photo: string | null;
-  provider: 'google' | 'discord' | 'password' | 'other';
+  provider: 'google' | 'facebook' | 'discord' | 'password' | 'other';
   /** False when the account has no display name yet (name falls back to the email). */
   named: boolean;
 }
@@ -51,7 +51,7 @@ function toUser(u: import('firebase/auth').User): CloudUser {
     name: u.displayName || (u.email ? u.email.split('@')[0] : 'ผู้เล่น'),
     email: u.email,
     photo: u.photoURL,
-    provider: u.uid.startsWith('discord:') ? 'discord' : p === 'google.com' ? 'google' : p === 'password' ? 'password' : 'other',
+    provider: u.uid.startsWith('discord:') ? 'discord' : p === 'google.com' ? 'google' : p === 'facebook.com' ? 'facebook' : p === 'password' ? 'password' : 'other',
     named: !!u.displayName,
   };
 }
@@ -67,9 +67,23 @@ export function watchAuth(cb: (u: CloudUser | null) => void): () => void {
 }
 
 export async function signInGoogle(): Promise<void> {
-  const { authMod, auth } = await sdk();
+  const { authMod } = await sdk();
   const provider = new authMod.GoogleAuthProvider();
   provider.setCustomParameters({ prompt: 'select_account' });
+  await signInWithProvider(provider);
+}
+
+/** Facebook through Firebase's built-in provider: asks only for the public profile and email. */
+export async function signInFacebook(): Promise<void> {
+  const { authMod } = await sdk();
+  const provider = new authMod.FacebookAuthProvider();
+  provider.addScope('email');
+  provider.addScope('public_profile');
+  await signInWithProvider(provider);
+}
+
+async function signInWithProvider(provider: import('firebase/auth').AuthProvider): Promise<void> {
+  const { authMod, auth } = await sdk();
   try {
     await authMod.signInWithPopup(auth, provider);
   } catch (e) {
@@ -129,6 +143,16 @@ export async function renameUser(name: string): Promise<CloudUser | null> {
   return toUser(auth.currentUser);
 }
 
+/** Deletes this member for good: progress, member entry, then the sign-in account itself. */
+export async function deleteAccount(): Promise<void> {
+  const { authMod, store, auth, db } = await sdk();
+  const u = auth.currentUser;
+  if (!u) return;
+  await store.deleteDoc(store.doc(db, 'users', u.uid));
+  await store.deleteDoc(store.doc(db, 'members', u.uid));
+  await authMod.deleteUser(u);
+}
+
 export async function signOutUser(): Promise<void> {
   const { authMod, auth } = await sdk();
   await authMod.signOut(auth);
@@ -170,6 +194,8 @@ export function authErrorText(e: unknown): string {
     'auth/popup-blocked': 'เบราว์เซอร์บล็อกหน้าต่างล็อกอิน กดอนุญาตป๊อปอัปให้เว็บนี้แล้วลองใหม่',
     'auth/unauthorized-domain': 'เว็บนี้ยังไม่ได้รับอนุญาตใน Firebase (ต้องเพิ่มโดเมนใน Authorized domains)',
     'auth/operation-not-allowed': 'วิธีล็อกอินนี้ยังไม่ได้เปิดใช้ใน Firebase',
+    'auth/requires-recent-login': 'ลบข้อมูลความคืบหน้าแล้ว แต่ต้องออกจากระบบแล้วเข้าใหม่ก่อน จึงจะลบบัญชีได้ แล้วกดลบบัญชีอีกครั้ง',
+    'auth/account-exists-with-different-credential': 'อีเมลนี้มีบัญชีที่เข้าสู่ระบบด้วยวิธีอื่นอยู่แล้ว (เช่น Google) ใช้วิธีเดิมเข้าสู่ระบบแทน',
   };
   if (code.startsWith('auth/api-key') || code === 'auth/invalid-api-key') return 'ระบบบัญชีตั้งค่าไม่ถูกต้อง (Firebase API key) แจ้งเจ้าของเว็บ';
   return map[code] || 'ล็อกอินไม่สำเร็จ ลองใหม่อีกครั้ง';

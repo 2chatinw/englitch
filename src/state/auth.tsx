@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { firebaseEnabled } from '../firebase.config';
 import {
-  authErrorText, recordMember, renameUser, signInDiscordToken, signInGoogle, signOutUser, watchAuth, type CloudUser,
+  authErrorText, recordMember, renameUser, deleteAccount, signInDiscordToken, signInFacebook, signInGoogle, signOutUser, watchAuth, type CloudUser,
 } from '../lib/cloud';
 
 /** 'loading' until Firebase says who is signed in; the app itself only renders for 'in'. */
@@ -15,9 +15,12 @@ interface AuthApi {
   /** True while a Discord sign-in is being finished after the redirect back. */
   finishing: boolean;
   google: () => Promise<void>;
+  facebook: () => Promise<void>;
   discord: () => void;
   rename: (name: string) => Promise<void>;
   signOut: () => Promise<void>;
+  /** Deletes the account and all its data; throws a Thai message on failure. */
+  remove: () => Promise<void>;
 }
 
 const Ctx = createContext<AuthApi | null>(null);
@@ -96,6 +99,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setError('');
       try { await signInGoogle(); } catch (e) { setError(authErrorText(e)); }
     },
+    facebook: async () => {
+      setError('');
+      try { await signInFacebook(); } catch (e) { setError(authErrorText(e)); }
+    },
     discord: () => {
       setError('');
       window.location.assign('/api/auth/discord/start');
@@ -105,6 +112,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (u) { setUser(u); recorded.current = null; }
     },
     signOut: async () => { await signOutUser(); recorded.current = null; memberEmail.current = null; },
+    remove: async () => {
+      try { await deleteAccount(); } catch (e) {
+        const msg = authErrorText(e);
+        throw new Error(msg === 'ล็อกอินไม่สำเร็จ ลองใหม่อีกครั้ง' ? 'ลบบัญชีไม่สำเร็จ ลองใหม่อีกครั้ง' : msg);
+      }
+      recorded.current = null; memberEmail.current = null;
+    },
   }), [status, user, error, finishing]);
 
   return <Ctx.Provider value={api}>{children}</Ctx.Provider>;

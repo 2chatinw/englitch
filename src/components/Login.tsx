@@ -18,10 +18,16 @@ const GoogleMark = () => (
   </svg>
 );
 
-/** The two sign-in buttons plus the note on what we keep; used inside the landing page's sign-in dialog. */
+const FacebookMark = () => (
+  <svg className="icon" viewBox="0 0 24 24" aria-hidden="true">
+    <path fill="currentColor" d="M24 12a12 12 0 1 0-13.9 11.9v-8.4H7.1V12h3V9.4c0-3 1.8-4.7 4.5-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.4l-.5 3.5h-2.9v8.4A12 12 0 0 0 24 12z" />
+  </svg>
+);
+
+/** The sign-in buttons (Discord, Facebook, Google) plus the note on what we keep; used inside the landing page's sign-in dialog. */
 export function SignInOptions() {
-  const { error, google, discord } = useAuth();
-  const [busy, setBusy] = useState<'' | 'google' | 'discord'>('');
+  const { error, google, facebook, discord } = useAuth();
+  const [busy, setBusy] = useState<'' | 'google' | 'facebook' | 'discord'>('');
   return (
     <div className="signin">
       <p className="muted">เข้าสู่ระบบเพื่อเริ่มฝึก ความคืบหน้าจะเก็บในบัญชี เล่นต่อได้ทุกเครื่อง</p>
@@ -29,6 +35,10 @@ export function SignInOptions() {
         <button type="button" className="btn btn-lg btn-block btn-discord" disabled={!!busy}
           onClick={() => { setBusy('discord'); discord(); }}>
           <DiscordMark /> {busy === 'discord' ? 'กำลังไปที่ Discord…' : 'เข้าสู่ระบบด้วย Discord'}
+        </button>
+        <button type="button" className="btn btn-lg btn-block btn-facebook" disabled={!!busy}
+          onClick={async () => { setBusy('facebook'); await facebook(); setBusy(''); }}>
+          <FacebookMark /> {busy === 'facebook' ? 'กำลังเปิดหน้า Facebook…' : 'เข้าสู่ระบบด้วย Facebook'}
         </button>
         <button type="button" className="btn btn-lg btn-block btn-ghost btn-google" disabled={!!busy}
           onClick={async () => { setBusy('google'); await google(); setBusy(''); }}>
@@ -38,6 +48,7 @@ export function SignInOptions() {
       {error ? <p className="form-error" role="alert">{error}</p> : null}
       <p className="login-note">
         เมื่อเข้าสู่ระบบ เราเก็บชื่อ อีเมล และรูปโปรไฟล์ไว้เป็นรายชื่อสมาชิก และใช้บันทึกความคืบหน้าของคุณเท่านั้น
+        {' '}<a href="./privacy.html" target="_blank" rel="noopener">อ่านนโยบายความเป็นส่วนตัว</a>
       </p>
     </div>
   );

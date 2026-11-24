@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>นโยบายความเป็นส่วนตัว · Englitch</title>
+<meta name="robots" content="noindex">
+<link rel="icon" type="image/png" sizes="64x64" href="./icons/favicon-64.png">
+<style>
+  :root { --bg: #EAF4FF; --surface: #FFFFFF; --ink: #15275C; --muted: #5A6B98; --line: #CFE0F7; --accent: #1E6BFF; color-scheme: light; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #0A1838; --surface: #12234D; --ink: #EEF4FF; --muted: #A2B5DE; --line: #24407E; --accent: #6FA8FF; color-scheme: dark; }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink); line-height: 1.75; font-size: 16px;
+    font-family: "Kanit", "Noto Sans Thai", "Leelawadee UI", "Thonburi", system-ui, sans-serif;
+    padding: 32px max(16px, env(safe-area-inset-right)) 56px max(16px, env(safe-area-inset-left));
+  }
+  main { max-width: 720px; margin: 0 auto; background: var(--surface); border: 1px solid var(--line); border-radius: 22px; padding: 28px clamp(18px, 5vw, 40px); }
+  .back { display: inline-block; margin-bottom: 18px; color: var(--accent); text-decoration: none; font-weight: 500; }
+  .back img { height: 34px; width: auto; vertical-align: middle; }
+  h1 { font-size: clamp(1.5rem, 4vw, 2rem); line-height: 1.3; margin: 0 0 6px; }
+  h2 { font-size: 1.15rem; margin: 28px 0 6px; }
+  p, li { color: var(--ink); }
+  .muted { color: var(--muted); font-size: .92rem; }
+  ul { padding-left: 1.2em; margin: 6px 0; }
+  a { color: var(--accent); }
+</style>
+</head>
+<body>
+<main>
+  <a class="back" href="./"><img src="./brand/englitch-wordmark.webp" alt="Englitch" width="628" height="200"></a>
+  <h1>นโยบายความเป็นส่วนตัว</h1>
+  <p class="muted">ปรับปรุงล่าสุด 25 พฤศจิกายน 2569 · ใช้กับเว็บไซต์ englitch.pages.dev และ englitch.com</p>
+
+  <p>Englitch เป็นเว็บฝึกภาษาอังกฤษส่วนตัวสำหรับคุยกับเพื่อนต่างชาติในเกม ใช้ฟรี ไม่มีโฆษณา และไม่มีการจัดอันดับผู้เล่น หน้านี้อธิบายว่าเราเก็บข้อมูลอะไร ใช้ทำอะไร และลบได้อย่างไร</p>
+
+  <h2>ข้อมูลที่เราเก็บ</h2>
+  <ul>
+    <li><b>ข้อมูลบัญชี</b> จากบริการที่คุณเลือกเข้าสู่ระบบ (Discord, Facebook หรือ Google): ชื่อที่แสดง อีเมล และรูปโปรไฟล์</li>
+    <li><b>ความคืบหน้าการฝึก</b>: คำศัพท์ที่ฝึก คะแนน XP เลเวล จำนวนวันที่ฝึกต่อเนื่อง และการตั้งค่าในแอป</li>
+  </ul>
+  <p>เราไม่เก็บรหัสผ่านของคุณ ไม่ขอรายชื่อเพื่อน ไม่โพสต์อะไรแทนคุณ และไม่อ่านข้อความในบัญชี Discord, Facebook หรือ Google ของคุณ</p>
+
+  <h2>เราใช้ข้อมูลทำอะไร</h2>
+  <ul>
+    <li>ให้คุณเข้าสู่ระบบ และเล่นต่อได้ทุกเครื่องด้วยความคืบหน้าเดิม</li>
+    <li>แสดงชื่อและรูปของคุณในแอป ซึ่งเห็นได้เฉพาะคุณเอง</li>
+    <li>เก็บรายชื่อสมาชิกไว้ให้เจ้าของเว็บรู้ว่ามีใครใช้งาน รายชื่อนี้ไม่แสดงต่อสาธารณะ</li>
+  </ul>
+  <p>เราไม่ขาย ไม่แชร์ และไม่ส่งข้อมูลของคุณให้ผู้อื่นเพื่อการโฆษณาหรือการตลาด</p>
+
+  <h2>ข้อมูลเก็บไว้ที่ไหน</h2>
+  <p>ข้อมูลเก็บใน Firebase (Google Cloud) ศูนย์ข้อมูลภูมิภาคเอเชียตะวันออกเฉียงใต้ ข้อมูลความคืบหน้าและรายชื่อสมาชิกตั้งค่าให้อ่านได้เฉพาะเจ้าของบัญชีนั้น เจ้าของเว็บดูรายชื่อสมาชิกได้ผ่านหน้าจัดการของ Firebase เท่านั้น เว็บไซต์ให้บริการผ่าน Cloudflare</p>
+
+  <h2 id="delete">วิธีลบข้อมูลของคุณ</h2>
+  <p>คุณลบบัญชีและข้อมูลทั้งหมดได้เองทุกเมื่อ:</p>
+  <ul>
+    <li>เข้าสู่ระบบที่ Englitch แล้วกดรูปโปรไฟล์ของคุณเพื่อเปิด <b>บัญชีของฉัน</b></li>
+    <li>กด <b>ลบบัญชีและข้อมูลของฉัน</b> แล้วกด <b>ลบถาวร</b></li>
+  </ul>
+  <p>ระบบจะลบความคืบหน้า ชื่อในรายชื่อสมาชิก และบัญชีเข้าสู่ระบบของคุณทันที ย้อนกลับไม่ได้ ถ้าคุณเข้าสู่ระบบด้วย Facebook จะเอา Englitch ออกจากแอปที่เชื่อมต่อในการตั้งค่า Facebook ของคุณด้วยก็ได้ (การตั้งค่าและความเป็นส่วนตัว › การตั้งค่า › แอปและเว็บไซต์)</p>
+
+  <h2>คุกกี้และพื้นที่จัดเก็บในเครื่อง</h2>
+  <p>แอปเก็บความคืบหน้าและการตั้งค่าไว้ในเบราว์เซอร์ของคุณด้วย เพื่อให้ใช้งานได้แม้ออฟไลน์ชั่วคราว เราไม่ใช้คุกกี้ติดตามหรือเครื่องมือวิเคราะห์ของบุคคลที่สาม</p>
+
+  <h2>การเปลี่ยนแปลงนโยบาย</h2>
+  <p>ถ้าเราเปลี่ยนวิธีใช้ข้อมูล เราจะแก้ไขหน้านี้และเปลี่ยนวันที่ด้านบน</p>
+</main>
+</body>
+</html>
