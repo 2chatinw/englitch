@@ -58,17 +58,18 @@ html { scroll-padding-top: 88px; }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .lp-nav { --nav-glass: rgba(10, 24, 56, .78); } }
 .lp-nav-in {
   max-width: none; height: calc(var(--nav-h) + env(safe-area-inset-top));
-  display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: center; column-gap: 24px;
+  display: flex; align-items: center; gap: 24px;
   padding: env(safe-area-inset-top) max(clamp(16px, 3.2vw, 56px), env(safe-area-inset-right)) 0 max(clamp(16px, 3.2vw, 56px), env(safe-area-inset-left));
 }
-.lp-nav-in > .brand { justify-self: start; }
-.lp-links { margin-left: 0; justify-self: center; gap: clamp(4px, 1.6vw, 26px); }
+.lp-nav-in > .brand { flex: none; }
+/* menu sits right after the logo, on the left */
+.lp-links { margin-left: clamp(4px, 1.2vw, 16px); gap: clamp(2px, 1vw, 14px); }
 .lp-links a { padding: 8px 12px; font-weight: 500; color: var(--ink); opacity: .78; transition: opacity .2s; }
 .lp-links a:hover { opacity: 1; color: var(--ink); }
-.lp-act { margin-left: 0; justify-self: end; }
+.lp-act { margin-left: auto; }
 @media (max-width: 640px) {
   .lp-nav { --nav-h: 64px; }
-  .lp-nav-in { grid-template-columns: auto minmax(0, 1fr); column-gap: 10px; }
+  .lp-nav-in { gap: 10px; }
   .lp-nav .brandmark { --logo-h: 38px; }
   .lp-act { gap: 6px; }
 }
