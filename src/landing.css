@@ -20,18 +20,7 @@
 @media (max-width: 640px) { .lp-links { display: none; } }
 .lp-act { margin-left: auto; display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
 
-/* Round light/dark toggle: moon in light theme, glowing sun in dark */
-.theme-toggle {
-  position: relative; display: inline-grid; place-items: center; width: 42px; height: 42px; padding: 0; flex-shrink: 0;
-  border-radius: 50%; border: 1px solid var(--line); background: var(--surface); color: var(--accent); cursor: pointer; overflow: hidden;
-  box-shadow: 0 2px 8px rgba(12, 19, 34, .08); transition: box-shadow .3s, transform .2s ease;
-}
-.theme-toggle:hover { transform: translateY(-1px); box-shadow: 0 6px 16px color-mix(in srgb, var(--accent) 25%, transparent); }
-.theme-toggle:active { transform: scale(.92); }
-.tt-ic { position: absolute; width: 20px; height: 20px; transition: opacity .35s, transform .6s cubic-bezier(.34, 1.56, .64, 1); }
-.tt-sun { color: #F59E0B; opacity: 0; transform: rotate(-120deg) scale(.4); }
-.theme-toggle.is-dark .tt-moon { opacity: 0; transform: rotate(120deg) scale(.4); }
-.theme-toggle.is-dark .tt-sun { opacity: 1; transform: none; color: #FBBF24; filter: drop-shadow(0 0 6px rgba(251, 191, 36, .7)); }
+/* Day/night toggle: see nav.css */
 
 /* Glass pill sign-in button: clear at rest; frosted glass, gradient rim, glow halo and twinkling stars on hover */
 .glass-cta {

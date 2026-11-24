@@ -6,8 +6,8 @@ import { Icon, type IconName } from '../components/Icon';
 import { Sheet } from '../components/Sheet';
 import { Brand, LOGO_URL, useScrolled } from '../components/Brand';
 import { SignInOptions } from '../components/Login';
+import { ThemeToggle } from '../components/ThemeToggle';
 import { useAuth } from '../state/auth';
-import { useProgress } from '../state/progress';
 import { PHRASES } from '../data/content';
 import { prefersReducedMotion } from '../lib/util';
 import { Backdrop, BACKDROPS, type BackdropKind } from '../components/Backdrop';
@@ -46,19 +46,6 @@ function GlassCta({ onClick, children }: { onClick: () => void; children: string
       <i className="cta-cloud" aria-hidden="true"><i /></i>
       <i className="glass-stars" aria-hidden="true" />
       <span>{children}</span>
-    </button>
-  );
-}
-
-function ThemeToggle() {
-  const { state, setSettings } = useProgress();
-  const isDark = state.settings.theme === 'dark' ||
-    (state.settings.theme === 'system' && typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: dark)').matches);
-  return (
-    <button type="button" className={'theme-toggle' + (isDark ? ' is-dark' : '')} aria-label={isDark ? 'เปลี่ยนเป็นธีมสว่าง' : 'เปลี่ยนเป็นธีมมืด'}
-      onClick={() => setSettings({ theme: isDark ? 'light' : 'dark' })}>
-      <svg className="tt-ic tt-moon" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z" /></svg>
-      <svg className="tt-ic tt-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.5" fill="currentColor" /><path stroke="currentColor" strokeWidth="2" strokeLinecap="round" d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8" /></svg>
     </button>
   );
 }

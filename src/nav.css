@@ -135,8 +135,48 @@ html { scroll-padding-top: 88px; }
     -66px 6px 0 -.4px #BAE6FD, 70px 8px #FFE27A, -44px 22px 0 -.3px #7DD3FC, -8px 24px #FFFFFF, 26px 23px 0 -.4px #FFC53D, 54px 18px #BAE6FD;
 }
 
+/* =========================================================================
+   Day/night toggle: a smiling sun on sky blue, or a sleeping moon on navy.
+   Shows the current theme; on tap the discs swing past each other like a dial.
+   ========================================================================= */
+.theme-toggle {
+  position: relative; display: inline-block; width: 44px; height: 44px; padding: 0; flex-shrink: 0;
+  border: 0; border-radius: 50%; background: transparent; cursor: pointer; overflow: hidden;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, .85), 0 6px 16px -4px rgba(30, 107, 255, .45);
+  transition: transform .25s cubic-bezier(.34, 1.56, .64, 1), box-shadow .3s;
+  -webkit-tap-highlight-color: transparent;
+}
+.theme-toggle.is-dark { box-shadow: 0 0 0 2px rgba(255, 233, 163, .55), 0 6px 18px -4px rgba(10, 16, 60, .8); }
+.theme-toggle:hover { transform: translateY(-1px) scale(1.06); }
+.theme-toggle:active { transform: scale(.92); }
+.theme-toggle:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+.tt-badge {
+  position: absolute; inset: 0; width: 100%; height: 100%; display: block;
+  transform-origin: 50% 160%;
+  transition: transform .7s cubic-bezier(.34, 1.4, .64, 1), opacity .45s ease;
+}
+.tt-night { transform: rotate(80deg); opacity: 0; }
+.theme-toggle.is-dark .tt-day { transform: rotate(-80deg); opacity: 0; }
+.theme-toggle.is-dark .tt-night { transform: none; opacity: 1; }
+
+/* little life on hover: the sun's rays turn, the cloud drifts, the stars twinkle and the z's float up */
+.tt-rays { transform-origin: 32px 27px; transform-box: view-box; }
+.tt-cloud { transition: transform .6s ease; }
+.theme-toggle:hover .tt-rays { animation: tt-spin 6s linear infinite; }
+.theme-toggle:hover .tt-cloud { transform: translateX(3px); }
+.theme-toggle:hover .tt-stars { animation: tt-twinkle 1.1s ease-in-out infinite alternate; }
+.theme-toggle:hover .tt-zzz path { animation: tt-z 1.6s ease-in-out infinite; }
+.tt-zzz path:nth-child(2) { animation-delay: .2s !important; }
+.tt-zzz path:nth-child(3) { animation-delay: .4s !important; }
+@keyframes tt-spin { to { transform: rotate(360deg); } }
+@keyframes tt-twinkle { from { opacity: .45; } to { opacity: 1; } }
+@keyframes tt-z { 0%, 100% { opacity: 1; transform: none; } 50% { opacity: .4; transform: translate(-1px, -2px); } }
+@media (max-width: 640px) { .theme-toggle { width: 40px; height: 40px; } }
+
 @media (prefers-reduced-motion: reduce) {
   .brand-shine, .brand-spark { animation: none; }
   .brand-spark { opacity: .9; transform: scale(.8); }
   .glass-cta:hover .cta-cloud { animation: none; }
+  .tt-badge { transition: opacity .2s; }
+  .theme-toggle:hover .tt-rays, .theme-toggle:hover .tt-stars, .theme-toggle:hover .tt-zzz path { animation: none; }
 }
