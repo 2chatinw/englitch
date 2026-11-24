@@ -1,9 +1,11 @@
 import { useEffect, useRef, useState, type RefObject } from 'react';
 import gsap from 'gsap';
 import { prefersReducedMotion } from '../lib/util';
+import { Confetti, Cotton, DotWave, Gingham, Keycaps, Morph, Planes, Stars, Talk, Waves } from './BackdropsMore';
 
-/** Pastel page backgrounds (five candidates). Each sits fixed behind the content and has one small moving detail. */
-export type BackdropKind = 'aurora' | 'shapes' | 'pixel' | 'bubbles' | 'stickers';
+/** Pastel page backgrounds (fifteen candidates). Each sits fixed behind the content and has one small moving detail. */
+export type BackdropKind = 'aurora' | 'shapes' | 'pixel' | 'bubbles' | 'stickers'
+  | 'cotton' | 'waves' | 'confetti' | 'stars' | 'gingham' | 'keys' | 'talk' | 'morph' | 'dotwave' | 'planes';
 
 export const BACKDROPS: { id: BackdropKind; name: string; note: string }[] = [
   { id: 'aurora', name: 'ออโรร่าพาสเทล', note: 'ก้อนสีชมพู ม่วง มิ้นต์ ลอยช้า ๆ และขยับตามเมาส์' },
@@ -11,6 +13,16 @@ export const BACKDROPS: { id: BackdropKind; name: string; note: string }[] = [
   { id: 'pixel', name: 'เมฆพิกเซล', note: 'ฟ้าพาสเทล เมฆพิกเซลแบบเกมย้อนยุคลอยผ่าน' },
   { id: 'bubbles', name: 'ฟองสบู่', note: 'ฟองลอยขึ้นช้า ๆ คลิกพื้นหลังว่าง ๆ แล้วฟองแตก' },
   { id: 'stickers', name: 'สติกเกอร์คำศัพท์', note: 'จุดพาสเทล กับสติกเกอร์คำอย่าง GG, Nice!, brb ที่โยกตามเมาส์' },
+  { id: 'cotton', name: 'สายไหมเปลี่ยนสี', note: 'สีพาสเทลนุ่ม ๆ ทั้งจอ ค่อย ๆ ไล่เปลี่ยนเฉดเอง' },
+  { id: 'waves', name: 'คลื่นพาสเทล', note: 'คลื่นสามชั้นไหลอยู่ขอบล่างของจอ' },
+  { id: 'confetti', name: 'คอนเฟตติ', note: 'กระดาษสีพาสเทลร่วงลงมาช้า ๆ หมุนไปมา' },
+  { id: 'stars', name: 'ดาวระยิบ', note: 'ฟ้าม่วงอ่อน ดาวพาสเทลกะพริบ มีดาวตกเป็นระยะ' },
+  { id: 'gingham', name: 'ลายผ้าปิกนิก', note: 'ลายตารางผ้าสีชมพู มีแสงวิบวับวิ่งเฉียงผ่าน' },
+  { id: 'keys', name: 'คีย์บอร์ดเกมมิ่ง', note: 'ปุ่ม W A S D ลอยอยู่ กดตัวเองเป็นระยะ และขยับตามเมาส์' },
+  { id: 'talk', name: 'ฟองคำพูด', note: 'ฟองแชตคำอย่าง gg, lol, Nice! ลอยขึ้นเหมือนลูกโป่ง' },
+  { id: 'morph', name: 'ก้อนสีเปลี่ยนรูป', note: 'ก้อนสีพาสเทลขอบคม ค่อย ๆ เปลี่ยนรูปร่างและหมุน' },
+  { id: 'dotwave', name: 'คลื่นจุด', note: 'ตารางจุดสีพาสเทล มีคลื่นวิ่งเฉียงผ่านทั้งจอ' },
+  { id: 'planes', name: 'เครื่องบินกระดาษ', note: 'เครื่องบินกระดาษสีพาสเทลบินผ่าน มีเส้นประตามหลัง' },
 ];
 
 function useMouseParallax(root: RefObject<HTMLDivElement | null>, selector: string, strength: number) {
@@ -144,5 +156,15 @@ export function Backdrop({ kind }: { kind: BackdropKind }) {
     case 'pixel': return <Pixel />;
     case 'bubbles': return <Bubbles />;
     case 'stickers': return <Stickers />;
+    case 'cotton': return <Cotton />;
+    case 'waves': return <Waves />;
+    case 'confetti': return <Confetti />;
+    case 'stars': return <Stars />;
+    case 'gingham': return <Gingham />;
+    case 'keys': return <Keycaps />;
+    case 'talk': return <Talk />;
+    case 'morph': return <Morph />;
+    case 'dotwave': return <DotWave />;
+    case 'planes': return <Planes />;
   }
 }

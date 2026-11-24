@@ -11,6 +11,7 @@ import '@fontsource/big-shoulders-display/800';
 import './styles.css';
 import './landing.css';
 import './backdrops.css';
+import './backdrops-more.css';
 import App from './App.tsx';
 
 gsap.registerPlugin(useGSAP);
