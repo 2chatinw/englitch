@@ -27,7 +27,7 @@ export function useAuth(): AuthApi {
 }
 
 // Visitors who have never signed in don't download the Firebase SDK until they open the account sheet.
-const HINT = 'gg-auth';
+const HINT = 'englitch-auth';
 const hasHint = () => { try { return localStorage.getItem(HINT) === '1'; } catch { return false; } };
 const setHint = (on: boolean) => { try { if (on) localStorage.setItem(HINT, '1'); else localStorage.removeItem(HINT); } catch { /* storage blocked */ } };
 

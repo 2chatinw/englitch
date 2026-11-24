@@ -32,7 +32,8 @@ export interface State {
 export type Grade = 'again' | 'good' | 'easy';
 export type SyncStatus = 'off' | 'syncing' | 'synced' | 'error';
 
-const KEY = 'gg-english-v1';
+const KEY = 'englitch-v1';
+const OLD_KEY = 'gg-english-v1'; // before the rename; read once so earlier progress isn't lost
 const emptyDay = (): DayStats => ({ cards: 0, listen: 0, speak: 0, quiz: 0, chat: 0, xp: 0, newCards: 0 });
 const fresh = (): State => ({
   v: 1, xp: 0, streak: 0, lastActive: null, days: {}, srs: {}, updatedAt: 0, owner: null,
@@ -89,7 +90,7 @@ export function normalize(raw: unknown): State {
   };
 }
 function load(): State {
-  try { const raw = localStorage.getItem(KEY); return raw ? normalize(JSON.parse(raw)) : fresh(); } catch { return fresh(); }
+  try { const raw = localStorage.getItem(KEY) ?? localStorage.getItem(OLD_KEY); return raw ? normalize(JSON.parse(raw)) : fresh(); } catch { return fresh(); }
 }
 
 export interface XpEvent { pts: number; id: number }
