@@ -3,9 +3,8 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
 import { Icon, type IconName } from '../components/Icon';
-import { Sheet } from '../components/Sheet';
 import { Brand, LOGO_URL, useScrolled } from '../components/Brand';
-import { SignInOptions } from '../components/Login';
+import { SignInDrop } from '../components/SignInDrop';
 import { ThemeToggle } from '../components/ThemeToggle';
 import { useAuth } from '../state/auth';
 import { PHRASES } from '../data/content';
@@ -39,17 +38,6 @@ const STEPS = [
 
 const TICKER = PHRASES.filter((p) => p.c === 'callout' || p.c === 'game' || p.c === 'help').slice(0, 18);
 
-/** The sign-in pill (top-right): clear at rest, turns into a little puffy cloud on hover. */
-function GlassCta({ onClick, children }: { onClick: () => void; children: string }) {
-  return (
-    <button type="button" className="glass-cta" onClick={onClick}>
-      <i className="cta-cloud" aria-hidden="true"><i /></i>
-      <i className="glass-stars" aria-hidden="true" />
-      <span>{children}</span>
-    </button>
-  );
-}
-
 export default function Landing() {
   const { error } = useAuth();
   const [open, setOpen] = useState(false);
@@ -58,7 +46,7 @@ export default function Landing() {
   const root = useRef<HTMLDivElement>(null);
   const scrolled = useScrolled();
 
-  // A failed Discord sign-in comes back with a message; show it where the buttons are.
+  // A failed Discord sign-in comes back with a message; drop the sign-in badges so it shows under them.
   useEffect(() => { if (error) setOpen(true); }, [error]);
 
   useGSAP(() => {
@@ -81,7 +69,11 @@ export default function Landing() {
     });
   }, { scope: root });
 
-  const signIn = () => setOpen(true);
+  // the other sign-in buttons on the page scroll back up and drop the badges under the top-right pill
+  const signIn = () => {
+    window.scrollTo({ top: 0, behavior: prefersReducedMotion() ? 'auto' : 'smooth' });
+    setOpen(true);
+  };
   const toFeatures = () => document.getElementById('features')?.scrollIntoView({ behavior: prefersReducedMotion() ? 'auto' : 'smooth' });
 
   return (
@@ -98,7 +90,7 @@ export default function Landing() {
           </nav>
           <div className="lp-act">
             <ThemeToggle />
-            <GlassCta onClick={signIn}>เข้าสู่ระบบ</GlassCta>
+            <SignInDrop open={open} onOpenChange={setOpen} />
           </div>
         </div>
       </header>
@@ -206,9 +198,6 @@ export default function Landing() {
         </div>
       ) : null}
 
-      <Sheet open={open} onClose={() => setOpen(false)} title="เข้าสู่ระบบ">
-        <SignInOptions />
-      </Sheet>
     </div>
   );
 }

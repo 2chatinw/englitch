@@ -173,7 +173,67 @@ html { scroll-padding-top: 88px; }
 @keyframes tt-z { 0%, 100% { opacity: 1; transform: none; } 50% { opacity: .4; transform: translate(-1px, -2px); } }
 @media (max-width: 640px) { .theme-toggle { width: 40px; height: 40px; } }
 
+/* =========================================================================
+   Sign-in badges: hang on little strings under the pill and swing gently
+   ========================================================================= */
+.signin-drop { position: relative; }
+/* while the badges are out, the pill keeps its cloud */
+.glass-cta.is-open { transform: translateY(-1px); --cta-a: #15275C; --cta-b: #1E6BFF; }
+.glass-cta.is-open::before, .glass-cta.is-open::after { opacity: 0; }
+.glass-cta.is-open .cta-cloud { opacity: 1; transform: none; }
+.glass-cta.is-open .glass-stars { opacity: 1; }
+
+.drop-panel {
+  position: absolute; top: calc(100% + 4px); right: -8px; z-index: 45;
+  display: flex; flex-direction: column; align-items: center; gap: 6px; pointer-events: none;
+}
+.drop-rail {
+  display: block; width: calc(100% - 8px); height: 5px; border-radius: 99px; transform-origin: center;
+  background: linear-gradient(90deg, #FFFFFF, #DCEAFF 50%, #FFFFFF);
+  box-shadow: 0 2px 6px rgba(30, 107, 255, .3);
+}
+.drop-hangs { display: flex; align-items: flex-start; gap: 14px; padding: 0 8px; margin-top: -6px; }
+.hang { display: flex; flex-direction: column; align-items: center; transform-origin: 50% 0; }
+.hang.is-swaying { animation: hang-sway 2.6s ease-in-out var(--sway-delay, 0s) infinite alternate; }
+@keyframes hang-sway { from { rotate: -3.5deg; } to { rotate: 3.5deg; } }
+.hang-string { display: block; width: 2px; height: var(--len, 30px); border-radius: 2px; background: color-mix(in srgb, var(--ink) 40%, transparent); }
+.hang-badge {
+  position: relative; display: grid; place-items: center; width: 54px; height: 54px; padding: 0; margin-top: 4px;
+  border-radius: 50%; border: 3px solid #FFFFFF; color: #FFFFFF; cursor: pointer; pointer-events: auto;
+  box-shadow: 0 10px 18px -8px rgba(21, 39, 92, .55);
+  transition: transform .25s cubic-bezier(.34, 1.56, .64, 1), box-shadow .25s;
+}
+/* the little ring the string ties onto */
+.hang-badge::before {
+  content: ""; position: absolute; top: -9px; left: 50%; width: 9px; height: 9px; translate: -50% 0;
+  border-radius: 50%; border: 2px solid color-mix(in srgb, var(--ink) 40%, transparent); background: transparent;
+}
+.hang-badge .icon { width: 26px; height: 26px; }
+.hang-discord { background: #5865F2; }
+.hang-facebook { background: #1877F2; }
+.hang-google { background: #FFFFFF; border-color: #DCEAFF; }
+.hang-badge:hover:not(:disabled), .hang-badge:focus-visible { transform: scale(1.12) rotate(-6deg); box-shadow: 0 14px 22px -8px rgba(21, 39, 92, .6); }
+.hang-badge:focus-visible { outline: 3px solid var(--sun); outline-offset: 3px; }
+.hang-badge:disabled:not(.is-busy) { opacity: .45; cursor: default; }
+.hang-badge.is-busy::after {
+  content: ""; position: absolute; inset: -7px; border-radius: 50%;
+  border: 3px solid transparent; border-top-color: var(--sun); border-right-color: var(--sun);
+  animation: hang-spin .8s linear infinite;
+}
+@keyframes hang-spin { to { rotate: 360deg; } }
+.hang-label {
+  margin-top: 5px; padding: 1px 8px; border-radius: 99px; font-size: 11.5px; font-weight: 600; line-height: 1.5;
+  color: var(--ink); background: color-mix(in srgb, var(--surface) 88%, transparent);
+}
+.drop-note {
+  pointer-events: auto; max-width: 250px; padding: 6px 12px; border-radius: 12px; text-align: center;
+  font-size: 12.5px; line-height: 1.5; color: var(--muted); background: var(--surface); border: 1px solid var(--line); box-shadow: var(--shadow);
+}
+.drop-note a { color: var(--accent); }
+.drop-error { color: var(--bad); }
+
 @media (prefers-reduced-motion: reduce) {
+  .hang.is-swaying, .hang-badge.is-busy::after { animation: none; }
   .brand-shine, .brand-spark { animation: none; }
   .brand-spark { opacity: .9; transform: scale(.8); }
   .glass-cta:hover .cta-cloud { animation: none; }
