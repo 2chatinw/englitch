@@ -5,55 +5,56 @@ import { prefersReducedMotion } from '../lib/util';
 import { DiscordMark, FacebookMark, GoogleMark } from './Login';
 
 type Provider = 'discord' | 'facebook' | 'google';
-const ITEMS: { id: Provider; label: string; mark: ReactNode; len: number; tilt: number }[] = [
-  { id: 'discord', label: 'Discord', mark: <DiscordMark />, len: 22, tilt: -22 },
-  { id: 'facebook', label: 'Facebook', mark: <FacebookMark />, len: 46, tilt: 16 },
-  { id: 'google', label: 'Google', mark: <GoogleMark />, len: 32, tilt: -14 },
+const ITEMS: { id: Provider; label: string; mark: ReactNode }[] = [
+  { id: 'discord', label: 'Discord', mark: <DiscordMark /> },
+  { id: 'facebook', label: 'Facebook', mark: <FacebookMark /> },
+  { id: 'google', label: 'Google', mark: <GoogleMark /> },
 ];
 
 /**
- * The sign-in pill in the top bar. Tapping it lets the three sign-in badges (Discord, Facebook, Google)
- * drop down on little strings and swing into place underneath; tapping a badge signs in with that service.
+ * The sign-in pill in the top bar. Tapping it unrolls a little rope ladder straight down from under the pill,
+ * with the Discord, Facebook and Google badges tied on one below the other; tapping a badge signs in with it.
  */
 export function SignInDrop({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void }) {
   const { error, google, facebook, discord } = useAuth();
   const [busy, setBusy] = useState<Provider | ''>('');
-  const [shown, setShown] = useState(open); // stays true while the badges are pulled back up
+  const [shown, setShown] = useState(open); // stays true while the ladder rolls back up
   const wrap = useRef<HTMLDivElement>(null);
   const panel = useRef<HTMLDivElement>(null);
+  const tl = useRef<gsap.core.Timeline | null>(null);
 
   if (open && !shown) setShown(true);
 
-  // drop in / pull up
+  // unroll / roll up
   useLayoutEffect(() => {
     const el = panel.current;
     if (!el || !shown) return;
-    const hangs = el.querySelectorAll<HTMLElement>('.hang');
-    const extras = el.querySelectorAll<HTMLElement>('.drop-rail, .drop-note');
-    const still = prefersReducedMotion();
-    gsap.killTweensOf([hangs, extras]);
+    const ladder = el.querySelector<HTMLElement>('.ladder');
     if (open) {
-      hangs.forEach((h) => h.classList.remove('is-swaying'));
-      if (still) { gsap.set([hangs, extras], { clearProps: 'all' }); return; }
-      gsap.fromTo(el.querySelector('.drop-rail'), { scaleX: 0, autoAlpha: 0 }, { scaleX: 1, autoAlpha: 1, duration: 0.3, ease: 'power2.out' });
-      gsap.fromTo(hangs,
-        { y: -64, autoAlpha: 0, rotation: (i: number) => ITEMS[i].tilt },
-        {
-          y: 0, autoAlpha: 1, rotation: 0, duration: 1.25, ease: 'elastic.out(1, 0.32)', stagger: 0.13, delay: 0.08,
-          onComplete: () => hangs.forEach((h) => h.classList.add('is-swaying')),
-        });
-      gsap.fromTo(el.querySelector('.drop-note'), { y: -6, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.35, delay: 0.55 });
-    } else {
-      hangs.forEach((h) => h.classList.remove('is-swaying'));
-      if (still) { setShown(false); return; }
-      gsap.to(el.querySelector('.drop-note'), { autoAlpha: 0, duration: 0.15 });
-      gsap.to(hangs, {
-        y: -48, autoAlpha: 0, rotation: (i: number) => -ITEMS[i].tilt / 2, duration: 0.26, ease: 'power2.in',
-        stagger: { each: 0.05, from: 'end' },
+      ladder?.classList.remove('is-swaying');
+      if (prefersReducedMotion()) return;
+      tl.current?.kill();
+      const t = gsap.timeline({ onComplete: () => ladder?.classList.add('is-swaying') });
+      el.querySelectorAll<HTMLElement>('.rung').forEach((step) => {
+        // each rope section unrolls downward, then its badge pops onto the end of it
+        t.fromTo(step.querySelector('.rope'), { scaleY: 0 }, { scaleY: 1, duration: 0.16, ease: 'none' })
+          .fromTo(step.querySelector('.hang-badge'), { scale: 0.2, autoAlpha: 0 }, { scale: 1, autoAlpha: 1, duration: 0.42, ease: 'back.out(2.6)' }, '-=0.02')
+          .fromTo(step.querySelector('.hang-label'), { x: 8, autoAlpha: 0 }, { x: 0, autoAlpha: 1, duration: 0.25 }, '<0.1');
       });
-      gsap.to(el.querySelector('.drop-rail'), { scaleX: 0, autoAlpha: 0, duration: 0.2, delay: 0.2, onComplete: () => setShown(false) });
+      t.fromTo(el.querySelector('.drop-note'), { y: -6, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.3 }, '-=0.1');
+      // a little bounce at the bottom of the drop, like a ladder that just fell open
+      t.fromTo(ladder, { rotation: 0 }, { keyframes: { rotation: [3, -2, 1, 0] }, duration: 0.9, ease: 'sine.out' }, '-=0.5');
+      tl.current = t;
+    } else {
+      ladder?.classList.remove('is-swaying');
+      const t = tl.current;
+      if (prefersReducedMotion() || !t) { setShown(false); return; }
+      t.eventCallback('onReverseComplete', () => setShown(false));
+      t.timeScale(2.6).reverse();
     }
   }, [open, shown]);
+
+  useEffect(() => () => { tl.current?.kill(); }, []);
 
   // close on a tap outside or on Escape
   useEffect(() => {
@@ -82,16 +83,17 @@ export function SignInDrop({ open, onOpenChange }: { open: boolean; onOpenChange
       </button>
       {shown ? (
         <div className="drop-panel" id="signin-drop-panel" ref={panel} role="group" aria-label="เลือกวิธีเข้าสู่ระบบ">
-          <span className="drop-rail" aria-hidden="true" />
-          <div className="drop-hangs">
-            {ITEMS.map((it, i) => (
-              <div key={it.id} className="hang" style={{ ['--len' as string]: it.len + 'px', ['--sway-delay' as string]: (-i * 0.7) + 's' }}>
-                <span className="hang-string" aria-hidden="true" />
-                <button type="button" className={'hang-badge hang-' + it.id + (busy === it.id ? ' is-busy' : '')}
-                  disabled={!!busy} onClick={() => go(it.id)} aria-label={'เข้าสู่ระบบด้วย ' + it.label}>
-                  {it.mark}
-                </button>
-                <span className="hang-label" aria-hidden="true">{it.label}</span>
+          <div className="ladder">
+            {ITEMS.map((it) => (
+              <div key={it.id} className="rung">
+                <span className="rope" aria-hidden="true" />
+                <div className="hang">
+                  <span className="hang-label" aria-hidden="true">{it.label}</span>
+                  <button type="button" className={'hang-badge hang-' + it.id + (busy === it.id ? ' is-busy' : '')}
+                    disabled={!!busy} onClick={() => go(it.id)} aria-label={'เข้าสู่ระบบด้วย ' + it.label}>
+                    {it.mark}
+                  </button>
+                </div>
               </div>
             ))}
           </div>
