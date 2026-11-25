@@ -99,9 +99,6 @@ img, svg { max-width: 100%; }
 .streak b { font-size: 1.1rem; font-weight: 800; }
 .streak.is-on { background: var(--hot-soft); color: var(--hot); }
 .streak-unit { font-size: .8rem; }
-/* total XP in the top bar (no levels: XP is just a running score) */
-.xp-total { display: inline-flex; align-items: baseline; gap: 4px; padding: 4px 10px; border-radius: 999px; background: var(--accent-soft); color: var(--accent); font-size: .8rem; font-weight: 600; white-space: nowrap; }
-.xp-total b { font-size: 1.1rem; font-weight: 800; }
 
 /* Top bar (phone/tablet) */
 .topbar {
@@ -137,11 +134,6 @@ img, svg { max-width: 100%; }
 @media (min-width: 900px) { .bottombar { display: none; } }
 @media (min-width: 900px) { .main { padding-bottom: 64px; } }
 
-/* XP pop */
-.xp-pop {
-  position: absolute; right: 8px; top: -4px; pointer-events: none; z-index: 5;
-  font-family: var(--f-display); font-weight: 800; font-size: 1.1rem; color: var(--hot); white-space: nowrap;
-}
 
 /* Page transition wipe */
 .wipe {

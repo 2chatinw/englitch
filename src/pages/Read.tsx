@@ -76,7 +76,7 @@ export default function Read() {
   if (!s) {
     return (
       <div className="page">
-        <PageHead route="read" aside={<MissionPill k="read" />}>อ่านสถานการณ์หรือประโยค แล้วเลือกคำตอบที่ถูก รอบละ 10 ข้อ ตอบถูกได้ 3 XP</PageHead>
+        <PageHead route="read" aside={<MissionPill k="read" />}>อ่านสถานการณ์หรือประโยค แล้วเลือกคำตอบที่ถูก รอบละ 10 ข้อ</PageHead>
         <MissionDone k="read" />
         <section className="card done-card" data-reveal>
           <span className="done-badge"><Icon name="book" size={28} /></span>
@@ -147,7 +147,7 @@ export default function Read() {
         </div>
         {answered ? (
           <>
-            <Result ok={right} title={right ? 'ถูกต้อง +3 XP' : 'ยังไม่ถูก คำตอบคือ: ' + q.answer}>
+            <Result ok={right} title={right ? 'ถูกต้อง' : 'ยังไม่ถูก คำตอบคือ: ' + q.answer}>
               {q.why ? <p className="small">{q.why}</p> : null}
               {q.say ? <div className="row"><SpeakButton text={q.say} label="ฟังคำตอบ" /></div> : null}
             </Result>

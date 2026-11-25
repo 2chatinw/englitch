@@ -86,7 +86,7 @@ export default function Listen() {
           </form>
         ) : (
           <>
-            <Result ok={ok} title={ok === true ? 'ถูกต้องทั้งประโยค +5 XP' : ok === 'near' ? 'ถูกแล้ว สะกดพลาดนิดหน่อย +5 XP' : 'ถูก ' + Math.round(s.result.score * 100) + '% ลองดูคำที่ขีดเส้นใต้'}>
+            <Result ok={ok} title={ok === true ? 'ถูกต้องทั้งประโยค' : ok === 'near' ? 'ถูกแล้ว สะกดพลาดนิดหน่อย' : 'ถูก ' + Math.round(s.result.score * 100) + '% ลองดูคำที่ขีดเส้นใต้'}>
               <WordDiff r={s.result} />
               <p className="small muted">คุณพิมพ์: {s.typed}</p>
               <p>{p.t}</p>

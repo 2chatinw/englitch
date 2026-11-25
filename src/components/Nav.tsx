@@ -9,24 +9,6 @@ import { Brand, useScrolled } from './Brand';
 import { ThemeToggle } from './ThemeToggle';
 import { AccountMenu } from './AccountMenu';
 
-/** Plays a floating "+N XP" over the given anchor whenever XP is gained. */
-function useXpPop(anchor: RefObject<HTMLElement | null>) {
-  const { xpEvent } = useProgress();
-  useEffect(() => {
-    const el = anchor.current;
-    if (!xpEvent || !el || el.offsetParent === null) return;
-    const pop = document.createElement('span');
-    pop.className = 'xp-pop';
-    pop.textContent = '+' + xpEvent.pts + ' XP';
-    el.appendChild(pop);
-    if (prefersReducedMotion()) { setTimeout(() => pop.remove(), 900); return; }
-    gsap.fromTo(pop, { y: 6, autoAlpha: 0, scale: 0.8 }, {
-      y: -26, autoAlpha: 1, scale: 1, duration: 0.45, ease: 'back.out(2)',
-      onComplete: () => { gsap.to(pop, { autoAlpha: 0, y: -38, duration: 0.4, delay: 0.35, onComplete: () => pop.remove() }); },
-    });
-  }, [xpEvent, anchor]);
-}
-
 function Streak({ n }: { n: number }) {
   return (
     <span className={'streak' + (n > 0 ? ' is-on' : '')} title="จำนวนวันที่ฝึกต่อเนื่อง">
@@ -122,20 +104,17 @@ export function QuestRail({ route }: { route: Route }) {
   );
 }
 
-/** Top bar on every screen size: logo, total XP and streak, theme and the account menu. Clear at the top, glass once scrolled. */
+/** Top bar on every screen size: logo, streak, theme and the account menu. Clear at the top, glass once scrolled. */
 export function TopBar({ onSettings, onAccount }: { onSettings: () => void; onAccount: () => void }) {
-  const { state, streak } = useProgress();
-  const hud = useRef<HTMLDivElement>(null);
+  const { streak } = useProgress();
   const scrolled = useScrolled();
-  useXpPop(hud);
   return (
     <header className="topbar" data-scrolled={scrolled ? 'true' : 'false'}>
       <div className="topbar-in">
         <a className="brand brand-sm" href="#today" aria-label="Englitch หน้าแรก">
           <Brand size="sm" />
         </a>
-        <div className="top-hud" ref={hud}>
-          <span className="xp-total" title="XP ทั้งหมดที่เก็บได้"><b className="num">{state.xp}</b><span>XP</span></span>
+        <div className="top-hud">
           <Streak n={streak} />
         </div>
         <span className="top-theme"><ThemeToggle /></span>

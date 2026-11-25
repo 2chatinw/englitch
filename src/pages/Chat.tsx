@@ -76,7 +76,7 @@ export default function Chat() {
         <Bar value={Math.min(1, day.chat / 6)} label="ภารกิจแชตวันนี้" />
         <div className="row between">
           <span className="muted small">ส่งข้อความภาษาอังกฤษไปแล้วกี่ข้อความ กดนับทีละข้อความ</span>
-          <button type="button" className="btn btn-ghost btn-sm" onClick={() => gain('chat', 4)}>+1 ข้อความ (+4 XP)</button>
+          <button type="button" className="btn btn-ghost btn-sm" onClick={() => gain('chat', 4)}>+1 ข้อความ</button>
         </div>
       </section>
     </div>

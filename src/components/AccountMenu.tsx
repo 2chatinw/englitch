@@ -30,7 +30,7 @@ const User = () => (
 
 /**
  * Signed-in account pill (avatar + chevron) with a drop-down, after the scholarship site's user menu:
- * name and XP first, then account, settings and theme, and a red sign-out last.
+ * name first, then account, settings and theme, and a red sign-out last.
  * Opens with a small GSAP pop; Escape, Tab, a click outside or picking an item closes it; arrow keys move between items.
  */
 export function AccountMenu({ onAccount, onSettings }: { onAccount: () => void; onSettings: () => void }) {
@@ -117,7 +117,7 @@ export function AccountMenu({ onAccount, onSettings }: { onAccount: () => void; 
             <Avatar name={u.name} photo={u.photo} size={40} />
             <span className="acct-id">
               <b>{u.name}</b>
-              <small>{state.xp} XP · เข้าด้วย {PROVIDER[u.provider] || 'บัญชี'}</small>
+              <small>เข้าด้วย {PROVIDER[u.provider] || 'บัญชี'}</small>
             </span>
           </button>
           <hr className="acct-sep" />

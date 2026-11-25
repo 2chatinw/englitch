@@ -93,7 +93,7 @@ export default function Write() {
           </form>
         ) : (
           <>
-            <Result ok={ok} title={ok === true ? 'ถูกต้องทั้งประโยค +5 XP' : ok === 'near' ? 'ถูกแล้ว สะกดพลาดนิดหน่อย +5 XP' : 'ถูก ' + Math.round(s.result.score * 100) + '% เทียบกับประโยคตัวอย่างด้านล่าง'}>
+            <Result ok={ok} title={ok === true ? 'ถูกต้องทั้งประโยค' : ok === 'near' ? 'ถูกแล้ว สะกดพลาดนิดหน่อย' : 'ถูก ' + Math.round(s.result.score * 100) + '% เทียบกับประโยคตัวอย่างด้านล่าง'}>
               <WordDiff r={s.result} />
               <p className="small muted">คุณเขียน: {s.typed}</p>
               {p.n ? <p className="small">{p.n}</p> : null}

@@ -91,13 +91,11 @@ function load(): State {
   try { const raw = localStorage.getItem(KEY) ?? localStorage.getItem(OLD_KEY); return raw ? normalize(JSON.parse(raw)) : fresh(); } catch { return fresh(); }
 }
 
-export interface XpEvent { pts: number; id: number }
 
 interface Api {
   state: State;
   day: DayStats;
   streak: number;
-  xpEvent: XpEvent | null;
   sync: SyncStatus;
   gain: (kind: Kind, pts: number) => void;
   /** Record how a practised sentence went, so missed ones come back sooner (spaced review). */
@@ -116,7 +114,6 @@ export function useProgress(): Api {
 
 export function ProgressProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<State>(load);
-  const [xpEvent, setXpEvent] = useState<XpEvent | null>(null);
   const ref = useRef(state);
   ref.current = state;
   const toast = useToast();
@@ -216,7 +213,6 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
       while (keys.length > 60) delete days[keys.shift() as string];
       return { ...s, xp: s.xp + pts, streak, lastActive, days, updatedAt: Date.now() };
     });
-    if (pts > 0) setXpEvent({ pts, id: Date.now() + Math.random() });
     if (mission && before + 1 === mission.goal) toast('ภารกิจ "' + mission.label + '" สำเร็จแล้ว!');
   }, [toast]);
 
@@ -268,9 +264,9 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
       state,
       day: { ...emptyDay(), ...(state.days[t] || {}) },
       streak,
-      xpEvent, sync, gain, remember, setSettings, reset, exportCode, importCode,
+      sync, gain, remember, setSettings, reset, exportCode, importCode,
     };
-  }, [state, xpEvent, sync, gain, remember, setSettings, reset, exportCode, importCode]);
+  }, [state, sync, gain, remember, setSettings, reset, exportCode, importCode]);
 
   return <Ctx.Provider value={api}>{children}</Ctx.Provider>;
 }

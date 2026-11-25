@@ -80,7 +80,7 @@ export default function Speak() {
 
         {s.result ? (
           <>
-            <Result ok={pass} title={pass ? 'ชัดเจนดีมาก +5 XP' : 'ได้ ' + Math.round(s.result.score * 100) + '% ลองฟังตัวอย่างแล้วพูดใหม่'}>
+            <Result ok={pass} title={pass ? 'ชัดเจนดีมาก' : 'ได้ ' + Math.round(s.result.score * 100) + '% ลองฟังตัวอย่างแล้วพูดใหม่'}>
               <WordDiff r={s.result} />
               <p className="small muted">ระบบได้ยินว่า: {s.said || '—'}</p>
             </Result>

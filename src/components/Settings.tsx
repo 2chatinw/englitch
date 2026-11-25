@@ -79,7 +79,7 @@ export function SettingsSheet({ open, onClose }: { open: boolean; onClose: () =>
           <span className="field-label">เริ่มใหม่</span>
           {confirm ? (
             <div className="confirm">
-              <p className="small">ลบ XP สถิติ และการ์ดที่เรียนไว้ทั้งหมด ย้อนกลับไม่ได้ ยืนยันไหม?</p>
+              <p className="small">ลบความคืบหน้า สถิติ และประโยคที่ฝึกไว้ทั้งหมด ย้อนกลับไม่ได้ ยืนยันไหม?</p>
               <div className="row">
                 <button type="button" className="btn btn-danger btn-sm" onClick={() => { reset(); clearSessions(); setConfirm(false); toast('เริ่มต้นใหม่แล้ว'); }}>ยืนยันลบ</button>
                 <button type="button" className="btn btn-ghost btn-sm" onClick={() => setConfirm(false)}>ยกเลิก</button>
