@@ -7,6 +7,7 @@ import { useSession } from '../state/session';
 import { compare, type Comparison } from '../lib/compare';
 import { isBrave, listen, micErrorText, micSupported, say, type Listener } from '../lib/speech';
 import { useToast } from '../state/toast';
+import { MicBrowsers } from '../components/MicBrowsers';
 import { pickSentence } from './practice';
 
 interface Sess { id: string; result: Comparison | null; said: string; scored?: boolean; typed: string; keyboard: boolean }
@@ -75,6 +76,7 @@ export default function Speak() {
             <SpeakButton text={p.s} slow />
           </div>
         </div>
+        {!s.result ? <MicBrowsers /> : null}
 
         {s.result ? (
           <>

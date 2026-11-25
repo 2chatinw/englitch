@@ -438,3 +438,51 @@ input[type="email"]:focus, input[type="password"]:focus { outline: none; border-
 .danger-link { color: var(--bad); align-self: flex-start; }
 .login-wait { padding: 16px; text-align: center; border-radius: var(--r-sm); background: var(--surface-2); color: var(--muted); }
 .login-note { font-size: .8rem; color: var(--muted); line-height: 1.5; }
+
+/* ---------- Which browsers can use the mic: a row of tilted browser stickers ---------- */
+.mb {
+  align-self: center; display: inline-flex; align-items: center; gap: 12px; padding: 12px 18px 12px 12px; margin-top: 4px;
+  border-radius: 999px; background: color-mix(in srgb, var(--surface-2) 80%, transparent);
+  border: 2px dashed color-mix(in srgb, var(--line) 90%, transparent);
+}
+.mb-mic {
+  display: grid; place-items: center; width: 46px; height: 46px; border-radius: 50%; flex: none;
+  background: linear-gradient(180deg, #FFE27A, #FFC53D); color: #15275C; box-shadow: 0 3px 0 #DE8F00;
+  animation: mb-talk 2.4s ease-in-out infinite;
+}
+.mb-mic svg { width: 24px; height: 24px; }
+.mb-dots { width: 18px; height: 4px; flex: none; background: radial-gradient(circle, var(--muted) 1.6px, transparent 2px) 0 50% / 6px 4px repeat-x; opacity: .6; }
+.mb-st {
+  position: relative; display: grid; place-items: center; width: 50px; height: 50px; flex: none; border-radius: 50%;
+  background: #FFFFFF; box-shadow: 0 0 0 3px var(--surface), 0 6px 14px -6px rgba(21, 39, 92, .45);
+  transform: rotate(calc((var(--i) - 2) * 5deg));
+  animation: mb-bob 3s ease-in-out infinite; animation-delay: calc(var(--i) * -.45s);
+  transition: transform .25s cubic-bezier(.34, 1.56, .64, 1);
+}
+.mb-st:hover { transform: rotate(0deg) scale(1.15); }
+.mb-logo { width: 38px; height: 38px; }
+.mb-st.is-no .mb-logo { filter: grayscale(.45) saturate(.8); opacity: .8; }
+.mb-mark {
+  position: absolute; right: -5px; bottom: -5px; display: grid; place-items: center; width: 21px; height: 21px;
+  border-radius: 50%; color: #FFFFFF; box-shadow: 0 0 0 2.5px var(--surface);
+}
+.mb-mark svg { width: 11px; height: 11px; }
+.is-ok .mb-mark { background: var(--good); }
+.is-no .mb-mark { background: var(--bad); }
+.mb-st.is-me { box-shadow: 0 0 0 3px var(--surface), 0 0 0 6px var(--accent), 0 8px 18px -6px rgba(30, 107, 255, .6); }
+.mb-st.is-no.is-me { box-shadow: 0 0 0 3px var(--surface), 0 0 0 6px var(--bad), 0 8px 18px -6px rgba(229, 72, 77, .55); }
+/* a little bouncing pointer over the browser you are using */
+.mb-here {
+  position: absolute; top: -17px; left: 50%; width: 0; height: 0; margin-left: -6px;
+  border: 6px solid transparent; border-top: 8px solid var(--accent); animation: mb-point 1s ease-in-out infinite;
+}
+.is-no .mb-here { border-top-color: var(--bad); }
+@keyframes mb-bob { 0%, 100% { translate: 0 0; } 50% { translate: 0 -3px; } }
+@keyframes mb-point { 0%, 100% { translate: 0 0; } 50% { translate: 0 -4px; } }
+@keyframes mb-talk { 0%, 70%, 100% { transform: scale(1) rotate(0); } 78% { transform: scale(1.1) rotate(-8deg); } 86% { transform: scale(1.1) rotate(8deg); } }
+@media (max-width: 400px) {
+  .mb { gap: 7px; padding: 8px 12px 8px 8px; }
+  .mb-mic { width: 34px; height: 34px; } .mb-dots { display: none; }
+  .mb-st { width: 40px; height: 40px; } .mb-logo { width: 30px; height: 30px; }
+}
+@media (prefers-reduced-motion: reduce) { .mb-st, .mb-mic, .mb-here { animation: none; } }

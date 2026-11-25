@@ -64,6 +64,20 @@ export const isBrave = typeof navigator !== 'undefined' && !!(navigator as AnyRe
 let broken = false;
 export const micSupported = (): boolean => !!SR && !broken && !isBrave;
 
+export type BrowserId = 'chrome' | 'edge' | 'safari' | 'firefox' | 'brave' | 'other';
+/** Which browser this is, as far as the mic is concerned (Brave and Edge also say "Chrome" in their user agent). */
+export function currentBrowser(): BrowserId {
+  if (typeof navigator === 'undefined') return 'other';
+  const ua = navigator.userAgent;
+  if (isBrave) return 'brave';
+  if (/Edg(e|A|iOS)?\//.test(ua)) return 'edge';
+  if (/Firefox|FxiOS/.test(ua)) return 'firefox';
+  if (/OPR\/|Opera|SamsungBrowser|YaBrowser|Vivaldi/.test(ua)) return 'other';
+  if (/Chrome|CriOS|Chromium/.test(ua)) return 'chrome';
+  if (/Safari/.test(ua)) return 'safari';
+  return 'other';
+}
+
 export interface ListenHandlers {
   onPartial: (text: string) => void;
   onDone: (text: string, error?: string) => void;
