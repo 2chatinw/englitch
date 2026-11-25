@@ -1,6 +1,7 @@
 const PATHS = {
   home: <path d="M3.5 10.5 12 4l8.5 6.5V20a1 1 0 0 1-1 1H15v-6H9v6H4.5a1 1 0 0 1-1-1z" />,
-  cards: <><rect x="7" y="3.5" width="12" height="16" rx="2" /><path d="M4 7.5v11a2 2 0 0 0 2 2h9" /></>,
+  book: <><path d="M12 6.5C10 5 7 4.5 3.5 5v13c3.5-.5 6.5 0 8.5 1.5 2-1.5 5-2 8.5-1.5V5C17 4.5 14 5 12 6.5z" /><path d="M12 6.5v13" /></>,
+  pen: <><path d="M15.5 4.5l4 4L9 19H5v-4z" /><path d="M13 7l4 4" /></>,
   headphones: <><path d="M4 15v-3a8 8 0 0 1 16 0v3" /><path d="M4 15h3.5v5.5H5.5A1.5 1.5 0 0 1 4 19zM20 15h-3.5v5.5h2A1.5 1.5 0 0 0 20 19z" /></>,
   mic: <><rect x="9" y="3" width="6" height="11" rx="3" /><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21" /></>,
   target: <><circle cx="12" cy="12" r="8" /><circle cx="12" cy="12" r="3" /><path d="M12 1.5V5M12 19v3.5M1.5 12H5M19 12h3.5" /></>,

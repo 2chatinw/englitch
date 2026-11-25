@@ -31,11 +31,11 @@ export default function Today() {
           <h1 className="welcome-title">ฝึกภาษาอังกฤษไว้คุยกับเพื่อนต่างชาติในเกม</h1>
           <ol className="steps">
             <li><b>วันละ ~{totalMin} นาที</b> ทำภารกิจ 5 อย่างด้านล่าง ระบบจะพาไปทีละขั้น</li>
-            <li><b>เริ่มจากการ์ดคำศัพท์</b> วันละ 10 คำใหม่ คำที่จำไม่ได้จะวนกลับมาเอง</li>
+            <li><b>ครบ 4 ทักษะ ฟัง พูด อ่าน เขียน</b> ประโยคที่ยังพลาดจะวนกลับมาให้ฝึกอีกเอง</li>
             <li><b>ทุกอย่างฟรี</b> ใช้ได้ทั้งคอมและมือถือ ความคืบหน้าเก็บในบัญชี เล่นต่อได้ทุกเครื่อง</li>
           </ol>
           <div className="row">
-            <button type="button" className="btn btn-primary" onClick={() => { setSettings({ onboarded: true }); navigate('cards'); }}>
+            <button type="button" className="btn btn-primary" onClick={() => { setSettings({ onboarded: true }); navigate('listen'); }}>
               เริ่มภารกิจแรก <Icon name="arrow" />
             </button>
             <button type="button" className="btn btn-ghost" onClick={() => setSettings({ onboarded: true })}>ดูภาพรวมก่อน</button>
@@ -56,7 +56,7 @@ export default function Today() {
                 <Icon name={PAGES[next.k].icon} /> ไปที่{PAGES[next.k].th} <Icon name="arrow" />
               </button>
             ) : (
-              <button type="button" className="btn btn-ghost btn-lg" onClick={() => navigate('quiz')}>เล่นควิซเพิ่มอีกรอบ</button>
+              <button type="button" className="btn btn-ghost btn-lg" onClick={() => navigate('read')}>ฝึกอ่านเพิ่มอีกรอบ</button>
             )}
           </div>
           <div className="ring" style={{ ['--p' as string]: String(pct) }} role="img" aria-label={'ทำภารกิจวันนี้ไปแล้ว ' + Math.round(pct * 100) + '%'}>
@@ -93,9 +93,9 @@ export default function Today() {
       </section>
 
       <section className="stats" data-reveal>
-        <div className="stat"><b className="num">{learned}</b><span>คำที่เคยเรียน<br />จาก {PHRASES.length}</span></div>
-        <div className="stat"><b className="num">{solid}</b><span>คำที่จำได้แม่น</span></div>
-        <div className={'stat' + (due > 0 ? ' stat-alert' : '')}><b className="num">{due}</b><span>การ์ดรอทบทวน</span></div>
+        <div className="stat"><b className="num">{learned}</b><span>ประโยคที่เคยฝึก<br />จาก {PHRASES.length}</span></div>
+        <div className="stat"><b className="num">{solid}</b><span>ประโยคที่จำได้แม่น</span></div>
+        <div className={'stat' + (due > 0 ? ' stat-alert' : '')}><b className="num">{due}</b><span>ประโยครอทบทวน</span></div>
       </section>
 
       <section className="card pod" data-reveal>

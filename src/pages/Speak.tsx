@@ -1,11 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
 import { PHRASES } from '../data/content';
 import { Icon } from '../components/Icon';
-import { Bar, MissionDone, MissionPill, PageHead, Result, SpeakButton, WordDiff } from '../components/ui';
+import { Bar, Kbd, MissionDone, MissionPill, PageHead, Result, SpeakButton, WordDiff } from '../components/ui';
 import { useProgress } from '../state/progress';
 import { useSession } from '../state/session';
 import { compare, type Comparison } from '../lib/compare';
-import { listen, micErrorText, micSupported, say, type Listener } from '../lib/speech';
+import { isBrave, listen, micErrorText, micSupported, say, type Listener } from '../lib/speech';
 import { useToast } from '../state/toast';
 import { pickSentence } from './practice';
 
@@ -13,7 +13,7 @@ interface Sess { id: string; result: Comparison | null; said: string; scored?: b
 const byId = new Map(PHRASES.map((p) => [p.e, p]));
 
 export default function Speak() {
-  const { state, day, gain } = useProgress();
+  const { state, day, gain, remember } = useProgress();
   const toast = useToast();
   const [s, setS] = useSession<Sess>('speak', () => ({ id: pickSentence(state).e, result: null, said: '', typed: '', keyboard: false }));
   const [live, setLive] = useState('');
@@ -26,7 +26,7 @@ export default function Speak() {
 
   const evaluate = (text: string) => {
     const r = compare(p.e, text);
-    if (!s.scored) gain('speak', r.score >= 0.8 ? 5 : 1);
+    if (!s.scored) { gain('speak', r.score >= 0.8 ? 5 : 1); remember(p.e, r.score >= 0.8); }
     setS({ ...s, result: r, said: text, scored: true });
   };
 
@@ -102,8 +102,16 @@ export default function Speak() {
           </div>
         ) : (
           <form className="stack" onSubmit={(e) => { e.preventDefault(); const v = s.typed.trim(); if (!v) { toast('พูดผ่านไมค์บนคีย์บอร์ดก่อน'); return; } evaluate(v); }}>
+            {isBrave ? (
+              <div className="note note-warn">
+                <b>Brave ใช้ไมค์ของเว็บนี้ไม่ได้</b> Brave ปิดระบบแปลงเสียงเป็นข้อความไว้ เปิดเว็บนี้ใน Chrome หรือ Edge จะกดไมค์พูดได้เลย หรือใช้การพิมพ์ด้วยเสียงตามด้านล่าง
+              </div>
+            ) : null}
             <div className="note">
-              <b>พูดผ่านไมค์บนคีย์บอร์ด</b> เปลี่ยนคีย์บอร์ดเป็นภาษาอังกฤษ แตะช่องด้านล่าง แล้วกดปุ่มไมค์บนคีย์บอร์ด (บน iPhone อยู่มุมล่างขวา) จากนั้นพูดประโยคด้านบน
+              <b>พูดผ่านการพิมพ์ด้วยเสียง</b> เปลี่ยนคีย์บอร์ดเป็นภาษาอังกฤษ แตะช่องด้านล่าง แล้ว
+              <br />· <b>มือถือ</b> กดปุ่มไมค์บนคีย์บอร์ด (บน iPhone อยู่มุมล่างขวา)
+              <br />· <b>คอม Windows</b> กด <Kbd>Win</Kbd> + <Kbd>H</Kbd>
+              <br />จากนั้นพูดประโยคด้านบน
             </div>
             <label className="sr-only" htmlFor="speak-input">ข้อความจากการพูด</label>
             <input id="speak-input" type="text" autoComplete="off" autoCapitalize="off" autoCorrect="off" spellCheck={false}

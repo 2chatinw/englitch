@@ -283,20 +283,11 @@ textarea { resize: vertical; }
 /* ---------- Practice ---------- */
 .play { box-shadow: var(--shadow); }
 .play-top { display: flex; align-items: center; gap: 12px; }
-.flash {
-  position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px;
-  min-height: 260px; padding: 28px 18px; text-align: center; border-radius: var(--r);
-  background: var(--bg); border: 2px dashed var(--line); cursor: pointer; perspective: 800px;
-}
-.flash.is-flipped { border-style: solid; border-color: var(--accent); background: var(--surface); cursor: default; }
-.flash-tags { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; }
-.flash-en { font-size: clamp(1.7rem, 6vw, 2.5rem); font-weight: 700; line-height: 1.2; overflow-wrap: anywhere; letter-spacing: -.01em; }
-.flash-hint { color: var(--muted); font-size: .9rem; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; justify-content: center; }
-.flash-back { display: flex; flex-direction: column; gap: 10px; align-items: center; }
-.flash-th { font-size: 1.3rem; font-weight: 600; }
-.grade { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
-.grade .btn { flex-direction: column; gap: 2px; min-height: 64px; padding: 8px 6px; white-space: normal; line-height: 1.2; }
-.grade .btn small { display: flex; align-items: center; gap: 4px; font-weight: 400; font-size: .74rem; opacity: .85; }
+/* writing mode: the Thai prompt, and the tap-to-add word hints */
+.say-en.write-th { font-size: clamp(1.35rem, 4.6vw, 1.9rem); font-weight: 600; }
+.word-bank { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+.word-bank .chip { font-size: .95rem; }
+.note-warn { background: var(--near-soft); }
 .done-card { align-items: center; text-align: center; padding: 36px 20px; }
 .done-badge { display: grid; place-items: center; width: 64px; height: 64px; border-radius: 20px; background: var(--good-soft); color: var(--good); }
 .score { font-size: 5rem; font-weight: 800; line-height: .9; }

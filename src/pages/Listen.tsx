@@ -13,7 +13,7 @@ interface Sess { id: string; typed: string; hint: 0 | 1 | 2; result: Comparison 
 const byId = new Map(PHRASES.map((p) => [p.e, p]));
 
 export default function Listen() {
-  const { state, day, gain } = useProgress();
+  const { state, day, gain, remember } = useProgress();
   const toast = useToast();
   const [s, setS] = useSession<Sess>('listen', () => ({ id: pickSentence(state).e, typed: '', hint: 0, result: null, started: false, plays: 0 }));
   const p = byId.get(s.id)!;
@@ -33,7 +33,7 @@ export default function Listen() {
     const val = s.typed.trim();
     if (!val) { toast('พิมพ์ประโยคที่ได้ยินก่อน'); input.current?.focus(); return; }
     const r = compare(p.e, val);
-    if (!s.scored) gain('listen', r.score === 1 ? 5 : 1);
+    if (!s.scored) { gain('listen', r.score === 1 ? 5 : 1); remember(p.e, r.score === 1 && s.hint < 2); }
     setS({ ...s, result: r, scored: true });
   };
   const next = () => {

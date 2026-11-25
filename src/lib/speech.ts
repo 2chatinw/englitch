@@ -58,8 +58,11 @@ const SR: AnyRec = typeof window !== 'undefined'
   ? (window as AnyRec).SpeechRecognition || (window as AnyRec).webkitSpeechRecognition
   : null;
 
+// Brave ships the speech-recognition API but blocks the online service behind it, so it always fails with "network".
+export const isBrave = typeof navigator !== 'undefined' && !!(navigator as AnyRec).brave;
+
 let broken = false;
-export const micSupported = (): boolean => !!SR && !broken;
+export const micSupported = (): boolean => !!SR && !broken && !isBrave;
 
 export interface ListenHandlers {
   onPartial: (text: string) => void;
@@ -104,7 +107,7 @@ export function micErrorText(code?: string): string {
     case 'service-not-allowed':
       return 'เบราว์เซอร์ไม่อนุญาตให้ใช้ไมค์ กดอนุญาตไมค์ที่แถบที่อยู่ หรือใช้ไมค์บนคีย์บอร์ดแทน';
     case 'audio-capture': return 'ไม่พบไมค์ในเครื่องนี้';
-    case 'network': return 'ระบบแปลงเสียงต้องใช้อินเทอร์เน็ต ลองใหม่อีกครั้ง';
+    case 'network': return 'ระบบฟังเสียงของเบราว์เซอร์นี้ใช้ไม่ได้ตอนนี้ ลองใหม่ หรือใช้ Chrome / Edge';
     case 'no-speech': return 'ไม่ได้ยินเสียง ลองพูดใกล้ไมค์อีกนิด';
     default: return 'ฟังไม่ชัด ลองพูดใหม่อีกครั้ง';
   }

@@ -209,17 +209,17 @@ export function chatPrompt(sc: Scenario): string {
     'If I write in Thai, show me how to say it in English. Start now with a short greeting.';
 }
 
-export type Kind = 'cards' | 'listen' | 'speak' | 'quiz' | 'chat';
+export type Kind = 'listen' | 'speak' | 'read' | 'write' | 'chat';
 
 export interface Mission { k: Kind; label: string; unit: string; goal: number; min: number }
 
 export const MISSIONS: Mission[] = [
-  { k: 'cards', label: 'ทบทวนการ์ดคำศัพท์', unit: 'ใบ', goal: 20, min: 8 },
   { k: 'listen', label: 'ฟังแล้วพิมพ์ตาม', unit: 'ประโยค', goal: 10, min: 7 },
   { k: 'speak', label: 'ฝึกพูดออกเสียง', unit: 'ประโยค', goal: 10, min: 7 },
-  { k: 'quiz', label: 'ตอบควิซสถานการณ์', unit: 'ข้อ', goal: 10, min: 4 },
+  { k: 'read', label: 'อ่านแล้วเลือกคำตอบ', unit: 'ข้อ', goal: 10, min: 5 },
+  { k: 'write', label: 'เขียนประโยคจากภาษาไทย', unit: 'ประโยค', goal: 10, min: 7 },
   { k: 'chat', label: 'คุยภาษาอังกฤษกับ AI', unit: 'ข้อความ', goal: 6, min: 6 },
 ];
 
+/** Days until a sentence comes back for review, by how many times in a row it was right. */
 export const INTERVALS = [0, 1, 2, 4, 7, 15, 30];
-export const NEW_PER_DAY = 10;

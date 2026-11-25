@@ -11,13 +11,13 @@ import { Splash } from './components/Login';
 import Landing from './pages/Landing';
 import { Backdrop } from './components/Backdrop';
 import Today from './pages/Today';
-import Cards from './pages/Cards';
 import Listen from './pages/Listen';
 import Speak from './pages/Speak';
-import Quiz from './pages/Quiz';
+import Read from './pages/Read';
+import Write from './pages/Write';
 import Chat from './pages/Chat';
 
-const PAGES: Record<Route, ComponentType> = { today: Today, cards: Cards, listen: Listen, speak: Speak, quiz: Quiz, chat: Chat };
+const PAGES: Record<Route, ComponentType> = { today: Today, listen: Listen, speak: Speak, read: Read, write: Write, chat: Chat };
 
 function Shell() {
   const route = useRoute();

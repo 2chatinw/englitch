@@ -9,13 +9,15 @@ import { shuffle, prefersReducedMotion } from '../lib/util';
 import { say } from '../lib/speech';
 import { navigate } from '../lib/router';
 
-interface Q { prompt: string; sub?: string; answer: string; options: string[]; say?: string; why?: string }
+/** `id` is the phrase a question is about, so a right or wrong answer feeds its review schedule. */
+interface Q { prompt: string; sub?: string; answer: string; options: string[]; say?: string; why?: string; id?: string }
 interface Miss { prompt: string; answer: string; picked: string }
 interface Sess { qs: Q[]; i: number; score: number; picked: string | null; misses: Miss[] }
 
 const ascii = (s: string) => /^[\x20-\x7E]+$/.test(s);
 
-function makeQuiz(state: State): Q[] {
+/** One reading round: 4 game situations plus 6 sentences (meaning either way), favouring ones already practised. */
+function makeRound(state: State): Q[] {
   const qs: Q[] = shuffle(SITUATIONS).slice(0, 4).map((s) => ({
     prompt: s.q, sub: 'สถานการณ์', answer: s.a, options: shuffle([s.a, ...s.o]),
     say: s.say || (ascii(s.a) ? s.a : undefined), why: s.why,
@@ -28,27 +30,28 @@ function makeQuiz(state: State): Q[] {
     const pool = shuffle(PHRASES.filter((x) => x !== p && x.c === p.c)).concat(shuffle(PHRASES.filter((x) => x.c !== p.c)));
     const opts: string[] = [];
     for (const x of pool) { if (opts.length >= 3) break; if (x[key] !== p[key] && !opts.includes(x[key])) opts.push(x[key]); }
-    if (enToTh) qs.push({ prompt: '"' + p.e + '" แปลว่าอะไร', sub: 'ความหมาย', answer: p.t, options: shuffle([p.t, ...opts]), say: p.s });
+    if (enToTh) qs.push({ prompt: '"' + p.e + '" แปลว่าอะไร', sub: 'ความหมาย', answer: p.t, options: shuffle([p.t, ...opts]), say: p.s, id: p.e });
     else qs.push({
       prompt: p.c === 'slang' ? 'ศัพท์แชตไหนหมายถึง "' + p.t + '"' : 'ถ้าจะบอกว่า "' + p.t + '" พูดว่าอะไร',
-      sub: 'เลือกประโยค', answer: p.e, options: shuffle([p.e, ...opts]), say: p.s,
+      sub: 'เลือกประโยค', answer: p.e, options: shuffle([p.e, ...opts]), say: p.s, id: p.e,
     });
   });
   return shuffle(qs);
 }
 
-export default function Quiz() {
-  const { state, gain } = useProgress();
-  const [s, setS] = useSession<Sess | null>('quiz', () => null);
+export default function Read() {
+  const { state, gain, remember } = useProgress();
+  const [s, setS] = useSession<Sess | null>('read', () => null);
   const optsRef = useRef<HTMLDivElement>(null);
-  const start = () => setS({ qs: makeQuiz(state), i: 0, score: 0, picked: null, misses: [] });
+  const start = () => setS({ qs: makeRound(state), i: 0, score: 0, picked: null, misses: [] });
   const q = s && s.i < s.qs.length ? s.qs[s.i] : null;
 
   const choose = (o: string) => {
     if (!s || !q || s.picked != null) return;
     const right = o === q.answer;
     if (q.say) say(q.say);
-    gain('quiz', right ? 3 : 1);
+    gain('read', right ? 3 : 1);
+    if (q.id) remember(q.id, right);
     setS({ ...s, picked: o, score: s.score + (right ? 1 : 0), misses: right ? s.misses : [...s.misses, { prompt: q.prompt, answer: q.answer, picked: o }] });
   };
   const next = () => s && setS({ ...s, i: s.i + 1, picked: null });
@@ -73,13 +76,13 @@ export default function Quiz() {
   if (!s) {
     return (
       <div className="page">
-        <PageHead route="quiz" aside={<MissionPill k="quiz" />}>ฝึกตัดสินใจว่าจะพูดอะไรในสถานการณ์จริง รอบละ 10 ข้อ ตอบถูกได้ 3 XP</PageHead>
-        <MissionDone k="quiz" />
+        <PageHead route="read" aside={<MissionPill k="read" />}>อ่านสถานการณ์หรือประโยค แล้วเลือกคำตอบที่ถูก รอบละ 10 ข้อ ตอบถูกได้ 3 XP</PageHead>
+        <MissionDone k="read" />
         <section className="card done-card" data-reveal>
-          <span className="done-badge"><Icon name="target" size={28} /></span>
+          <span className="done-badge"><Icon name="book" size={28} /></span>
           <h2>พร้อมเริ่มไหม</h2>
-          <p className="muted">มีทั้งสถานการณ์ในเกม ศัพท์แชต และคำที่คุณเคยเรียนในการ์ด</p>
-          <button type="button" className="btn btn-primary btn-lg" onClick={start}>เริ่มควิซ <Icon name="arrow" /></button>
+          <p className="muted">มีทั้งสถานการณ์ในเกม ศัพท์แชต และประโยคที่คุณเคยฝึก</p>
+          <button type="button" className="btn btn-primary btn-lg" onClick={start}>เริ่มอ่าน <Icon name="arrow" /></button>
         </section>
       </div>
     );
@@ -89,15 +92,15 @@ export default function Quiz() {
     const great = s.score >= 8;
     return (
       <div className="page">
-        <PageHead route="quiz" aside={<MissionPill k="quiz" />} />
-        <MissionDone k="quiz" />
+        <PageHead route="read" aside={<MissionPill k="read" />} />
+        <MissionDone k="read" />
         <section className="card done-card" data-reveal>
           <span className="kicker">{great ? 'เก่งมาก' : 'จบรอบนี้แล้ว'}</span>
           <p className="score num">{s.score}<small>/{s.qs.length}</small></p>
           <p className="muted">{great ? 'เยี่ยมมาก พร้อมไปคุยกับเพื่อนต่างชาติแล้ว' : 'ทบทวนข้อที่พลาดด้านล่าง แล้วลองอีกรอบ จะดีขึ้นเรื่อย ๆ'}</p>
           <div className="row center">
-            <button type="button" className="btn btn-primary" onClick={start}><Icon name="retry" /> เล่นอีกรอบ</button>
-            <button type="button" className="btn btn-ghost" onClick={() => navigate('cards')}>ไปทบทวนการ์ด</button>
+            <button type="button" className="btn btn-primary" onClick={start}><Icon name="retry" /> อ่านอีกรอบ</button>
+            <button type="button" className="btn btn-ghost" onClick={() => navigate('write')}>ไปฝึกเขียน</button>
           </div>
         </section>
         {s.misses.length ? (
@@ -122,10 +125,10 @@ export default function Quiz() {
   const right = s.picked === q.answer;
   return (
     <div className="page">
-      <PageHead route="quiz" aside={<span className="pill num">ถูก {s.score} ข้อ</span>} />
+      <PageHead route="read" aside={<span className="pill num">ถูก {s.score} ข้อ</span>} />
       <section className="card play" data-reveal>
         <div className="play-top">
-          <Bar value={s.i / s.qs.length} label="ความคืบหน้าควิซ" />
+          <Bar value={s.i / s.qs.length} label="ความคืบหน้ารอบนี้" />
           <span className="muted small num">ข้อ {s.i + 1}/{s.qs.length}</span>
         </div>
         <span className="kicker">{q.sub}</span>

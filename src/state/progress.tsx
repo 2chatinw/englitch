@@ -6,7 +6,7 @@ import { useToast } from './toast';
 import { useAuth } from './auth';
 import { saveProgress, watchProgress } from '../lib/cloud';
 
-export interface DayStats { cards: number; listen: number; speak: number; quiz: number; chat: number; xp: number; newCards: number }
+export interface DayStats { listen: number; speak: number; read: number; write: number; chat: number; xp: number }
 export interface Settings {
   voiceURI: string;
   rate: number;
@@ -28,12 +28,11 @@ export interface State {
   /** Account this device's progress belongs to; null for a guest. */
   owner: string | null;
 }
-export type Grade = 'again' | 'good' | 'easy';
 export type SyncStatus = 'off' | 'syncing' | 'synced' | 'error';
 
 const KEY = 'englitch-v1';
 const OLD_KEY = 'gg-english-v1'; // before the rename; read once so earlier progress isn't lost
-const emptyDay = (): DayStats => ({ cards: 0, listen: 0, speak: 0, quiz: 0, chat: 0, xp: 0, newCards: 0 });
+const emptyDay = (): DayStats => ({ listen: 0, speak: 0, read: 0, write: 0, chat: 0, xp: 0 });
 const fresh = (): State => ({
   v: 1, xp: 0, streak: 0, lastActive: null, days: {}, srs: {}, updatedAt: 0, owner: null,
   settings: { voiceURI: '', rate: 0.9, autoPlay: true, theme: 'system', onboarded: false, installHintDismissed: false },
@@ -59,7 +58,7 @@ export function mergeStates(local: State, remote: State, addXp = false): State {
   // Re-count the run of active days from the merged history (guest days can bridge account days).
   let walked = 0;
   if (streakSrc.lastActive) {
-    for (let k = streakSrc.lastActive; days[k] && (days[k].xp > 0 || days[k].cards > 0); k = addDays(k, -1)) walked++;
+    for (let k = streakSrc.lastActive; days[k] && days[k].xp > 0; k = addDays(k, -1)) walked++;
   }
   return {
     ...remote,
@@ -103,7 +102,8 @@ interface Api {
   xpEvent: XpEvent | null;
   sync: SyncStatus;
   gain: (kind: Kind, pts: number) => void;
-  grade: (id: string, g: Grade) => void;
+  /** Record how a practised sentence went, so missed ones come back sooner (spaced review). */
+  remember: (id: string, ok: boolean) => void;
   setSettings: (patch: Partial<Settings>) => void;
   reset: () => void;
   exportCode: () => string;
@@ -222,22 +222,16 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
     if (mission && before + 1 === mission.goal) toast('ภารกิจ "' + mission.label + '" สำเร็จแล้ว!');
   }, [toast]);
 
-  const grade = useCallback((id: string, g: Grade) => {
+  const remember = useCallback((id: string, ok: boolean) => {
     const t = today();
     setState((s) => {
       const cur = s.srs[id];
-      const d = { ...emptyDay(), ...(s.days[t] || {}) };
-      if (!cur) d.newCards += 1;
-      let item: SrsItem;
-      if (g === 'again') item = { b: 0, d: t };
-      else {
-        const b = Math.min(6, (cur ? cur.b : 0) + (g === 'easy' ? 2 : 1));
-        item = { b, d: addDays(t, INTERVALS[b]) };
-      }
-      return { ...s, srs: { ...s.srs, [id]: item }, days: { ...s.days, [t]: d }, updatedAt: Date.now() };
+      if (ok && cur && cur.d > t) return s; // right again before it was due: keep the schedule
+      const b = ok ? Math.min(6, (cur ? cur.b : 0) + 1) : 0;
+      const item: SrsItem = { b, d: addDays(t, INTERVALS[b]) };
+      return { ...s, srs: { ...s.srs, [id]: item }, updatedAt: Date.now() };
     });
-    gain('cards', g === 'again' ? 1 : 2);
-  }, [gain]);
+  }, []);
 
   const setSettings = useCallback((patch: Partial<Settings>) => {
     setState((s) => ({ ...s, settings: { ...s.settings, ...patch }, updatedAt: Date.now() }));
@@ -278,9 +272,9 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
       streak,
       level: Math.floor(state.xp / 100) + 1,
       levelXp: state.xp % 100,
-      xpEvent, sync, gain, grade, setSettings, reset, exportCode, importCode,
+      xpEvent, sync, gain, remember, setSettings, reset, exportCode, importCode,
     };
-  }, [state, xpEvent, sync, gain, grade, setSettings, reset, exportCode, importCode]);
+  }, [state, xpEvent, sync, gain, remember, setSettings, reset, exportCode, importCode]);
 
   return <Ctx.Provider value={api}>{children}</Ctx.Provider>;
 }

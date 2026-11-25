@@ -34,6 +34,10 @@ npm run build   # tsc -b && vite build → dist/
 - `src/pages/Landing.tsx` — landing; `HeroKeys.tsx` (interactive WASD keypad hero), `Keypad.tsx` (isometric SVG),
   `SectionNav.tsx` (scroll-spy links), `SignInDrop.tsx` (rope-ladder sign-in badges), `ThemeToggle.tsx` (sun/moon).
 - `src/components/PageStage.tsx` — page-change wipe (keypad taps W-A-S-D-Space).
+- Practice modes = the four skills + AI chat: `pages/Listen.tsx` (hear → type), `Speak.tsx` (mic; Brave blocks web speech
+  recognition, so it falls back to keyboard/Win+H voice typing), `Read.tsx` (situations + meanings, multiple choice),
+  `Write.tsx` (Thai → type English, two-step hints), `Chat.tsx`. Flashcards were removed (owner's choice, Nov 2026);
+  `remember()` in `state/progress.tsx` keeps a spaced-review schedule from right/wrong answers in every mode.
 - Styles: `src/styles.css` (base + tokens), `src/theme.css` (logo retheme, wipe, hero), `src/nav.css` (navbars, logo, sign-in, app shell) — loaded last.
 - Design tokens: sky blue, sun yellow `#FFC53D` (edge `#DE8F00`), navy `#15275C`, accent `#1E6BFF`.
 - `public/privacy.html` — privacy policy + data-deletion section (`#delete`), needed by Meta.
