@@ -107,6 +107,10 @@ h1, h2, h3, .lp-hero h1, .page-head h1, .lp-head h2, .lp-final h2, .sheet-head h
   display: inline-grid; place-items: center; min-width: 24px; height: 24px; padding: 0 5px; border-radius: 6px;
   font: 700 .78rem "Fredoka", sans-serif; color: #15275C; background: var(--surface); border: 1.5px solid #15275C; box-shadow: 0 2px 0 #15275C;
 }
+/* yellow like the W A S D keys on the keypad, so they show on the dark sky too */
+.hk-hint kbd { background: linear-gradient(180deg, #FFE27A, #FFC53D); }
+:root[data-theme="dark"] .hk-hint kbd { border-color: #DE8F00; box-shadow: 0 2px 0 #DE8F00; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .hk-hint kbd { border-color: #DE8F00; box-shadow: 0 2px 0 #DE8F00; } }
 .hk-hint-touch { display: none; }
 @media (hover: none) { .hk-hint-desk { display: none; } .hk-hint-touch { display: inline; } }
 @media (max-width: 880px) { .hk-pad { width: min(100%, 400px); } }
