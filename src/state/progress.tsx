@@ -1,8 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
-import { INTERVALS, MISSIONS, type Kind, type Level } from '../data/content';
+import { INTERVALS, type Category, type Kind, type Level } from '../data/content';
 import { addDays, today } from '../lib/util';
 import { setVoiceSettings } from '../lib/speech';
-import { useToast } from './toast';
 import { useAuth } from './auth';
 import { saveProgress, watchProgress } from '../lib/cloud';
 
@@ -16,6 +15,8 @@ export interface Settings {
   installHintDismissed: boolean;
   /** 'auto' starts with easy sentences and opens harder ones as they're learned; otherwise one fixed level. */
   level: 'auto' | Level;
+  /** The topic mission being played, or null to practise every topic mixed. */
+  mission: Category | null;
 }
 export interface SrsItem { b: number; d: string }
 export interface State {
@@ -37,7 +38,7 @@ const OLD_KEY = 'gg-english-v1'; // before the rename; read once so earlier prog
 const emptyDay = (): DayStats => ({ listen: 0, speak: 0, read: 0, write: 0, chat: 0, xp: 0 });
 const fresh = (): State => ({
   v: 1, xp: 0, streak: 0, lastActive: null, days: {}, srs: {}, updatedAt: 0, owner: null,
-  settings: { voiceURI: '', rate: 0.9, autoPlay: true, theme: 'system', onboarded: false, installHintDismissed: false, level: 'auto' },
+  settings: { voiceURI: '', rate: 0.9, autoPlay: true, theme: 'system', onboarded: false, installHintDismissed: false, level: 'auto', mission: null },
 });
 
 /** Combine two copies of the same player's progress without losing work done on either device. */
@@ -118,7 +119,6 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<State>(load);
   const ref = useRef(state);
   ref.current = state;
-  const toast = useToast();
   const { user } = useAuth();
   const uid = user?.uid ?? null;
   const [sync, setSync] = useState<SyncStatus>('off');
@@ -202,8 +202,6 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
 
   const gain = useCallback((kind: Kind, pts: number) => {
     const t = today();
-    const before = ref.current.days[t]?.[kind] || 0;
-    const mission = MISSIONS.find((m) => m.k === kind);
     setState((s) => {
       const d = { ...emptyDay(), ...(s.days[t] || {}) };
       d[kind] = (d[kind] || 0) + 1;
@@ -215,8 +213,7 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
       while (keys.length > 60) delete days[keys.shift() as string];
       return { ...s, xp: s.xp + pts, streak, lastActive, days, updatedAt: Date.now() };
     });
-    if (mission && before + 1 === mission.goal) toast('ภารกิจ "' + mission.label + '" สำเร็จแล้ว!');
-  }, [toast]);
+  }, []);
 
   const remember = useCallback((id: string, ok: boolean) => {
     const t = today();

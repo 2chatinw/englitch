@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 import { PHRASES } from '../data/content';
 import { Icon } from '../components/Icon';
-import { Bar, Kbd, MissionDone, MissionPill, NextButton, PageHead, Result, SpeakButton, WordDiff } from '../components/ui';
+import { Kbd, NextButton, PageHead, Result, SpeakButton, WordDiff } from '../components/ui';
 import { useProgress } from '../state/progress';
+import { MissionChip, MissionStrip } from '../components/Missions';
 import { useSession } from '../state/session';
 import { compare, type Comparison } from '../lib/compare';
 import { isBrave, listen, micErrorText, micSupported, say, type Listener } from '../lib/speech';
@@ -14,7 +15,7 @@ interface Sess { id: string; result: Comparison | null; said: string; scored?: b
 const byId = new Map(PHRASES.map((p) => [p.e, p]));
 
 export default function Speak() {
-  const { state, day, gain, remember } = useProgress();
+  const { state, gain, remember } = useProgress();
   const toast = useToast();
   const [s, setS] = useSession<Sess>('speak', () => ({ id: pickSentence(state).e, result: null, said: '', typed: '', keyboard: false }));
   const [live, setLive] = useState('');
@@ -62,12 +63,11 @@ export default function Speak() {
 
   return (
     <div className="page">
-      <PageHead route="speak" aside={<MissionPill k="speak" />}>
+      <PageHead route="speak" aside={<MissionChip />}>
         ฟังตัวอย่าง แล้วพูดตามให้ชัด ระบบจะบอกว่าคำไหนยังฟังไม่ชัด
       </PageHead>
-      <MissionDone k="speak" />
       <section className="card play" data-reveal>
-        <Bar value={Math.min(1, day.speak / 10)} label="ภารกิจฝึกพูดวันนี้" />
+        <MissionStrip route="speak" />
         <div className="say-line">
           <p className="say-en">{p.e}</p>
           <p className="muted">{p.t}</p>

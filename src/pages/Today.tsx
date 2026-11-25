@@ -1,27 +1,33 @@
-import { MISSIONS, PHRASES, SENTENCES } from '../data/content';
+import { PHRASES, SENTENCES } from '../data/content';
 import { Icon } from '../components/Icon';
-import { Bar, SpeakButton } from '../components/ui';
+import { SpeakButton } from '../components/ui';
 import { useProgress } from '../state/progress';
 import { today } from '../lib/util';
-import { PAGES, navigate } from '../lib/router';
-import { LevelCard } from '../components/LevelCard';
+import { PAGES, navigate, type Route } from '../lib/router';
+import { MissionBar, MissionBoard } from '../components/Missions';
+import { activeMission, allMissions, missionStats, readOnlyMission } from '../lib/missions';
 
 const isIOS = typeof navigator !== 'undefined' && /iPhone|iPad|iPod/.test(navigator.userAgent);
 const isStandalone = typeof window !== 'undefined' &&
   (window.matchMedia('(display-mode: standalone)').matches || (navigator as unknown as { standalone?: boolean }).standalone === true);
 
+const MODES: Route[] = ['listen', 'speak', 'read', 'write'];
+
 export default function Today() {
-  const { state, day, streak, setSettings } = useProgress();
+  const { state, streak, setSettings } = useProgress();
   const t = today();
   const learned = Object.keys(state.srs).length;
   const solid = Object.values(state.srs).filter((x) => x.b >= 3).length;
   const due = PHRASES.filter((p) => state.srs[p.e] && state.srs[p.e].d <= t).length;
-  const done = MISSIONS.filter((m) => day[m.k] >= m.goal).length;
-  const next = MISSIONS.find((m) => day[m.k] < m.goal);
-  const pct = MISSIONS.reduce((a, m) => a + Math.min(1, day[m.k] / m.goal), 0) / MISSIONS.length;
   const dayIdx = Math.floor(new Date(t + 'T00:00:00').getTime() / 86400000);
   const pod = SENTENCES[dayIdx % SENTENCES.length];
   const firstVisit = !state.settings.onboarded;
+  const active = activeMission(state);
+  const m = active ? missionStats(state, active) : null;
+  const ms = allMissions(state);
+  const overall = ms.reduce((a, x) => a + x.done, 0) / ms.reduce((a, x) => a + x.total, 0);
+  // suggestion when nothing is picked: the first mission not passed yet
+  const suggest = ms.find((x) => !x.complete) ?? null;
 
   return (
     <div className="page">
@@ -30,13 +36,13 @@ export default function Today() {
           <span className="kicker">ยินดีต้อนรับ</span>
           <h1 className="welcome-title">ฝึกภาษาอังกฤษไว้คุยกับเพื่อนต่างชาติในเกม</h1>
           <ol className="steps">
-            <li><b>ทำภารกิจ 5 อย่างด้านล่าง</b> ตามจังหวะของตัวเอง ไม่ต้องรีบ ระบบจะพาไปทีละขั้น</li>
-            <li><b>ครบ 4 ทักษะ ฟัง พูด อ่าน เขียน</b> ประโยคที่ยังพลาดจะวนกลับมาให้ฝึกอีกเอง</li>
+            <li><b>เลือก Mission ตามหมวด</b> เช่น ทักทาย คอลในเกม หาเพื่อน แล้วฝึกตามจังหวะของตัวเอง ไม่มีรีเซ็ตรายวัน</li>
+            <li><b>ครบ 4 ทักษะ ฟัง พูด อ่าน เขียน</b> ตอบถูกครบทุกประโยคในหมวด = ผ่าน Mission</li>
             <li><b>ทุกอย่างฟรี</b> ใช้ได้ทั้งคอมและมือถือ ความคืบหน้าเก็บในบัญชี เล่นต่อได้ทุกเครื่อง</li>
           </ol>
           <div className="row">
-            <button type="button" className="btn btn-primary" onClick={() => { setSettings({ onboarded: true }); navigate('listen'); }}>
-              เริ่มภารกิจแรก <Icon name="arrow" />
+            <button type="button" className="btn btn-primary" onClick={() => setSettings({ onboarded: true, mission: suggest?.c ?? null })}>
+              เริ่ม Mission แรก <Icon name="arrow" />
             </button>
             <button type="button" className="btn btn-ghost" onClick={() => setSettings({ onboarded: true })}>ดูภาพรวมก่อน</button>
           </div>
@@ -44,54 +50,44 @@ export default function Today() {
       ) : (
         <section className="card hero" data-reveal>
           <div className="hero-copy">
-            <span className="kicker">วันนี้</span>
+            <span className="kicker">{m ? 'Mission ที่เล่นอยู่' : 'ฝึกรวมทุกหมวด'}</span>
             <h1 className="hero-title">
-              {next ? <>{done === 0 && pct === 0 ? 'เริ่มที่' : 'ต่อด้วย'}<br /><span className="hl">{next.label}</span></> : <>ครบทุกภารกิจแล้ว<br /><span className="hl">GG! เจอกันพรุ่งนี้</span></>}
+              {m ? <><span aria-hidden="true">{m.icon}</span> <span className="hl">{m.name}</span></> : <>เลือก Mission<br /><span className="hl">ที่อยากฝึกด้านล่าง</span></>}
             </h1>
-            <p className="muted">
-              {done}/{MISSIONS.length} ภารกิจ · {streak > 0 ? 'ฝึกต่อเนื่อง ' + streak + ' วัน' : 'เริ่มนับวันต่อเนื่องวันนี้เลย'}
-            </p>
-            {next ? (
-              <button type="button" className="btn btn-primary btn-lg" onClick={() => navigate(next.k)}>
-                <Icon name={PAGES[next.k].icon} /> ไปที่{PAGES[next.k].th} <Icon name="arrow" />
-              </button>
+            {m ? (
+              <>
+                <MissionBar m={m} />
+                <p className="muted">
+                  {m.complete ? 'ผ่าน Mission นี้แล้ว! ทบทวนต่อหรือเลือก Mission ใหม่ได้เลย' : 'ผ่านแล้ว ' + m.done + ' จาก ' + m.total + ' ประโยค'}
+                  {streak > 0 ? ' · ฝึกต่อเนื่อง ' + streak + ' วัน' : ''}
+                </p>
+                <div className="row">
+                  {(readOnlyMission(m.c) ? (['read'] as Route[]) : MODES).map((r, i) => (
+                    <button key={r} type="button" className={'btn ' + (i === 0 ? 'btn-primary' : 'btn-ghost')} onClick={() => navigate(r)}>
+                      <Icon name={PAGES[r].icon} /> {PAGES[r].th}
+                    </button>
+                  ))}
+                </div>
+              </>
             ) : (
-              <button type="button" className="btn btn-ghost btn-lg" onClick={() => navigate('read')}>ฝึกอ่านเพิ่มอีกรอบ</button>
+              <>
+                <p className="muted">หรือกดเมนูด้านข้างเพื่อฝึกรวมทุกหมวดเลย{streak > 0 ? ' · ฝึกต่อเนื่อง ' + streak + ' วัน' : ''}</p>
+                {suggest ? (
+                  <button type="button" className="btn btn-primary btn-lg" onClick={() => setSettings({ mission: suggest.c })}>
+                    <span aria-hidden="true">{suggest.icon}</span> เริ่ม Mission {suggest.short} <Icon name="arrow" />
+                  </button>
+                ) : null}
+              </>
             )}
           </div>
-          <div className="ring" style={{ ['--p' as string]: String(pct) }} role="img" aria-label={'ทำภารกิจวันนี้ไปแล้ว ' + Math.round(pct * 100) + '%'}>
-            <span className="ring-num num">{Math.round(pct * 100)}<small>%</small></span>
-            <span className="ring-label">ของวันนี้</span>
+          <div className="ring" style={{ ['--p' as string]: String(overall) }} role="img" aria-label={'ผ่านทุก Mission ไปแล้ว ' + Math.round(overall * 100) + '%'}>
+            <span className="ring-num num">{Math.round(overall * 100)}<small>%</small></span>
+            <span className="ring-label">ของทั้งหมด</span>
           </div>
         </section>
       )}
 
-      <LevelCard />
-
-      <section className="card" data-reveal>
-        <div className="section-head">
-          <h2>ภารกิจวันนี้</h2>
-        </div>
-        <ul className="missions">
-          {MISSIONS.map((m) => {
-            const n = Math.min(day[m.k], m.goal);
-            const complete = n >= m.goal;
-            return (
-              <li key={m.k} className={'mission' + (complete ? ' is-done' : '') + (next?.k === m.k ? ' is-next' : '')}>
-                <a href={'#' + m.k} className="mission-link">
-                  <span className="mission-icon"><Icon name={complete ? 'check' : PAGES[m.k].icon} /></span>
-                  <span className="mission-body">
-                    <span className="mission-title">{m.label}</span>
-                    <span className="mission-meta"><b className="num">{n}/{m.goal}</b> {m.unit}</span>
-                    <Bar value={n / m.goal} tone={complete ? 'good' : 'accent'} />
-                  </span>
-                  <Icon name="arrow" />
-                </a>
-              </li>
-            );
-          })}
-        </ul>
-      </section>
+      <MissionBoard />
 
       <section className="stats" data-reveal>
         <div className="stat"><b className="num">{learned}</b><span>ประโยคที่เคยฝึก<br />จาก {PHRASES.length}</span></div>

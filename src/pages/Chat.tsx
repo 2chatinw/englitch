@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { SCENARIOS, chatPrompt } from '../data/content';
 import { Icon } from '../components/Icon';
-import { Bar, MissionDone, MissionPill, PageHead, SpeakButton } from '../components/ui';
+import { PageHead, SpeakButton } from '../components/ui';
 import { useProgress } from '../state/progress';
 import { useToast } from '../state/toast';
 import { useSession } from '../state/session';
@@ -26,10 +26,9 @@ export default function Chat() {
 
   return (
     <div className="page">
-      <PageHead route="chat" aside={<MissionPill k="chat" />}>
+      <PageHead route="chat" aside={<span className="pill num">วันนี้ {day.chat} ข้อความ</span>}>
         ฝึกคุยจริงกับ AI ฟรี ผ่าน Claude หรือ ChatGPT AI จะเล่นเป็นเพื่อนต่างชาติ และช่วยแก้ประโยคให้เป็นภาษาไทย
       </PageHead>
-      <MissionDone k="chat" />
 
       <section className="card" data-reveal>
         <div className="section-head"><h2><span className="step-n num">1</span> เลือกคนที่จะคุยด้วย</h2></div>
@@ -72,10 +71,9 @@ export default function Chat() {
       </section>
 
       <section className="card" data-reveal>
-        <div className="section-head"><h2><span className="step-n num">4</span> นับข้อความเพื่อเก็บภารกิจ</h2></div>
-        <Bar value={Math.min(1, day.chat / 6)} label="ภารกิจแชตวันนี้" />
+        <div className="section-head"><h2><span className="step-n num">4</span> นับข้อความที่ส่ง</h2></div>
         <div className="row between">
-          <span className="muted small">ส่งข้อความภาษาอังกฤษไปแล้วกี่ข้อความ กดนับทีละข้อความ</span>
+          <span className="muted small">ส่งข้อความภาษาอังกฤษไปแล้ว กดนับทีละข้อความ นับเป็นวันที่ฝึกต่อเนื่องด้วย</span>
           <button type="button" className="btn btn-ghost btn-sm" onClick={() => gain('chat', 4)}>+1 ข้อความ</button>
         </div>
       </section>

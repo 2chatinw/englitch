@@ -38,9 +38,13 @@ npm run build   # tsc -b && vite build → dist/
   recognition, so it falls back to keyboard/Win+H voice typing), `Read.tsx` (situations + meanings, multiple choice),
   `Write.tsx` (Thai → type English, two-step hints), `Chat.tsx`. Flashcards were removed (owner's choice, Nov 2026);
   `remember()` in `state/progress.tsx` keeps a spaced-review schedule from right/wrong answers in every mode.
+- Missions (no daily missions any more, owner's choice): one mission per phrase topic (`lib/missions.ts`,
+  `components/Missions.tsx`). Passed when every phrase in the topic was answered right once, in any mode. The active
+  mission is `settings.mission`; practice then draws only from that topic, short sentences first (3 stages = levels).
+  The slang mission is reading-only. No mission = mixed practice from every topic.
 - Levels: each phrase's level comes from its word count (`data/content.ts`: 1–3 easy, 4–5 medium, 6+ hard).
-  `pages/practice.ts` picks sentences from the active levels; in auto mode medium opens after 25 easy sentences answered
-  right, hard after 20 medium (`UNLOCK`). Settings can fix one level. Today page shows it (`components/LevelCard.tsx`).
+  In mixed practice, auto mode opens medium after 25 easy right answers and hard after 20 medium (`UNLOCK` in
+  `pages/practice.ts`). Settings can fix one level (applies inside missions too).
 - Owner's preferences: no timers or "minutes per day" anywhere (no pressure), no XP or levels-as-score on screen,
   night mode is pure black. The 3-second auto-next after a right answer stays (owner asked for it).
 - Styles: `src/styles.css` (base + tokens), `src/theme.css` (logo retheme, wipe, hero), `src/nav.css` (navbars, logo, sign-in, app shell) — loaded last.

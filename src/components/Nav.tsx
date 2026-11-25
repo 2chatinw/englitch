@@ -3,7 +3,7 @@ import gsap from 'gsap';
 import { Icon } from './Icon';
 import { PAGES, ROUTES, type Route } from '../lib/router';
 import { useProgress } from '../state/progress';
-import { MISSIONS } from '../data/content';
+import { allMissions } from '../lib/missions';
 import { prefersReducedMotion } from '../lib/util';
 import { Brand, useScrolled } from './Brand';
 import { ThemeToggle } from './ThemeToggle';
@@ -17,31 +17,31 @@ function Streak({ n }: { n: number }) {
   );
 }
 
-/** Today's progress for a menu item: one mission's count, or (for the lobby) all missions together. */
+/**
+ * Ring for a menu item: the lobby's ring fills with progress across all missions (nothing resets daily);
+ * the practice modes have no ring of their own (`p: null`).
+ */
 function useQuest() {
-  const { day } = useProgress();
-  return (r: Route) => {
-    if (r === 'today') {
-      const goal = MISSIONS.reduce((s, m) => s + m.goal, 0);
-      const got = MISSIONS.reduce((s, m) => s + Math.min(day[m.k], m.goal), 0);
-      const done = MISSIONS.filter((m) => day[m.k] >= m.goal).length;
-      return { p: got / goal, done: done === MISSIONS.length, text: 'ภารกิจครบ ' + done + ' จาก ' + MISSIONS.length };
-    }
-    const m = MISSIONS.find((x) => x.k === r)!;
-    const n = Math.min(day[m.k], m.goal);
-    return { p: n / m.goal, done: n >= m.goal, text: 'วันนี้ ' + n + ' จาก ' + m.goal + ' ' + m.unit };
-  };
+  const { state } = useProgress();
+  const ms = allMissions(state);
+  const passed = ms.filter((m) => m.complete).length;
+  const overall = ms.reduce((a, m) => a + m.done, 0) / ms.reduce((a, m) => a + m.total, 0);
+  return (r: Route): { p: number | null; done: boolean; text: string } => r === 'today'
+    ? { p: overall, done: passed === ms.length, text: 'ผ่าน Mission ' + passed + ' จาก ' + ms.length }
+    : { p: null, done: false, text: '' };
 }
 
-/** The menu icon inside a quest ring that fills with today's progress; a green ring and a tick once done. */
-function QuestRing({ icon, p, done, lobby }: { icon: Route; p: number; done: boolean; lobby?: boolean }) {
+/** The menu icon, inside a progress ring when there is progress to show; a green ring and a tick once done. */
+function QuestRing({ icon, p, done, lobby }: { icon: Route; p: number | null; done: boolean; lobby?: boolean }) {
   return (
-    <span className={'qring' + (done ? ' is-done' : '') + (lobby ? ' is-lobby' : '')} aria-hidden="true">
-      <svg className="qring-svg" viewBox="0 0 40 40">
-        <circle className="qring-track" cx="20" cy="20" r="17" />
-        <circle className="qring-fill" cx="20" cy="20" r="17" pathLength="100"
-          style={{ strokeDasharray: `${Math.max(0, Math.min(1, p)) * 100} 100`, strokeOpacity: p > 0 ? 1 : 0 }} />
-      </svg>
+    <span className={'qring' + (done ? ' is-done' : '') + (lobby ? ' is-lobby' : '') + (p === null ? ' is-plain' : '')} aria-hidden="true">
+      {p !== null ? (
+        <svg className="qring-svg" viewBox="0 0 40 40">
+          <circle className="qring-track" cx="20" cy="20" r="17" />
+          <circle className="qring-fill" cx="20" cy="20" r="17" pathLength="100"
+            style={{ strokeDasharray: `${Math.max(0, Math.min(1, p)) * 100} 100`, strokeOpacity: p > 0 ? 1 : 0 }} />
+        </svg>
+      ) : null}
       <Icon name={PAGES[icon].icon} />
       {done ? <span className="qring-tick"><Icon name="check" /></span> : null}
     </span>
@@ -89,11 +89,11 @@ export function QuestRail({ route }: { route: Route }) {
           const q = quest(r);
           return (
             <div key={r} className="rail-slot">
-              <a href={'#' + r} className="rail-item" title={PAGES[r].th + ' · ' + q.text}
+              <a href={'#' + r} className="rail-item" title={PAGES[r].th + (q.text ? ' · ' + q.text : '')}
                 aria-current={r === route ? 'page' : undefined}>
                 <QuestRing icon={r} p={q.p} done={q.done} lobby={r === 'today'} />
                 <span className="rail-label">{PAGES[r].short}</span>
-                <span className="sr-only">{PAGES[r].th}, {q.text}</span>
+                <span className="sr-only">{PAGES[r].th}{q.text ? ', ' + q.text : ''}</span>
               </a>
               {r === 'today' ? <hr className="rail-sep" /> : null}
             </div>
@@ -138,7 +138,7 @@ export function BottomBar({ route }: { route: Route }) {
             <a key={r} href={'#' + r} className="bottom-link" aria-current={r === route ? 'page' : undefined}>
               <QuestRing icon={r} p={q.p} done={q.done} lobby={r === 'today'} />
               <span>{PAGES[r].short}</span>
-              <span className="sr-only">, {q.text}</span>
+              {q.text ? <span className="sr-only">, {q.text}</span> : null}
             </a>
           );
         })}

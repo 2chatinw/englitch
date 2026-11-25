@@ -508,15 +508,6 @@ export function chatPrompt(sc: Scenario): string {
 
 export type Kind = 'listen' | 'speak' | 'read' | 'write' | 'chat';
 
-export interface Mission { k: Kind; label: string; unit: string; goal: number }
-
-export const MISSIONS: Mission[] = [
-  { k: 'listen', label: 'ฟังแล้วพิมพ์ตาม', unit: 'ประโยค', goal: 10 },
-  { k: 'speak', label: 'ฝึกพูดออกเสียง', unit: 'ประโยค', goal: 10 },
-  { k: 'read', label: 'อ่านแล้วเลือกคำตอบ', unit: 'ข้อ', goal: 10 },
-  { k: 'write', label: 'เขียนประโยคจากภาษาไทย', unit: 'ประโยค', goal: 10 },
-  { k: 'chat', label: 'คุยภาษาอังกฤษกับ AI', unit: 'ข้อความ', goal: 6 },
-];
 
 /** Days until a sentence comes back for review, by how many times in a row it was right. */
 export const INTERVALS = [0, 1, 2, 4, 7, 15, 30];

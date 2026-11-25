@@ -242,18 +242,6 @@ textarea { resize: vertical; }
 .welcome-title { font-size: clamp(1.5rem, 4.6vw, 2.1rem); font-weight: 700; }
 .steps { margin: 0; padding-left: 1.25em; display: flex; flex-direction: column; gap: 6px; color: var(--muted); }
 .steps b { color: var(--ink); }
-.missions { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
-.mission + .mission { border-top: 1px solid var(--line); }
-.mission-link { display: flex; align-items: center; gap: 14px; padding: 12px 4px; text-decoration: none; border-radius: var(--r-sm); }
-.mission-link:hover .mission-title { color: var(--accent); }
-.mission-icon { display: grid; place-items: center; width: 42px; height: 42px; flex: none; border-radius: 12px; background: var(--surface-2); color: var(--muted); }
-.mission.is-next .mission-icon { background: var(--accent); color: var(--accent-ink); }
-.mission.is-done .mission-icon { background: var(--good-soft); color: var(--good); }
-.mission-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
-.mission-title { font-weight: 600; }
-.mission-meta { font-size: .85rem; color: var(--muted); }
-.mission-meta b { font-size: 1rem; color: var(--ink); }
-.mission-link > .icon:last-child { color: var(--muted); }
 .stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
 .stat { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 14px; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 .stat b { font-size: 2.3rem; font-weight: 800; line-height: 1; }
@@ -494,28 +482,45 @@ input[type="email"]:focus, input[type="password"]:focus { outline: none; border-
 @keyframes auto-fill { from { transform: scaleX(0); } to { transform: scaleX(1); } }
 @media (prefers-reduced-motion: reduce) { .auto-bar { animation: none; transform: scaleX(1); opacity: .5; } }
 
-/* ---------- Sentence levels on the Today page: three badges joined like a quest path ---------- */
-.lvl-steps { list-style: none; margin: 0; padding: 4px 0 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
-.lvl-step { position: relative; display: flex; flex-direction: column; align-items: center; gap: 4px; text-align: center; min-width: 0; }
-.lvl-link { position: absolute; top: 24px; right: 50%; width: 100%; height: 4px; border-radius: 4px; background: var(--line); z-index: 0; }
-.lvl-step.is-open .lvl-link { background: var(--good); }
-.lvl-badge {
-  position: relative; z-index: 1; display: grid; place-items: center; width: 50px; height: 50px; border-radius: 16px;
-  font-family: var(--f-display); font-size: 1.4rem; transform: rotate(-4deg);
-  background: var(--surface-2); color: var(--muted); border: 2px solid var(--line);
+
+/* ---------- Missions (one per phrase topic, nothing resets daily) ---------- */
+/* three-stage bar: short / longer / long sentences, each filling in its own colour */
+.mbar { display: flex; gap: 3px; width: 100%; height: 9px; }
+.mbar-seg { position: relative; flex-basis: 0; min-width: 8px; border-radius: 99px; background: var(--surface-2); overflow: hidden; }
+.mbar-seg i { position: absolute; inset: 0 auto 0 0; border-radius: inherit; transition: width .6s cubic-bezier(.22, 1, .36, 1); }
+.mbar-easy i { background: var(--good); }
+.mbar-medium i { background: var(--sun-2); }
+.mbar-hard i { background: var(--hot); }
+.hero .mbar { max-width: 360px; }
+
+.mchip { text-decoration: none; color: inherit; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+.mchip:hover { border-color: var(--accent); }
+.mstrip { display: flex; flex-direction: column; gap: 10px; }
+
+.mboard { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+@media (max-width: 640px) { .mboard { grid-template-columns: 1fr; } }
+.mcard { display: flex; flex-direction: column; border-radius: var(--r-sm); border: 2px solid var(--line); background: var(--surface); transition: border-color .2s, box-shadow .2s; min-width: 0; }
+.mcard.is-on { border-color: var(--accent); box-shadow: 0 8px 22px -12px var(--accent); grid-column: 1 / -1; }
+.mcard.is-done { border-color: color-mix(in srgb, var(--good) 55%, var(--line)); }
+.mcard-pick {
+  all: unset; box-sizing: border-box; cursor: pointer; display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: inherit;
 }
-.lvl-step:nth-child(2) .lvl-badge { transform: rotate(3deg); }
-.lvl-step:nth-child(3) .lvl-badge { transform: rotate(-2deg); }
-.lvl-badge .icon { width: 20px; height: 20px; }
-.lvl-easy.is-open .lvl-badge { background: #3FD08F; border-color: #14965A; color: #0B3A24; }
-.lvl-medium.is-open .lvl-badge { background: var(--sun); border-color: var(--sun-edge); color: #15275C; }
-.lvl-hard.is-open .lvl-badge { background: #FF8A65; border-color: #D9542B; color: #3A1206; }
-.lvl-step.is-open .lvl-badge { box-shadow: 0 4px 0 color-mix(in srgb, currentColor 30%, transparent); }
-.lvl-step.is-current .lvl-badge { animation: lvl-bob 2.6s ease-in-out infinite; outline: 3px solid var(--accent); outline-offset: 3px; }
-.lvl-name { font-weight: 600; }
-.lvl-step.is-locked .lvl-name { color: var(--muted); }
-.lvl-sub { font-size: .75rem; color: var(--muted); }
-.lvl-next { display: flex; flex-direction: column; gap: 6px; }
-.lvl-next .bar { flex: none; }
-@keyframes lvl-bob { 0%, 100% { translate: 0 0; } 50% { translate: 0 -4px; } }
-@media (prefers-reduced-motion: reduce) { .lvl-step.is-current .lvl-badge { animation: none; } }
+.mcard-pick:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.mcard-pick:hover .mcard-title { color: var(--accent); }
+.mcard-icon {
+  display: grid; place-items: center; width: 46px; height: 46px; flex: none; border-radius: 14px; font-size: 1.5rem;
+  background: var(--surface-2); transform: rotate(-4deg); transition: transform .25s cubic-bezier(.34, 1.56, .64, 1);
+}
+.mcard-pick:hover .mcard-icon, .mcard.is-on .mcard-icon { transform: rotate(0) scale(1.06); }
+.mcard.is-done .mcard-icon { background: var(--good-soft); }
+.mcard-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 5px; }
+.mcard-title { font-weight: 600; line-height: 1.3; overflow-wrap: anywhere; }
+.mcard-meta { display: inline-flex; align-items: center; gap: 4px; flex-wrap: wrap; font-size: .82rem; color: var(--muted); }
+.mcard-meta b { color: var(--ink); }
+.mcard.is-done .mcard-meta { color: var(--good); font-weight: 600; }
+.mcard-meta .icon { width: 15px; height: 15px; }
+.mcard-modes { display: flex; flex-wrap: wrap; gap: 8px; padding: 0 12px 12px; }
+@media (prefers-reduced-motion: reduce) { .mcard-icon, .mbar-seg i { transition: none; } }
+
+/* menu items without a progress ring: the icon sits in a soft circle */
+.qring.is-plain { border-radius: 50%; background: color-mix(in srgb, var(--surface-2) 70%, transparent); }

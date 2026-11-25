@@ -1,8 +1,9 @@
 import { useEffect, useRef } from 'react';
 import { PHRASES } from '../data/content';
 import { Icon } from '../components/Icon';
-import { Bar, MissionDone, MissionPill, NextButton, PageHead, Result, SpeakButton, WordDiff } from '../components/ui';
+import { NextButton, PageHead, Result, SpeakButton, WordDiff } from '../components/ui';
 import { useProgress } from '../state/progress';
+import { MissionChip, MissionStrip } from '../components/Missions';
 import { useSession } from '../state/session';
 import { compare, firstLetters, type Comparison } from '../lib/compare';
 import { say } from '../lib/speech';
@@ -13,7 +14,7 @@ interface Sess { id: string; typed: string; hint: 0 | 1 | 2; result: Comparison 
 const byId = new Map(PHRASES.map((p) => [p.e, p]));
 
 export default function Listen() {
-  const { state, day, gain, remember } = useProgress();
+  const { state, gain, remember } = useProgress();
   const toast = useToast();
   const [s, setS] = useSession<Sess>('listen', () => ({ id: pickSentence(state).e, typed: '', hint: 0, result: null, started: false, plays: 0 }));
   const p = byId.get(s.id)!;
@@ -46,12 +47,11 @@ export default function Listen() {
 
   return (
     <div className="page">
-      <PageHead route="listen" aside={<MissionPill k="listen" />}>
+      <PageHead route="listen" aside={<MissionChip />}>
         กดฟัง แล้วพิมพ์ประโยคที่ได้ยิน ไม่ต้องสนใจตัวพิมพ์ใหญ่และเครื่องหมายวรรคตอน
       </PageHead>
-      <MissionDone k="listen" />
       <section className="card play" data-reveal>
-        <Bar value={Math.min(1, day.listen / 10)} label="ภารกิจฝึกฟังวันนี้" />
+        <MissionStrip route="listen" />
         <div className="listen-deck">
           <button type="button" className="play-btn" onClick={() => play()} aria-label="ฟังประโยค">
             <Icon name="speaker" size={34} />

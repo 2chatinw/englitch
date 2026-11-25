@@ -1,8 +1,9 @@
 import { LEVELS, PHRASES, SENTENCES, type Level, type Phrase } from '../data/content';
 import type { State } from '../state/progress';
 import { pick, today } from '../lib/util';
+import { activeMission, missionStats, readOnlyMission } from '../lib/missions';
 
-/** How many sentences of a level must be answered right (at least once) to open the next level. */
+/** Mixed practice (no mission): right answers needed at one level to open the next (auto mode). */
 export const UNLOCK: Record<Exclude<Level, 'easy'>, { from: Level; need: number }> = {
   medium: { from: 'easy', need: 25 },
   hard: { from: 'medium', need: 20 },
@@ -10,48 +11,57 @@ export const UNLOCK: Record<Exclude<Level, 'easy'>, { from: Level; need: number 
 
 const learnedIn = (state: State, lv: Level) => SENTENCES.filter((p) => p.l === lv && (state.srs[p.e]?.b ?? 0) >= 1).length;
 
-/** Where the player stands: which levels are open, and how far they are from opening the next one. */
+/** Levels opened so far in mixed practice, and the level chosen in settings (if any). */
 export function levelStatus(state: State) {
   const open: Level[] = ['easy'];
   if (learnedIn(state, 'easy') >= UNLOCK.medium.need) open.push('medium');
   if (open.includes('medium') && learnedIn(state, 'medium') >= UNLOCK.hard.need) open.push('hard');
-  const top = open[open.length - 1];
   const next = LEVELS.find((x) => !open.includes(x.k))?.k as Exclude<Level, 'easy'> | undefined;
   const fixed = state.settings.level === 'auto' ? null : state.settings.level;
-  return {
-    open, top, next, fixed,
-    /** right-answered sentences of the level that opens `next`, and how many it takes */
-    have: next ? learnedIn(state, UNLOCK[next].from) : 0,
-    need: next ? UNLOCK[next].need : 0,
-  };
-}
-
-/** The levels being practised now: the one chosen in settings, or every level opened so far. */
-export function activeLevels(state: State): Level[] {
-  const st = levelStatus(state);
-  return st.fixed ? [st.fixed] : st.open;
-}
-
-/** Phrases (slang included) for the reading mode at the active levels. */
-export function phrasePool(state: State): Phrase[] {
-  const lv = activeLevels(state);
-  return PHRASES.filter((p) => lv.includes(p.l));
+  return { open, top: open[open.length - 1], next, fixed };
 }
 
 /**
- * Next sentence to practise, from the active levels: about half the time one that is due for review
- * (missed before, or its review day has come), otherwise mostly ones not met yet — in auto mode
- * leaning on the newest level opened, so a level-up is felt straight away.
+ * What can come up now. With a mission: that topic only, every level (the mission walks from short to
+ * long sentences by itself), or just the level fixed in settings. Without one: every topic, at the
+ * levels opened so far (or the fixed level).
+ */
+function pool(state: State, withSlang: boolean): Phrase[] {
+  const m = activeMission(state);
+  const st = levelStatus(state);
+  const base = withSlang ? PHRASES : SENTENCES;
+  if (m && (withSlang || !readOnlyMission(m))) {
+    const inMission = base.filter((p) => p.c === m);
+    const fixed = st.fixed ? inMission.filter((p) => p.l === st.fixed) : [];
+    return fixed.length ? fixed : inMission;
+  }
+  const lv = st.fixed ? [st.fixed] : st.open;
+  return base.filter((p) => lv.includes(p.l));
+}
+
+/** Phrases (slang included) for the reading mode. */
+export const phrasePool = (state: State) => pool(state, true);
+
+/**
+ * Next sentence: about half the time one due for review, otherwise mostly one not met yet — in a
+ * mission from its current stage (the shortest sentences not done), in mixed practice leaning on the
+ * newest level opened.
  */
 export function pickSentence(state: State, prev?: string): Phrase {
   const t = today();
-  const lv = activeLevels(state);
-  const pool = SENTENCES.filter((p) => lv.includes(p.l) && p.e !== prev);
-  const due = pool.filter((p) => state.srs[p.e] && state.srs[p.e].d <= t);
-  const unseen = pool.filter((p) => !state.srs[p.e]);
-  const newest = unseen.filter((p) => p.l === lv[lv.length - 1]);
+  const all = pool(state, false).filter((p) => p.e !== prev);
+  const due = all.filter((p) => state.srs[p.e] && state.srs[p.e].d <= t);
+  const unseen = all.filter((p) => !state.srs[p.e]);
+  const m = activeMission(state);
+  const stage = m && !readOnlyMission(m) ? missionStats(state, m).stage : levelStatus(state).top;
+  const focus = unseen.filter((p) => p.l === stage);
+  // in a mission, sentences answered wrong before also count as "not done" for the stage
+  const notDone = m ? all.filter((p) => (state.srs[p.e]?.b ?? 0) < 1 && p.l === stage) : [];
   const r = Math.random();
   if (due.length && r < 0.5) return pick(due);
-  if (unseen.length && r < 0.85) return pick(newest.length && Math.random() < 0.7 ? newest : unseen);
-  return pick(pool.length ? pool : SENTENCES);
+  if (r < 0.85) {
+    if (notDone.length) return pick(notDone);
+    if (unseen.length) return pick(focus.length && Math.random() < 0.7 ? focus : unseen);
+  }
+  return pick(all.length ? all : SENTENCES);
 }

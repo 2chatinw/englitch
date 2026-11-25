@@ -11,7 +11,7 @@ import { Splash } from './components/Login';
 import Landing from './pages/Landing';
 import { Backdrop } from './components/Backdrop';
 import Today from './pages/Today';
-import { useLevelUpToast } from './components/LevelCard';
+import { useProgressToasts } from './components/Missions';
 import Listen from './pages/Listen';
 import Speak from './pages/Speak';
 import Read from './pages/Read';
@@ -22,7 +22,7 @@ const PAGES: Record<Route, ComponentType> = { today: Today, listen: Listen, spea
 
 function Shell() {
   const route = useRoute();
-  useLevelUpToast();
+  useProgressToasts();
   const [settings, setSettings] = useState(false);
   const openSettings = useCallback(() => setSettings(true), []);
   const closeSettings = useCallback(() => setSettings(false), []);

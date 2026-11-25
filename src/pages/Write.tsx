@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useRef } from 'react';
 import { PHRASES } from '../data/content';
 import { Icon } from '../components/Icon';
-import { Bar, MissionDone, MissionPill, NextButton, PageHead, Result, SpeakButton, WordDiff } from '../components/ui';
+import { NextButton, PageHead, Result, SpeakButton, WordDiff } from '../components/ui';
 import { useProgress } from '../state/progress';
+import { MissionChip, MissionStrip } from '../components/Missions';
 import { useSession } from '../state/session';
 import { compare, firstLetters, type Comparison } from '../lib/compare';
 import { useToast } from '../state/toast';
@@ -17,7 +18,7 @@ const byId = new Map(PHRASES.map((p) => [p.e, p]));
  * shuffled, which can be tapped into the answer). Checked word by word like the listening mode.
  */
 export default function Write() {
-  const { state, day, gain, remember } = useProgress();
+  const { state, gain, remember } = useProgress();
   const toast = useToast();
   const [s, setS] = useSession<Sess>('write', () => ({ id: pickSentence(state).e, typed: '', hint: 0, result: null }));
   const p = byId.get(s.id)!;
@@ -54,12 +55,11 @@ export default function Write() {
 
   return (
     <div className="page">
-      <PageHead route="write" aside={<MissionPill k="write" />}>
+      <PageHead route="write" aside={<MissionChip />}>
         อ่านภาษาไทย แล้วเขียนเป็นประโยคภาษาอังกฤษ ไม่ต้องสนใจตัวพิมพ์ใหญ่และเครื่องหมายวรรคตอน
       </PageHead>
-      <MissionDone k="write" />
       <section className="card play" data-reveal>
-        <Bar value={Math.min(1, day.write / 10)} label="ภารกิจฝึกเขียนวันนี้" />
+        <MissionStrip route="write" />
         <div className="say-line">
           <span className="kicker">เขียนเป็นภาษาอังกฤษ</span>
           <p className="say-en write-th">{p.t}</p>

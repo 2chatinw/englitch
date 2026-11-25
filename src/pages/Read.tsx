@@ -2,13 +2,15 @@ import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { PHRASES, SITUATIONS } from '../data/content';
 import { Icon } from '../components/Icon';
-import { Bar, Kbd, MissionDone, MissionPill, NextButton, PageHead, Result, SpeakButton } from '../components/ui';
+import { Bar, Kbd, NextButton, PageHead, Result, SpeakButton } from '../components/ui';
+import { MissionChip, MissionStrip } from '../components/Missions';
 import { useProgress, type State } from '../state/progress';
 import { useSession } from '../state/session';
 import { shuffle, prefersReducedMotion } from '../lib/util';
 import { say } from '../lib/speech';
 import { navigate } from '../lib/router';
 import { phrasePool } from './practice';
+import { activeMission } from '../lib/missions';
 
 /** `id` is the phrase a question is about, so a right or wrong answer feeds its review schedule. */
 interface Q { prompt: string; sub?: string; answer: string; options: string[]; say?: string; why?: string; id?: string }
@@ -17,20 +19,28 @@ interface Sess { qs: Q[]; i: number; score: number; picked: string | null; misse
 
 const ascii = (s: string) => /^[\x20-\x7E]+$/.test(s);
 
+const LEVEL_RANK = { easy: 0, medium: 1, hard: 2 } as const;
+
 /**
- * One reading round: 4 game situations plus 6 sentences at the player's level (meaning either way),
- * half from sentences already practised and half new ones when there are enough.
+ * One reading round of 10. Mixed practice: 4 game situations plus 6 sentences (meaning either way).
+ * In a mission: 10 sentences from that topic, mostly ones not answered right yet, shortest first,
+ * plus a few already learned to keep them fresh.
  */
 function makeRound(state: State): Q[] {
-  const qs: Q[] = shuffle(SITUATIONS).slice(0, 4).map((s) => ({
+  const inMission = activeMission(state) !== null;
+  const nSit = inMission ? 0 : 4;
+  const qs: Q[] = shuffle(SITUATIONS).slice(0, nSit).map((s) => ({
     prompt: s.q, sub: 'สถานการณ์', answer: s.a, options: shuffle([s.a, ...s.o]),
     say: s.say || (ascii(s.a) ? s.a : undefined), why: s.why,
   }));
+  const n = 10 - nSit;
   const levelPool = phrasePool(state);
-  const learned = shuffle(levelPool.filter((p) => state.srs[p.e]));
-  const fresh = shuffle(levelPool.filter((p) => !state.srs[p.e]));
-  const base = [...learned.slice(0, 3), ...fresh].slice(0, 6);
-  if (base.length < 6) base.push(...learned.slice(3, 3 + 6 - base.length));
+  const learned = shuffle(levelPool.filter((p) => (state.srs[p.e]?.b ?? 0) >= 1));
+  const todo = shuffle(levelPool.filter((p) => (state.srs[p.e]?.b ?? 0) < 1))
+    .sort((a, b) => (inMission ? LEVEL_RANK[a.l] - LEVEL_RANK[b.l] : 0));
+  const keep = inMission ? 3 : Math.floor(n / 2);
+  const base = [...learned.slice(0, keep), ...todo].slice(0, n);
+  if (base.length < n) base.push(...learned.slice(keep, keep + n - base.length));
   base.forEach((p, i) => {
     const enToTh = i % 2 === 0;
     const key = enToTh ? 't' : 'e';
@@ -39,7 +49,8 @@ function makeRound(state: State): Q[] {
     for (const x of pool) { if (opts.length >= 3) break; if (x[key] !== p[key] && !opts.includes(x[key])) opts.push(x[key]); }
     if (enToTh) qs.push({ prompt: '"' + p.e + '" แปลว่าอะไร', sub: 'ความหมาย', answer: p.t, options: shuffle([p.t, ...opts]), say: p.s, id: p.e });
     else qs.push({
-      prompt: p.c === 'slang' ? 'ศัพท์แชตไหนหมายถึง "' + p.t + '"' : 'ถ้าจะบอกว่า "' + p.t + '" พูดว่าอะไร',
+      // slang meanings start with the English full form ("got to go = ต้องไปแล้ว"): show only the Thai, or it gives the answer away
+      prompt: p.c === 'slang' ? 'ศัพท์แชตไหนหมายถึง "' + p.t.split('=').pop()!.trim() + '"' : 'ถ้าจะบอกว่า "' + p.t + '" พูดว่าอะไร',
       sub: 'เลือกประโยค', answer: p.e, options: shuffle([p.e, ...opts]), say: p.s, id: p.e,
     });
   });
@@ -83,8 +94,8 @@ export default function Read() {
   if (!s) {
     return (
       <div className="page">
-        <PageHead route="read" aside={<MissionPill k="read" />}>อ่านสถานการณ์หรือประโยค แล้วเลือกคำตอบที่ถูก รอบละ 10 ข้อ</PageHead>
-        <MissionDone k="read" />
+        <PageHead route="read" aside={<MissionChip />}>อ่านสถานการณ์หรือประโยค แล้วเลือกคำตอบที่ถูก รอบละ 10 ข้อ</PageHead>
+        <MissionStrip route="read" />
         <section className="card done-card" data-reveal>
           <span className="done-badge"><Icon name="book" size={28} /></span>
           <h2>พร้อมเริ่มไหม</h2>
@@ -99,8 +110,8 @@ export default function Read() {
     const great = s.score >= 8;
     return (
       <div className="page">
-        <PageHead route="read" aside={<MissionPill k="read" />} />
-        <MissionDone k="read" />
+        <PageHead route="read" aside={<MissionChip />} />
+        <MissionStrip route="read" />
         <section className="card done-card" data-reveal>
           <span className="kicker">{great ? 'เก่งมาก' : 'จบรอบนี้แล้ว'}</span>
           <p className="score num">{s.score}<small>/{s.qs.length}</small></p>
