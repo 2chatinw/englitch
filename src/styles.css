@@ -1,5 +1,5 @@
 /* Englitch — taken from the app logo: bright sky blue, cloud white, sunny yellow ("litch"), the mascot's orange,
-   navy outlines, and chunky rounded type. Dark theme = the same sky at night.
+   navy outlines, and chunky rounded type. Dark theme = pure black (OLED), owner's pick from six night palettes.
    Layout: desktop = top bar + floating quest rail beside a centered content column;
            phone   = top HUD bar + content + thumb-reach bottom tab bar. */
 :root {
@@ -35,8 +35,8 @@
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #0A1838; --surface: #12234D; --surface-2: #1A2F63; --ink: #EEF4FF; --muted: #A2B5DE; --line: #24407E;
-    --accent: #6FA8FF; --accent-ink: #0A1838; --accent-soft: #1B356F; --navy: #0A1838;
+    --bg: #000000; --surface: #121212; --surface-2: #1C1C1E; --ink: #FFFFFF; --muted: #A0A0A8; --line: #2A2A2E;
+    --accent: #7DB0FF; --accent-ink: #000000; --accent-soft: #172338; --navy: #000000;
     --sun: #FFD25A; --sun-2: #FFBE2E; --sun-edge: #C98200; --sun-ink: #1B2A5E;
     --hot: #FF9A4D; --hot-soft: #3D2313; --good: #3FD08F; --good-soft: #0F3A2A; --bad: #FF7C80; --bad-soft: #43181C;
     --near: #FFCB5C; --near-soft: #3A2C10;
@@ -45,8 +45,8 @@
   }
 }
 :root[data-theme="dark"] {
-  --bg: #0A1838; --surface: #12234D; --surface-2: #1A2F63; --ink: #EEF4FF; --muted: #A2B5DE; --line: #24407E;
-  --accent: #6FA8FF; --accent-ink: #0A1838; --accent-soft: #1B356F; --navy: #0A1838;
+  --bg: #000000; --surface: #121212; --surface-2: #1C1C1E; --ink: #FFFFFF; --muted: #A0A0A8; --line: #2A2A2E;
+  --accent: #7DB0FF; --accent-ink: #000000; --accent-soft: #172338; --navy: #000000;
   --sun: #FFD25A; --sun-2: #FFBE2E; --sun-edge: #C98200; --sun-ink: #1B2A5E;
   --hot: #FF9A4D; --hot-soft: #3D2313; --good: #3FD08F; --good-soft: #0F3A2A; --bad: #FF7C80; --bad-soft: #43181C;
   --near: #FFCB5C; --near-soft: #3A2C10;

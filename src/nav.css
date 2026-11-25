@@ -54,8 +54,8 @@ html { scroll-padding-top: 88px; }
   backdrop-filter: saturate(1.5) blur(16px); -webkit-backdrop-filter: saturate(1.5) blur(16px);
   box-shadow: 0 1px 0 color-mix(in srgb, var(--line) 80%, transparent), 0 10px 30px rgba(21, 39, 92, .08);
 }
-:root[data-theme="dark"] .lp-nav { --nav-glass: rgba(10, 24, 56, .78); }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .lp-nav { --nav-glass: rgba(10, 24, 56, .78); } }
+:root[data-theme="dark"] .lp-nav { --nav-glass: rgba(0, 0, 0, .78); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .lp-nav { --nav-glass: rgba(0, 0, 0, .78); } }
 .lp-nav-in {
   max-width: none; height: calc(var(--nav-h) + env(safe-area-inset-top));
   display: flex; align-items: center; gap: 24px;

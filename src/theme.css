@@ -154,13 +154,13 @@ h1, h2, h3, .lp-hero h1, .page-head h1, .lp-head h2, .lp-final h2, .sheet-head h
 @keyframes sky-twinkle { from { scale: .55; opacity: .35; rotate: -12deg; } to { scale: 1; opacity: .95; rotate: 10deg; } }
 
 /* Dark: night sky, dim clouds */
-:root[data-theme="dark"] .bd-sky { background: linear-gradient(180deg, #071330 0%, #0C1D46 55%, #12275A 100%); }
-:root[data-theme="dark"]:has(.bd-sky) body { background: #0C1D46; }
-:root[data-theme="dark"] .sky-cloud { background: #1C3570; opacity: .55; box-shadow: none; }
+:root[data-theme="dark"] .bd-sky { background: linear-gradient(180deg, #000000 0%, #050506 55%, #0B0B0E 100%); }
+:root[data-theme="dark"]:has(.bd-sky) body { background: #000000; }
+:root[data-theme="dark"] .sky-cloud { background: #18181C; opacity: .55; box-shadow: none; }
 @media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) .bd-sky { background: linear-gradient(180deg, #071330 0%, #0C1D46 55%, #12275A 100%); }
-  :root:not([data-theme="light"]):has(.bd-sky) body { background: #0C1D46; }
-  :root:not([data-theme="light"]) .sky-cloud { background: #1C3570; opacity: .55; box-shadow: none; }
+  :root:not([data-theme="light"]) .bd-sky { background: linear-gradient(180deg, #000000 0%, #050506 55%, #0B0B0E 100%); }
+  :root:not([data-theme="light"]):has(.bd-sky) body { background: #000000; }
+  :root:not([data-theme="light"]) .sky-cloud { background: #18181C; opacity: .55; box-shadow: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {
