@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { PHRASES, SITUATIONS } from '../data/content';
 import { Icon } from '../components/Icon';
-import { Bar, Kbd, PageHead, Result, SpeakButton } from '../components/ui';
+import { Bar, Kbd, MissionDone, MissionPill, PageHead, Result, SpeakButton } from '../components/ui';
 import { useProgress, type State } from '../state/progress';
 import { useSession } from '../state/session';
 import { shuffle, prefersReducedMotion } from '../lib/util';
@@ -73,10 +73,11 @@ export default function Quiz() {
   if (!s) {
     return (
       <div className="page">
-        <PageHead route="quiz">ฝึกตัดสินใจว่าจะพูดอะไรในสถานการณ์จริง รอบละ 10 ข้อ ตอบถูกได้ 3 XP</PageHead>
+        <PageHead route="quiz" aside={<MissionPill k="quiz" />}>ฝึกตัดสินใจว่าจะพูดอะไรในสถานการณ์จริง รอบละ 10 ข้อ ตอบถูกได้ 3 XP</PageHead>
+        <MissionDone k="quiz" />
         <section className="card done-card" data-reveal>
           <span className="done-badge"><Icon name="target" size={28} /></span>
-          <h2>พร้อมเข้าแมตช์ไหม</h2>
+          <h2>พร้อมเริ่มไหม</h2>
           <p className="muted">มีทั้งสถานการณ์ในเกม ศัพท์แชต และคำที่คุณเคยเรียนในการ์ด</p>
           <button type="button" className="btn btn-primary btn-lg" onClick={start}>เริ่มควิซ <Icon name="arrow" /></button>
         </section>
@@ -88,9 +89,10 @@ export default function Quiz() {
     const great = s.score >= 8;
     return (
       <div className="page">
-        <PageHead route="quiz" />
+        <PageHead route="quiz" aside={<MissionPill k="quiz" />} />
+        <MissionDone k="quiz" />
         <section className="card done-card" data-reveal>
-          <span className="kicker">{great ? 'Victory' : 'Round over'}</span>
+          <span className="kicker">{great ? 'เก่งมาก' : 'จบรอบนี้แล้ว'}</span>
           <p className="score num">{s.score}<small>/{s.qs.length}</small></p>
           <p className="muted">{great ? 'เยี่ยมมาก พร้อมไปคุยกับเพื่อนต่างชาติแล้ว' : 'ทบทวนข้อที่พลาดด้านล่าง แล้วลองอีกรอบ จะดีขึ้นเรื่อย ๆ'}</p>
           <div className="row center">
@@ -120,7 +122,7 @@ export default function Quiz() {
   const right = s.picked === q.answer;
   return (
     <div className="page">
-      <PageHead route="quiz" aside={<span className="pill num">คะแนน {s.score}</span>} />
+      <PageHead route="quiz" aside={<span className="pill num">ถูก {s.score} ข้อ</span>} />
       <section className="card play" data-reveal>
         <div className="play-top">
           <Bar value={s.i / s.qs.length} label="ความคืบหน้าควิซ" />

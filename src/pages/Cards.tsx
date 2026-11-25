@@ -1,13 +1,13 @@
 import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
-import { CATS, NEW_PER_DAY, PHRASES, type Category, type Phrase } from '../data/content';
+import { CATS, MISSIONS, NEW_PER_DAY, PHRASES, type Category, type Phrase } from '../data/content';
 import { Icon } from '../components/Icon';
-import { Bar, Kbd, PageHead, SpeakButton } from '../components/ui';
+import { Bar, Kbd, MissionDone, PageHead, SpeakButton } from '../components/ui';
 import { useProgress, type Grade, type State } from '../state/progress';
 import { useSession } from '../state/session';
 import { shuffle, today, prefersReducedMotion } from '../lib/util';
 import { say } from '../lib/speech';
-import { navigate } from '../lib/router';
+import { PAGES, navigate } from '../lib/router';
 
 type Cat = Category | 'all';
 interface Sess { cat: Cat; queue: string[]; requeued: string[]; flipped: boolean; extra: boolean; total: number; done: number }
@@ -68,6 +68,17 @@ export default function Cards() {
   });
 
   const setCat = (cat: Cat) => setS(build(state, cat, day.newCards));
+  // after the due cards run out: 10 more cards to practise, known ones first
+  const practiseMore = () => {
+    const inCat = (x: Phrase) => s.cat === 'all' || x.c === s.cat;
+    const known = shuffle(PHRASES.filter((x) => inCat(x) && state.srs[x.e]));
+    const unknown = PHRASES.filter((x) => inCat(x) && !state.srs[x.e]);
+    const queue = (known.length >= 5 ? known : known.concat(unknown)).slice(0, 10).map((x) => x.e);
+    setS({ ...s, queue, requeued: [], flipped: false, extra: true, total: queue.length, done: 0 });
+  };
+  const goal = MISSIONS.find((m) => m.k === 'cards')!.goal;
+  const left = Math.max(0, goal - day.cards);
+  const nextMission = MISSIONS.find((m) => day[m.k] < m.goal);
   const counts = (Object.keys(CATS) as Category[]).map((c) => [c, PHRASES.filter((x) => x.c === c).length] as const);
 
   return (
@@ -75,6 +86,7 @@ export default function Cards() {
       <PageHead route="cards" aside={<span className="pill num">{s.queue.length} ใบที่เหลือ</span>}>
         นึกความหมายในใจก่อน แล้วค่อยเปิดดู ตอบตามจริงว่าจำได้แค่ไหน ระบบจะนัดทบทวนให้เอง
       </PageHead>
+      {p ? <MissionDone k="cards" /> : null}
 
       <div className="chips scroller" role="group" aria-label="หมวดคำศัพท์" data-reveal>
         <button type="button" className="chip" aria-pressed={s.cat === 'all'} onClick={() => setCat('all')}>ทุกหมวด</button>
@@ -137,18 +149,25 @@ export default function Cards() {
       ) : (
         <section className="card done-card" data-reveal>
           <span className="done-badge"><Icon name="check" size={28} /></span>
-          <h2>ทบทวนครบแล้วสำหรับวันนี้</h2>
-          <p className="muted">คำไหนจำได้แม่นจะเว้นระยะนานขึ้น เรียนคำใหม่ได้วันละ {NEW_PER_DAY} คำ พรุ่งนี้กลับมาทบทวนต่อ</p>
-          <div className="row center">
-            <button type="button" className="btn btn-primary" onClick={() => navigate('listen')}>ไปฝึกฟังต่อ <Icon name="arrow" /></button>
-            <button type="button" className="btn btn-ghost" onClick={() => {
-              const inCat = (x: Phrase) => s.cat === 'all' || x.c === s.cat;
-              const known = shuffle(PHRASES.filter((x) => inCat(x) && state.srs[x.e]));
-              const unknown = PHRASES.filter((x) => inCat(x) && !state.srs[x.e]);
-              const queue = (known.length >= 5 ? known : known.concat(unknown)).slice(0, 10).map((x) => x.e);
-              setS({ ...s, queue, requeued: [], flipped: false, extra: true, total: queue.length, done: 0 });
-            }}>ฝึกเพิ่มอีก 10 ใบ</button>
-          </div>
+          {left > 0 ? (
+            <>
+              <h2>ทบทวนรอบนี้ครบแล้ว</h2>
+              <p className="muted">อีก <b className="num">{left}</b> ใบจะครบภารกิจการ์ดของวันนี้ ฝึกเพิ่มจากคำที่เคยเรียนได้เลย คำใหม่มาวันละ {NEW_PER_DAY} คำ</p>
+              <div className="row center">
+                <button type="button" className="btn btn-primary" onClick={practiseMore}>ฝึกเพิ่มอีก 10 ใบ <Icon name="arrow" /></button>
+                {nextMission && nextMission.k !== 'cards' ? <button type="button" className="btn btn-ghost" onClick={() => navigate(nextMission.k)}>ข้ามไป{PAGES[nextMission.k].th}</button> : null}
+              </div>
+            </>
+          ) : (
+            <>
+              <h2>ครบภารกิจการ์ดของวันนี้แล้ว</h2>
+              <p className="muted">คำไหนจำได้แม่นจะเว้นระยะนานขึ้น พรุ่งนี้มีคำใหม่อีก {NEW_PER_DAY} คำ</p>
+              <div className="row center">
+                {nextMission ? <button type="button" className="btn btn-primary" onClick={() => navigate(nextMission.k)}>ต่อด้วย{PAGES[nextMission.k].th} <Icon name="arrow" /></button> : null}
+                <button type="button" className={nextMission ? 'btn btn-ghost' : 'btn btn-primary'} onClick={practiseMore}>ฝึกเพิ่มอีก 10 ใบ</button>
+              </div>
+            </>
+          )}
         </section>
       )}
     </div>

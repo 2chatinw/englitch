@@ -135,3 +135,16 @@ h1, h2, h3, .lp-hero h1, .page-head h1, .lp-head h2, .lp-final h2, .sheet-head h
 
 /* Cards sit on the sky: keep them solid and readable */
 .has-bd .card { background: var(--surface); }
+
+/* ---------- Daily mission: done badge in the page head + "next mission" banner ---------- */
+.pill-done { gap: 6px; color: var(--good); background: var(--good-soft); border-color: color-mix(in srgb, var(--good) 30%, transparent); }
+.pill-done .icon { width: 16px; height: 16px; }
+.mission-done {
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  padding: 12px 14px; border-radius: var(--r-sm);
+  background: var(--good-soft); border: 1px solid color-mix(in srgb, var(--good) 30%, transparent);
+}
+.mission-done-ic { flex: none; display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; background: var(--good); color: #fff; }
+.mission-done-txt { flex: 1 1 200px; min-width: 0; display: flex; flex-direction: column; line-height: 1.35; }
+.mission-done-txt b { font-weight: 600; color: var(--ink); }
+.mission-done-txt span { font-size: .88rem; color: var(--muted); }

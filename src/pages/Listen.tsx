@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { PHRASES } from '../data/content';
 import { Icon } from '../components/Icon';
-import { Bar, PageHead, Result, SpeakButton, WordDiff } from '../components/ui';
+import { Bar, MissionDone, MissionPill, PageHead, Result, SpeakButton, WordDiff } from '../components/ui';
 import { useProgress } from '../state/progress';
 import { useSession } from '../state/session';
 import { compare, firstLetters, type Comparison } from '../lib/compare';
@@ -46,9 +46,10 @@ export default function Listen() {
 
   return (
     <div className="page">
-      <PageHead route="listen" aside={<span className="pill num">วันนี้ {day.listen}/10</span>}>
+      <PageHead route="listen" aside={<MissionPill k="listen" />}>
         กดฟัง แล้วพิมพ์ประโยคที่ได้ยิน ไม่ต้องสนใจตัวพิมพ์ใหญ่และเครื่องหมายวรรคตอน
       </PageHead>
+      <MissionDone k="listen" />
       <section className="card play" data-reveal>
         <Bar value={Math.min(1, day.listen / 10)} label="ภารกิจฝึกฟังวันนี้" />
         <div className="listen-deck">

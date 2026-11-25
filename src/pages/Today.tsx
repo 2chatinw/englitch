@@ -27,12 +27,12 @@ export default function Today() {
     <div className="page">
       {firstVisit ? (
         <section className="card welcome" data-reveal>
-          <span className="kicker">Welcome</span>
+          <span className="kicker">ยินดีต้อนรับ</span>
           <h1 className="welcome-title">ฝึกภาษาอังกฤษไว้คุยกับเพื่อนต่างชาติในเกม</h1>
           <ol className="steps">
             <li><b>วันละ ~{totalMin} นาที</b> ทำภารกิจ 5 อย่างด้านล่าง ระบบจะพาไปทีละขั้น</li>
             <li><b>เริ่มจากการ์ดคำศัพท์</b> วันละ 10 คำใหม่ คำที่จำไม่ได้จะวนกลับมาเอง</li>
-            <li><b>ทุกอย่างฟรี</b> ใช้ได้ทั้งคอมและมือถือ ความคืบหน้าเก็บในเครื่องนี้</li>
+            <li><b>ทุกอย่างฟรี</b> ใช้ได้ทั้งคอมและมือถือ ความคืบหน้าเก็บในบัญชี เล่นต่อได้ทุกเครื่อง</li>
           </ol>
           <div className="row">
             <button type="button" className="btn btn-primary" onClick={() => { setSettings({ onboarded: true }); navigate('cards'); }}>
@@ -44,9 +44,9 @@ export default function Today() {
       ) : (
         <section className="card hero" data-reveal>
           <div className="hero-copy">
-            <span className="kicker">Today's run</span>
+            <span className="kicker">วันนี้</span>
             <h1 className="hero-title">
-              {next ? <>ต่อด้วย<br /><span className="hl">{next.label}</span></> : <>ครบทุกภารกิจแล้ว<br /><span className="hl">GG! เจอกันพรุ่งนี้</span></>}
+              {next ? <>{done === 0 && pct === 0 ? 'เริ่มที่' : 'ต่อด้วย'}<br /><span className="hl">{next.label}</span></> : <>ครบทุกภารกิจแล้ว<br /><span className="hl">GG! เจอกันพรุ่งนี้</span></>}
             </h1>
             <p className="muted">
               {done}/{MISSIONS.length} ภารกิจ · {streak > 0 ? 'ฝึกต่อเนื่อง ' + streak + ' วัน' : 'เริ่มนับวันต่อเนื่องวันนี้เลย'}
@@ -99,7 +99,7 @@ export default function Today() {
       </section>
 
       <section className="card pod" data-reveal>
-        <span className="kicker">Phrase of the day</span>
+        <span className="kicker">ประโยคประจำวัน</span>
         <p className="pod-en">{pod.e}</p>
         <p className="muted">{pod.t}{pod.n ? ' — ' + pod.n : ''}</p>
         <div className="row"><SpeakButton text={pod.s} /><SpeakButton text={pod.s} slow /></div>

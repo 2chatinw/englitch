@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { SCENARIOS, chatPrompt } from '../data/content';
 import { Icon } from '../components/Icon';
-import { Bar, PageHead, SpeakButton } from '../components/ui';
+import { Bar, MissionDone, MissionPill, PageHead, SpeakButton } from '../components/ui';
 import { useProgress } from '../state/progress';
 import { useToast } from '../state/toast';
 import { useSession } from '../state/session';
@@ -26,9 +26,10 @@ export default function Chat() {
 
   return (
     <div className="page">
-      <PageHead route="chat" aside={<span className="pill num">วันนี้ {day.chat}/6</span>}>
+      <PageHead route="chat" aside={<MissionPill k="chat" />}>
         ฝึกคุยจริงกับ AI ฟรี ผ่าน Claude หรือ ChatGPT AI จะเล่นเป็นเพื่อนต่างชาติ และช่วยแก้ประโยคให้เป็นภาษาไทย
       </PageHead>
+      <MissionDone k="chat" />
 
       <section className="card" data-reveal>
         <div className="section-head"><h2><span className="step-n num">1</span> เลือกคนที่จะคุยด้วย</h2></div>

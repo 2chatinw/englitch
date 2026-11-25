@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { PHRASES } from '../data/content';
 import { Icon } from '../components/Icon';
-import { Bar, PageHead, Result, SpeakButton, WordDiff } from '../components/ui';
+import { Bar, MissionDone, MissionPill, PageHead, Result, SpeakButton, WordDiff } from '../components/ui';
 import { useProgress } from '../state/progress';
 import { useSession } from '../state/session';
 import { compare, type Comparison } from '../lib/compare';
@@ -61,9 +61,10 @@ export default function Speak() {
 
   return (
     <div className="page">
-      <PageHead route="speak" aside={<span className="pill num">วันนี้ {day.speak}/10</span>}>
+      <PageHead route="speak" aside={<MissionPill k="speak" />}>
         ฟังตัวอย่าง แล้วพูดตามให้ชัด ระบบจะบอกว่าคำไหนยังฟังไม่ชัด
       </PageHead>
+      <MissionDone k="speak" />
       <section className="card play" data-reveal>
         <Bar value={Math.min(1, day.speak / 10)} label="ภารกิจฝึกพูดวันนี้" />
         <div className="say-line">
