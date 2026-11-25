@@ -5,6 +5,7 @@ import { useGSAP } from '@gsap/react';
 import { Icon, type IconName } from '../components/Icon';
 import { Brand, useScrolled } from '../components/Brand';
 import { HeroKeys } from '../components/HeroKeys';
+import { SectionNav } from '../components/SectionNav';
 import { SignInDrop } from '../components/SignInDrop';
 import { ThemeToggle } from '../components/ThemeToggle';
 import { useAuth } from '../state/auth';
@@ -81,10 +82,7 @@ export default function Landing() {
           <a className="brand" href="#top" aria-label="Englitch">
             <Brand />
           </a>
-          <nav className="lp-links" aria-label="หัวข้อ">
-            <a href="#features">ฟีเจอร์</a>
-            <a href="#how">วิธีใช้</a>
-          </nav>
+          <SectionNav />
           <div className="lp-act">
             <ThemeToggle />
             <SignInDrop open={open} onOpenChange={setOpen} />

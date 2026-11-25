@@ -243,3 +243,14 @@ html { scroll-padding-top: 88px; }
   .tt-badge { transition: opacity .2s; }
   .theme-toggle:hover .tt-rays, .theme-toggle:hover .tt-stars, .theme-toggle:hover .tt-zzz path { animation: none; }
 }
+
+/* Landing menu follows the scroll: the link for the section on screen is lit, a yellow bar slides under it */
+.lp-links { position: relative; align-self: stretch; align-items: center; }
+.lp-links a { position: relative; transition: opacity .2s, color .2s; }
+.lp-links a.is-active { opacity: 1; font-weight: 600; color: var(--ink); }
+.lp-links-bar {
+  position: absolute; left: 0; bottom: 14px; height: 4px; border-radius: 99px; pointer-events: none;
+  background: var(--sun); box-shadow: 0 2px 0 var(--sun-edge);
+  transition: transform .45s cubic-bezier(.34, 1.4, .64, 1), width .45s cubic-bezier(.34, 1.4, .64, 1), opacity .25s;
+}
+@media (prefers-reduced-motion: reduce) { .lp-links-bar { transition: opacity .2s; } }
