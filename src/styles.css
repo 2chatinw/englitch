@@ -516,5 +516,6 @@ input[type="email"]:focus, input[type="password"]:focus { outline: none; border-
 .lvl-step.is-locked .lvl-name { color: var(--muted); }
 .lvl-sub { font-size: .75rem; color: var(--muted); }
 .lvl-next { display: flex; flex-direction: column; gap: 6px; }
+.lvl-next .bar { flex: none; }
 @keyframes lvl-bob { 0%, 100% { translate: 0 0; } 50% { translate: 0 -4px; } }
 @media (prefers-reduced-motion: reduce) { .lvl-step.is-current .lvl-badge { animation: none; } }

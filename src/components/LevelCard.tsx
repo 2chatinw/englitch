@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { LEVELS, SENTENCES, type Level } from '../data/content';
+import { LEVELS, type Level } from '../data/content';
 import { Icon } from './Icon';
 import { Bar } from './ui';
 import { useProgress } from '../state/progress';
@@ -7,7 +7,8 @@ import { useToast } from '../state/toast';
 import { levelStatus } from '../pages/practice';
 
 const NAME: Record<Level, string> = { easy: 'ง่าย', medium: 'กลาง', hard: 'ยาก' };
-const WORDS: Record<Level, string> = { easy: '1–3 คำ', medium: '4–5 คำ', hard: '6 คำขึ้นไป' };
+// words, not numbers, so this card never reads like the mission counts (10/10) below it
+const WORDS: Record<Level, string> = { easy: 'ประโยคสั้น', medium: 'ยาวขึ้น', hard: 'ประโยคยาว' };
 
 /**
  * Today page: the three difficulty steps as badges (open, current, locked) and how close the next one is.
@@ -17,7 +18,6 @@ export function LevelCard() {
   const { state } = useProgress();
   const st = levelStatus(state);
   const current: Level = st.fixed ?? st.top;
-  const count = (lv: Level) => SENTENCES.filter((p) => p.l === lv).length;
 
   return (
     <section className="card lvl" data-reveal aria-labelledby="lvl-h">
@@ -36,7 +36,7 @@ export function LevelCard() {
                 {open ? <b>{i + 1}</b> : <Icon name="lock" />}
               </span>
               <span className="lvl-name">{NAME[k]}</span>
-              <span className="lvl-sub">{WORDS[k]} · {count(k)}</span>
+              <span className="lvl-sub">{WORDS[k]}</span>
               <span className="sr-only">{open ? (k === current ? ' กำลังฝึก' : ' เปิดแล้ว') : ' ยังล็อก'}</span>
             </li>
           );
@@ -48,8 +48,7 @@ export function LevelCard() {
         <div className="lvl-next">
           <Bar value={st.have / st.need} tone="good" label={'ความคืบหน้าสู่ระดับ' + NAME[st.next]} />
           <p className="muted small">
-            ตอบประโยคระดับ{NAME[st.open[st.open.length - 1]]}ถูกแล้ว <b className="num">{Math.min(st.have, st.need)}/{st.need}</b> ประโยค
-            ครบแล้วจะเปิดระดับ{NAME[st.next]}ให้เอง
+            ตอบถูกอีก <b className="num">{Math.max(0, st.need - st.have)}</b> ประโยค จะเปิดระดับ{NAME[st.next]}ให้เอง
           </p>
         </div>
       ) : (
