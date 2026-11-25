@@ -15,10 +15,9 @@ export default function Today() {
   const learned = Object.keys(state.srs).length;
   const solid = Object.values(state.srs).filter((x) => x.b >= 3).length;
   const due = PHRASES.filter((p) => state.srs[p.e] && state.srs[p.e].d <= t).length;
-  const totalMin = MISSIONS.reduce((a, m) => a + m.min, 0);
   const done = MISSIONS.filter((m) => day[m.k] >= m.goal).length;
   const next = MISSIONS.find((m) => day[m.k] < m.goal);
-  const pct = MISSIONS.reduce((a, m) => a + Math.min(1, day[m.k] / m.goal) * m.min, 0) / totalMin;
+  const pct = MISSIONS.reduce((a, m) => a + Math.min(1, day[m.k] / m.goal), 0) / MISSIONS.length;
   const dayIdx = Math.floor(new Date(t + 'T00:00:00').getTime() / 86400000);
   const pod = SENTENCES[dayIdx % SENTENCES.length];
   const firstVisit = !state.settings.onboarded;
@@ -30,7 +29,7 @@ export default function Today() {
           <span className="kicker">ยินดีต้อนรับ</span>
           <h1 className="welcome-title">ฝึกภาษาอังกฤษไว้คุยกับเพื่อนต่างชาติในเกม</h1>
           <ol className="steps">
-            <li><b>วันละ ~{totalMin} นาที</b> ทำภารกิจ 5 อย่างด้านล่าง ระบบจะพาไปทีละขั้น</li>
+            <li><b>ทำภารกิจ 5 อย่างด้านล่าง</b> ตามจังหวะของตัวเอง ไม่ต้องรีบ ระบบจะพาไปทีละขั้น</li>
             <li><b>ครบ 4 ทักษะ ฟัง พูด อ่าน เขียน</b> ประโยคที่ยังพลาดจะวนกลับมาให้ฝึกอีกเอง</li>
             <li><b>ทุกอย่างฟรี</b> ใช้ได้ทั้งคอมและมือถือ ความคืบหน้าเก็บในบัญชี เล่นต่อได้ทุกเครื่อง</li>
           </ol>
@@ -69,7 +68,6 @@ export default function Today() {
       <section className="card" data-reveal>
         <div className="section-head">
           <h2>ภารกิจวันนี้</h2>
-          <span className="muted small">รวมประมาณ {totalMin} นาที</span>
         </div>
         <ul className="missions">
           {MISSIONS.map((m) => {
@@ -81,7 +79,7 @@ export default function Today() {
                   <span className="mission-icon"><Icon name={complete ? 'check' : PAGES[m.k].icon} /></span>
                   <span className="mission-body">
                     <span className="mission-title">{m.label}</span>
-                    <span className="mission-meta"><b className="num">{n}/{m.goal}</b> {m.unit} · ~{m.min} นาที</span>
+                    <span className="mission-meta"><b className="num">{n}/{m.goal}</b> {m.unit}</span>
                     <Bar value={n / m.goal} tone={complete ? 'good' : 'accent'} />
                   </span>
                   <Icon name="arrow" />

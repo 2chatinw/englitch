@@ -36,7 +36,7 @@ const COPYRIGHT_YEAR = Math.max(2026, new Date().getFullYear());
 
 const STEPS = [
   { n: '1', title: 'เข้าสู่ระบบ', body: 'ใช้บัญชี Discord หรือ Google ได้เลย ไม่ต้องตั้งรหัสผ่านใหม่' },
-  { n: '2', title: 'ทำภารกิจวันละ ~30 นาที', body: 'ฟัง พูด อ่าน เขียน และแชต ระบบพาไปทีละขั้นตามลำดับ' },
+  { n: '2', title: 'ทำภารกิจวันละนิด', body: 'ฟัง พูด อ่าน เขียน และแชต ตามจังหวะของตัวเอง ระบบพาไปทีละขั้น' },
   { n: '3', title: 'ไปคุยในเกมจริง', body: 'ใช้ประโยคที่ฝึกไว้กับเพื่อนต่างชาติ แล้วกลับมาฝึกต่อตามจังหวะของตัวเอง' },
 ];
 
@@ -99,7 +99,7 @@ export default function Landing() {
             <h1>พูดอังกฤษในเกม<br /><span className="hl">ได้แบบไม่เขิน</span></h1>
             <p className="lp-lede">
               Englitch สอนประโยคที่ใช้จริงตอนเล่นกับเพื่อนต่างชาติ ตั้งแต่ทักทาย คอลในเกม ไปจนถึงชวนแอด Discord
-              ฝึกวันละไม่ถึงชั่วโมง ทั้งบนคอมและมือถือ
+              ฝึกตามจังหวะของตัวเอง ทั้งบนคอมและมือถือ
             </p>
             <div className="row">
               <button type="button" className="btn btn-primary btn-lg" onClick={signIn}>เริ่มฝึกฟรี <Icon name="arrow" /></button>
@@ -108,7 +108,7 @@ export default function Landing() {
             <ul className="lp-facts">
               <li><b className="num">118</b> วลีจากเกมจริง</li>
               <li><b className="num">5</b> โหมดฝึก</li>
-              <li><b className="num">~30</b> นาทีต่อวัน</li>
+              <li><b className="num">0</b> บาท ฟรีทั้งหมด</li>
             </ul>
           </div>
 
@@ -160,7 +160,7 @@ export default function Landing() {
 
         <section className="lp-final" data-rise>
           <h2>พร้อมเริ่มฝึกวันแรกหรือยัง</h2>
-          <p>ฟรีทั้งหมด ใช้บัญชี Discord หรือ Google เข้าสู่ระบบได้ในไม่กี่วินาที</p>
+          <p>ฟรีทั้งหมด ใช้บัญชี Discord หรือ Google เข้าสู่ระบบได้ง่าย ๆ</p>
           <button type="button" className="btn btn-lg lp-final-btn" onClick={signIn}>เข้าสู่ระบบแล้วเริ่มเลย <Icon name="arrow" /></button>
         </section>
       </main>
