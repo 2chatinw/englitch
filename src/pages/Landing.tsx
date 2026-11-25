@@ -32,6 +32,8 @@ const FEATURES: { icon: IconName; title: string; body: string }[] = [
   { icon: 'lock', title: 'ส่วนตัว 100%', body: 'ฝึกเพื่อตัวเองล้วน ๆ ตามจังหวะของคุณ ความคืบหน้าและชื่อของคุณเห็นได้เฉพาะคุณคนเดียว' },
 ];
 
+const COPYRIGHT_YEAR = Math.max(2026, new Date().getFullYear());
+
 const STEPS = [
   { n: '1', title: 'เข้าสู่ระบบ', body: 'ใช้บัญชี Discord หรือ Google ได้เลย ไม่ต้องตั้งรหัสผ่านใหม่' },
   { n: '2', title: 'ทำภารกิจวันละ ~30 นาที', body: 'ฟัง พูด อ่าน เขียน และแชต ระบบพาไปทีละขั้นตามลำดับ' },
@@ -127,7 +129,7 @@ export default function Landing() {
           <div className="lp-head" data-rise>
             <span className="kicker">Features</span>
             <h2>ฝึกครบทั้งฟัง พูด อ่าน เขียน แบบเกมเมอร์</h2>
-            <p className="muted">ทุกโหมดใช้ประโยคชุดเดียวกัน คำที่เรียนในการ์ดจะโผล่ในการฟัง การพูด และควิซ ให้จำได้จริง</p>
+            <p className="muted">ทุกโหมดใช้ประโยคชุดเดียวกัน ประโยคที่ยังพลาดจะวนกลับมาในการฟัง พูด อ่าน และเขียน ให้จำได้จริง</p>
           </div>
           <div className="lp-grid">
             {FEATURES.map((f) => (
@@ -166,6 +168,7 @@ export default function Landing() {
       <footer className="lp-foot">
         <span><b>Englitch</b> · ฝึกภาษาอังกฤษไว้คุยกับเพื่อนต่างชาติในเกม</span>
         <a href="./privacy.html">นโยบายความเป็นส่วนตัว</a>
+        <p className="copyright">© {COPYRIGHT_YEAR} Chatchathep Meekaew. All rights reserved.</p>
       </footer>
 
       {bd.picker ? (

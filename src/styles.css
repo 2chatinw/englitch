@@ -478,3 +478,8 @@ input[type="email"]:focus, input[type="password"]:focus { outline: none; border-
   .mb-st { width: 40px; height: 40px; } .mb-logo { width: 30px; height: 30px; }
 }
 @media (prefers-reduced-motion: reduce) { .mb-st, .mb-mic, .mb-here { animation: none; } }
+
+/* Copyright line: landing footer and the bottom of every app page */
+.copyright { margin: 0; color: var(--muted); font-size: .8rem; letter-spacing: .01em; text-align: center; }
+.lp-foot .copyright { margin-top: 10px; }
+.app-copy { padding-top: 28px; opacity: .8; }

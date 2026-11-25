@@ -41,6 +41,7 @@ function Shell() {
         <QuestRail route={route} />
         <main id="main" className="main">
           <PageStage route={route} render={(r) => { const P = PAGES[r]; return <P key={r} />; }} />
+          <footer className="copyright app-copy">© {Math.max(2026, new Date().getFullYear())} Chatchathep Meekaew</footer>
         </main>
       </div>
       <BottomBar route={route} />
