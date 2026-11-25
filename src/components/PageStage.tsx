@@ -48,7 +48,9 @@ export function PageStage({ route, render }: { route: Route; render: (r: Route) 
     if (sub.current) sub.current.textContent = PAGES[route].th;
     tl.current?.kill();
     const t = gsap.timeline();
-    if (!covering.current) {
+    // Cover from scratch unless the panel is already on screen: when a new tap lands while the last page is
+    // still rising in, `covering` is set but the panel has already slid away (display: none).
+    if (!covering.current || w.style.display === 'none') {
       covering.current = true;
       t.set(w, { display: 'flex', xPercent: -101 })
         .to(page.current, { autoAlpha: 0, x: 24, duration: 0.22, ease: 'power2.in' }, 0);
