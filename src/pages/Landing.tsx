@@ -179,7 +179,7 @@ export default function Landing() {
         </section>
 
         <section className="lp-final" data-rise>
-          <h2>พร้อมเข้าแมตช์แรกหรือยัง</h2>
+          <h2>พร้อมเริ่มฝึกวันแรกหรือยัง</h2>
           <p>ฟรีทั้งหมด ใช้บัญชี Discord หรือ Google เข้าสู่ระบบได้ในไม่กี่วินาที</p>
           <button type="button" className="btn btn-lg lp-final-btn" onClick={signIn}>เข้าสู่ระบบแล้วเริ่มเลย <Icon name="arrow" /></button>
         </section>
