@@ -483,3 +483,13 @@ input[type="email"]:focus, input[type="password"]:focus { outline: none; border-
 .copyright { margin: 0; color: var(--muted); font-size: .8rem; letter-spacing: .01em; text-align: center; }
 .lp-foot .copyright { margin-top: 10px; }
 .app-copy { padding-top: 28px; opacity: .8; }
+
+/* Next button counting down after a right answer: a light bar fills across it, then the next item comes */
+.btn.is-counting { position: relative; isolation: isolate; overflow: hidden; }
+.auto-bar {
+  position: absolute; inset: 0; z-index: -1; pointer-events: none; transform-origin: left center;
+  background: color-mix(in srgb, #FFFFFF 55%, transparent); box-shadow: inset 0 -4px 0 rgba(21, 39, 92, .35);
+  animation: auto-fill var(--auto-ms, 3s) linear forwards;
+}
+@keyframes auto-fill { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@media (prefers-reduced-motion: reduce) { .auto-bar { animation: none; transform: scaleX(1); opacity: .5; } }

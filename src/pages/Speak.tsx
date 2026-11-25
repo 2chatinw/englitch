@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { PHRASES } from '../data/content';
 import { Icon } from '../components/Icon';
-import { Bar, Kbd, MissionDone, MissionPill, PageHead, Result, SpeakButton, WordDiff } from '../components/ui';
+import { Bar, Kbd, MissionDone, MissionPill, NextButton, PageHead, Result, SpeakButton, WordDiff } from '../components/ui';
 import { useProgress } from '../state/progress';
 import { useSession } from '../state/session';
 import { compare, type Comparison } from '../lib/compare';
@@ -85,7 +85,7 @@ export default function Speak() {
               <p className="small muted">ระบบได้ยินว่า: {s.said || '—'}</p>
             </Result>
             <div className="row">
-              <button type="button" className="btn btn-primary grow" onClick={next}>ประโยคต่อไป <Icon name="arrow" /></button>
+              <NextButton auto={pass} onNext={next}>ประโยคต่อไป <Icon name="arrow" /></NextButton>
               <button type="button" className="btn btn-ghost" onClick={() => { setS({ ...s, result: null, said: '' }); setLive(''); }}><Icon name="retry" /> พูดใหม่</button>
             </div>
           </>

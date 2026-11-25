@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { PHRASES } from '../data/content';
 import { Icon } from '../components/Icon';
-import { Bar, MissionDone, MissionPill, PageHead, Result, SpeakButton, WordDiff } from '../components/ui';
+import { Bar, MissionDone, MissionPill, NextButton, PageHead, Result, SpeakButton, WordDiff } from '../components/ui';
 import { useProgress } from '../state/progress';
 import { useSession } from '../state/session';
 import { compare, firstLetters, type Comparison } from '../lib/compare';
@@ -93,7 +93,7 @@ export default function Listen() {
               <div className="row"><SpeakButton text={p.e} label="ฟังอีกครั้ง" /></div>
             </Result>
             <div className="row">
-              <button type="button" className="btn btn-primary grow" ref={nextBtn} onClick={next}>ประโยคต่อไป <Icon name="arrow" /></button>
+              <NextButton auto={ok !== false} btnRef={nextBtn} onNext={next}>ประโยคต่อไป <Icon name="arrow" /></NextButton>
               {ok !== true ? <button type="button" className="btn btn-ghost" onClick={() => setS({ ...s, result: null })}><Icon name="retry" /> แก้คำตอบ</button> : null}
             </div>
           </>

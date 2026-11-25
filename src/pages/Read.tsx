@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { PHRASES, SITUATIONS } from '../data/content';
 import { Icon } from '../components/Icon';
-import { Bar, Kbd, MissionDone, MissionPill, PageHead, Result, SpeakButton } from '../components/ui';
+import { Bar, Kbd, MissionDone, MissionPill, NextButton, PageHead, Result, SpeakButton } from '../components/ui';
 import { useProgress, type State } from '../state/progress';
 import { useSession } from '../state/session';
 import { shuffle, prefersReducedMotion } from '../lib/util';
@@ -151,9 +151,9 @@ export default function Read() {
               {q.why ? <p className="small">{q.why}</p> : null}
               {q.say ? <div className="row"><SpeakButton text={q.say} label="ฟังคำตอบ" /></div> : null}
             </Result>
-            <button type="button" className="btn btn-primary btn-block" onClick={next} autoFocus>
+            <NextButton auto={right} onNext={next} className="btn btn-primary btn-block" autoFocus>
               {s.i + 1 >= s.qs.length ? 'ดูผลคะแนน' : 'ข้อต่อไป'} <Icon name="arrow" />
-            </button>
+            </NextButton>
           </>
         ) : null}
       </section>

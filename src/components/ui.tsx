@@ -1,4 +1,4 @@
-import { useEffect, useRef, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactNode, type Ref } from 'react';
 import gsap from 'gsap';
 import { Icon } from './Icon';
 import { say } from '../lib/speech';
@@ -69,6 +69,46 @@ export function Result({ ok, title, children }: { ok: boolean | 'near'; title: s
       <div className="result-title"><Icon name={ok === true ? 'check' : ok === 'near' ? 'bulb' : 'x'} />{title}</div>
       {children}
     </div>
+  );
+}
+
+const AUTO_NEXT_MS = 3000;
+
+/**
+ * The "next" button after an answer. With `auto` (a right answer) it moves on by itself after 3 seconds,
+ * with a bar filling across the button as it counts down. Tapping anything else first (listen again,
+ * fix the answer…) stops the countdown, so nobody gets rushed.
+ */
+export function NextButton({ auto, onNext, className = 'btn btn-primary grow', btnRef, autoFocus, children }: {
+  auto: boolean; onNext: () => void; className?: string; btnRef?: Ref<HTMLButtonElement>; autoFocus?: boolean; children: ReactNode;
+}) {
+  const [stopped, setStopped] = useState(false);
+  const own = useRef<HTMLButtonElement | null>(null);
+  const next = useRef(onNext);
+  next.current = onNext;
+  const counting = auto && !stopped;
+
+  useEffect(() => {
+    if (!counting) return;
+    const t = window.setTimeout(() => next.current(), AUTO_NEXT_MS);
+    const onDown = (e: PointerEvent) => { if (!own.current?.contains(e.target as Node)) setStopped(true); };
+    document.addEventListener('pointerdown', onDown, true);
+    return () => { window.clearTimeout(t); document.removeEventListener('pointerdown', onDown, true); };
+  }, [counting]);
+
+  const setRef = (el: HTMLButtonElement | null) => {
+    own.current = el;
+    if (typeof btnRef === 'function') btnRef(el);
+    else if (btnRef) (btnRef as { current: HTMLButtonElement | null }).current = el;
+  };
+
+  return (
+    <button type="button" ref={setRef} onClick={onNext} autoFocus={autoFocus}
+      className={className + (counting ? ' is-counting' : '')}
+      style={counting ? { ['--auto-ms' as string]: AUTO_NEXT_MS + 'ms' } : undefined}>
+      {counting ? <span className="auto-bar" aria-hidden="true" /> : null}
+      {children}
+    </button>
   );
 }
 
