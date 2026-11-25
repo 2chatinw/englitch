@@ -8,6 +8,7 @@ import { useSession } from '../state/session';
 import { shuffle, prefersReducedMotion } from '../lib/util';
 import { say } from '../lib/speech';
 import { navigate } from '../lib/router';
+import { phrasePool } from './practice';
 
 /** `id` is the phrase a question is about, so a right or wrong answer feeds its review schedule. */
 interface Q { prompt: string; sub?: string; answer: string; options: string[]; say?: string; why?: string; id?: string }
@@ -16,14 +17,20 @@ interface Sess { qs: Q[]; i: number; score: number; picked: string | null; misse
 
 const ascii = (s: string) => /^[\x20-\x7E]+$/.test(s);
 
-/** One reading round: 4 game situations plus 6 sentences (meaning either way), favouring ones already practised. */
+/**
+ * One reading round: 4 game situations plus 6 sentences at the player's level (meaning either way),
+ * half from sentences already practised and half new ones when there are enough.
+ */
 function makeRound(state: State): Q[] {
   const qs: Q[] = shuffle(SITUATIONS).slice(0, 4).map((s) => ({
     prompt: s.q, sub: 'สถานการณ์', answer: s.a, options: shuffle([s.a, ...s.o]),
     say: s.say || (ascii(s.a) ? s.a : undefined), why: s.why,
   }));
-  const learned = PHRASES.filter((p) => state.srs[p.e]);
-  const base = shuffle(learned.length >= 6 ? learned : PHRASES).slice(0, 6);
+  const levelPool = phrasePool(state);
+  const learned = shuffle(levelPool.filter((p) => state.srs[p.e]));
+  const fresh = shuffle(levelPool.filter((p) => !state.srs[p.e]));
+  const base = [...learned.slice(0, 3), ...fresh].slice(0, 6);
+  if (base.length < 6) base.push(...learned.slice(3, 3 + 6 - base.length));
   base.forEach((p, i) => {
     const enToTh = i % 2 === 0;
     const key = enToTh ? 't' : 'e';

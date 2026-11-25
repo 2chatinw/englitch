@@ -17,6 +17,7 @@ export function SettingsSheet({ open, onClose }: { open: boolean; onClose: () =>
   const st = state.settings;
   const themes: [S['theme'], string][] = [['system', 'ตามเครื่อง'], ['light', 'สว่าง'], ['dark', 'มืด']];
   const rates: [number, string][] = [[0.75, 'ช้า'], [0.9, 'ปกติ'], [1, 'เร็ว']];
+  const levels: [S['level'], string][] = [['auto', 'อัตโนมัติ'], ['easy', 'ง่าย'], ['medium', 'กลาง'], ['hard', 'ยาก']];
 
   return (
     <Sheet open={open} onClose={onClose} title="ตั้งค่า" onClosed={() => setConfirm(false)}>
@@ -41,8 +42,23 @@ export function SettingsSheet({ open, onClose }: { open: boolean; onClose: () =>
           ) : <p className="muted">เบราว์เซอร์นี้อ่านออกเสียงไม่ได้ ลองเปิดด้วย Chrome หรือ Safari</p>}
           <label className="switch">
             <input type="checkbox" checked={st.autoPlay} onChange={(e) => setSettings({ autoPlay: e.target.checked })} />
-            <span>เล่นเสียงอัตโนมัติเมื่อขึ้นการ์ดหรือประโยคใหม่</span>
+            <span>เล่นเสียงอัตโนมัติเมื่อขึ้นประโยคใหม่</span>
           </label>
+        </section>
+
+        <section className="field">
+          <span className="field-label">ระดับความยาก</span>
+          <div className="seg" role="radiogroup" aria-label="ระดับความยาก">
+            {levels.map(([k, l]) => (
+              <button key={k} type="button" role="radio" aria-checked={st.level === k} className="seg-btn"
+                onClick={() => { setSettings({ level: k }); clearSessions(); }}>{l}</button>
+            ))}
+          </div>
+          <p className="muted small">
+            {st.level === 'auto'
+              ? 'เริ่มจากประโยคสั้น ๆ จำได้มากพอแล้วระบบจะเปิดประโยคที่ยาวขึ้นให้เอง'
+              : 'ฝึกเฉพาะประโยคระดับนี้ ง่าย 1–3 คำ · กลาง 4–5 คำ · ยาก 6 คำขึ้นไป'}
+          </p>
         </section>
 
         <section className="field">

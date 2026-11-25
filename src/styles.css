@@ -493,3 +493,28 @@ input[type="email"]:focus, input[type="password"]:focus { outline: none; border-
 }
 @keyframes auto-fill { from { transform: scaleX(0); } to { transform: scaleX(1); } }
 @media (prefers-reduced-motion: reduce) { .auto-bar { animation: none; transform: scaleX(1); opacity: .5; } }
+
+/* ---------- Sentence levels on the Today page: three badges joined like a quest path ---------- */
+.lvl-steps { list-style: none; margin: 0; padding: 4px 0 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.lvl-step { position: relative; display: flex; flex-direction: column; align-items: center; gap: 4px; text-align: center; min-width: 0; }
+.lvl-link { position: absolute; top: 24px; right: 50%; width: 100%; height: 4px; border-radius: 4px; background: var(--line); z-index: 0; }
+.lvl-step.is-open .lvl-link { background: var(--good); }
+.lvl-badge {
+  position: relative; z-index: 1; display: grid; place-items: center; width: 50px; height: 50px; border-radius: 16px;
+  font-family: var(--f-display); font-size: 1.4rem; transform: rotate(-4deg);
+  background: var(--surface-2); color: var(--muted); border: 2px solid var(--line);
+}
+.lvl-step:nth-child(2) .lvl-badge { transform: rotate(3deg); }
+.lvl-step:nth-child(3) .lvl-badge { transform: rotate(-2deg); }
+.lvl-badge .icon { width: 20px; height: 20px; }
+.lvl-easy.is-open .lvl-badge { background: #3FD08F; border-color: #14965A; color: #0B3A24; }
+.lvl-medium.is-open .lvl-badge { background: var(--sun); border-color: var(--sun-edge); color: #15275C; }
+.lvl-hard.is-open .lvl-badge { background: #FF8A65; border-color: #D9542B; color: #3A1206; }
+.lvl-step.is-open .lvl-badge { box-shadow: 0 4px 0 color-mix(in srgb, currentColor 30%, transparent); }
+.lvl-step.is-current .lvl-badge { animation: lvl-bob 2.6s ease-in-out infinite; outline: 3px solid var(--accent); outline-offset: 3px; }
+.lvl-name { font-weight: 600; }
+.lvl-step.is-locked .lvl-name { color: var(--muted); }
+.lvl-sub { font-size: .75rem; color: var(--muted); }
+.lvl-next { display: flex; flex-direction: column; gap: 6px; }
+@keyframes lvl-bob { 0%, 100% { translate: 0 0; } 50% { translate: 0 -4px; } }
+@media (prefers-reduced-motion: reduce) { .lvl-step.is-current .lvl-badge { animation: none; } }

@@ -4,6 +4,7 @@ import { Bar, SpeakButton } from '../components/ui';
 import { useProgress } from '../state/progress';
 import { today } from '../lib/util';
 import { PAGES, navigate } from '../lib/router';
+import { LevelCard } from '../components/LevelCard';
 
 const isIOS = typeof navigator !== 'undefined' && /iPhone|iPad|iPod/.test(navigator.userAgent);
 const isStandalone = typeof window !== 'undefined' &&
@@ -64,6 +65,8 @@ export default function Today() {
           </div>
         </section>
       )}
+
+      <LevelCard />
 
       <section className="card" data-reveal>
         <div className="section-head">

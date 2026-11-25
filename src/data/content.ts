@@ -10,7 +10,18 @@ export interface Phrase {
   n: string;
   /** What the voice should read (expands chat abbreviations). */
   s: string;
+  /** Difficulty, from the sentence length: 1–3 words easy, 4–5 medium, 6+ hard. */
+  l: Level;
 }
+
+export type Level = 'easy' | 'medium' | 'hard';
+export const LEVELS: { k: Level; th: string }[] = [
+  { k: 'easy', th: 'ง่าย' }, { k: 'medium', th: 'กลาง' }, { k: 'hard', th: 'ยาก' },
+];
+const levelOf = (e: string): Level => {
+  const n = e.trim().split(/\s+/).length;
+  return n <= 3 ? 'easy' : n <= 5 ? 'medium' : 'hard';
+};
 
 type Raw = [string, string, Category, string?, string?];
 
@@ -30,6 +41,7 @@ const RAW: Raw[] = [
   ['See you later!', 'ไว้เจอกันนะ', 'basics'],
   ['Good night!', 'ราตรีสวัสดิ์ / ฝันดี', 'basics'],
   ['Have a nice day!', 'ขอให้เป็นวันที่ดี', 'basics'],
+  ["It's really late here, so I need to sleep.", 'ที่นี่ดึกมากแล้ว ฉันต้องไปนอนแล้ว', 'basics'],
   // help
   ['Sorry, can you say that again?', 'ขอโทษ พูดอีกทีได้ไหม', 'help', 'ประโยคสำคัญที่สุดเวลาฟังไม่ทัน'],
   ['Can you speak slowly, please?', 'ช่วยพูดช้า ๆ หน่อยได้ไหม', 'help'],
@@ -46,6 +58,9 @@ const RAW: Raw[] = [
   ['Wait for me!', 'รอฉันด้วย', 'help'],
   ["I'll be right back.", 'เดี๋ยวกลับมา', 'help', 'ในแชตมักย่อเป็น brb'],
   ['My internet is lagging.', 'เน็ตฉันแลค', 'help'],
+  ["Sorry, I didn't catch what you said.", 'ขอโทษ ฉันฟังที่คุณพูดไม่ทัน', 'help', 'catch ในที่นี้แปลว่าฟังทัน / ได้ยินชัด'],
+  ["I'm still learning, so please be patient with me.", 'ฉันยังฝึกอยู่ ใจเย็นกับฉันหน่อยนะ', 'help'],
+  ['Could you explain the rules of this game?', 'ช่วยอธิบายกติกาของเกมนี้หน่อยได้ไหม', 'help', 'Could you สุภาพกว่า Can you'],
   // game
   ['Do you want to play together?', 'อยากเล่นด้วยกันไหม', 'game'],
   ["Let's team up!", 'มาจับทีมกัน', 'game'],
@@ -66,6 +81,10 @@ const RAW: Raw[] = [
   ["Don't worry, we'll win next time.", 'ไม่เป็นไร ตาหน้าชนะแน่', 'game'],
   ['Thanks for the carry!', 'ขอบคุณที่แบกทีมนะ', 'game'],
   ['That was so much fun.', 'สนุกมากเลย', 'game'],
+  ['Do you want to play one more round?', 'อยากเล่นอีกตาไหม', 'game'],
+  ["Let's wait until everyone is ready.", 'รอให้ทุกคนพร้อมก่อนนะ', 'game'],
+  ['I think we should change our plan.', 'ฉันว่าเราควรเปลี่ยนแผนกัน', 'game'],
+  ['I have to go, my mom is calling me.', 'ฉันต้องไปแล้ว แม่เรียก', 'game'],
   // callout
   ['Enemy behind you!', 'ศัตรูอยู่ข้างหลังคุณ', 'callout'],
   ['Help me!', 'ช่วยด้วย', 'callout'],
@@ -87,6 +106,9 @@ const RAW: Raw[] = [
   ['Nice shot!', 'ยิงสวย!', 'callout'],
   ['On my way.', 'กำลังไป', 'callout'],
   ['Cover me.', 'คุ้มกันฉันที', 'callout'],
+  ['The enemy team is coming from the middle.', 'ทีมศัตรูกำลังมาจากตรงกลาง', 'callout'],
+  ["I'll go first, you stay behind me.", 'ฉันไปก่อน คุณอยู่ข้างหลังฉันนะ', 'callout'],
+  ["Don't fight alone, wait for the team.", 'อย่าสู้คนเดียว รอทีมก่อน', 'callout'],
   // react
   ['That was close!', 'เกือบไปแล้ว!', 'react'],
   ["That's awesome!", 'สุดยอดไปเลย', 'react'],
@@ -106,6 +128,8 @@ const RAW: Raw[] = [
   ['So lucky!', 'ดวงดีจัง / เฮงมาก', 'react'],
   ["I don't know.", 'ไม่รู้สิ', 'react'],
   ['Maybe later.', 'ไว้ทีหลังนะ', 'react'],
+  ["I didn't know you could do that!", 'ไม่รู้เลยว่าทำแบบนั้นได้ด้วย!', 'react'],
+  ["That was the best game I've played today.", 'ตานี้สนุกที่สุดที่เล่นมาวันนี้เลย', 'react'],
   // friend
   ['What games do you like?', 'คุณชอบเกมอะไร', 'friend'],
   ['Do you have Discord?', 'มีดิสคอร์ดไหม', 'friend'],
@@ -121,6 +145,10 @@ const RAW: Raw[] = [
   ['Have you been to Thailand?', 'เคยมาประเทศไทยไหม', 'friend'],
   ["What's the weather like there?", 'ที่นั่นอากาศเป็นยังไง', 'friend'],
   ["It's very hot here.", 'ที่นี่ร้อนมาก', 'friend'],
+  ['Your English is good, where did you learn it?', 'ภาษาอังกฤษคุณดีมาก เรียนมาจากไหน', 'friend'],
+  ['I usually play in the evening after school.', 'ปกติฉันเล่นตอนเย็นหลังเลิกเรียน', 'friend'],
+  ['Can you send me the link to your server?', 'ส่งลิงก์เซิร์ฟเวอร์ของคุณให้หน่อยได้ไหม', 'friend', 'server ในที่นี้คือเซิร์ฟเวอร์ Discord'],
+  ['Add me as a friend so we can play again.', 'แอดฉันเป็นเพื่อนสิ จะได้เล่นด้วยกันอีก', 'friend'],
   // slang
   ['gg', 'good game = เกมดี (พิมพ์ตอนจบเกม)', 'slang', '', 'G G. Good game.'],
   ['brb', 'be right back = เดี๋ยวกลับมา', 'slang', '', 'B R B. Be right back.'],
@@ -142,7 +170,7 @@ const RAW: Raw[] = [
   ['carry', 'แบกทีม', 'slang'],
 ];
 
-export const PHRASES: Phrase[] = RAW.map(([e, t, c, n, s]) => ({ e, t, c, n: n || '', s: s || e }));
+export const PHRASES: Phrase[] = RAW.map(([e, t, c, n, s]) => ({ e, t, c, n: n || '', s: s || e, l: levelOf(e) }));
 export const SENTENCES: Phrase[] = PHRASES.filter((p) => p.c !== 'slang');
 
 export const CATS: Record<Category, string> = {

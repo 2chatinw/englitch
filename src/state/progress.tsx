@@ -1,5 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
-import { INTERVALS, MISSIONS, type Kind } from '../data/content';
+import { INTERVALS, MISSIONS, type Kind, type Level } from '../data/content';
 import { addDays, today } from '../lib/util';
 import { setVoiceSettings } from '../lib/speech';
 import { useToast } from './toast';
@@ -14,6 +14,8 @@ export interface Settings {
   theme: 'system' | 'light' | 'dark';
   onboarded: boolean;
   installHintDismissed: boolean;
+  /** 'auto' starts with easy sentences and opens harder ones as they're learned; otherwise one fixed level. */
+  level: 'auto' | Level;
 }
 export interface SrsItem { b: number; d: string }
 export interface State {
@@ -35,7 +37,7 @@ const OLD_KEY = 'gg-english-v1'; // before the rename; read once so earlier prog
 const emptyDay = (): DayStats => ({ listen: 0, speak: 0, read: 0, write: 0, chat: 0, xp: 0 });
 const fresh = (): State => ({
   v: 1, xp: 0, streak: 0, lastActive: null, days: {}, srs: {}, updatedAt: 0, owner: null,
-  settings: { voiceURI: '', rate: 0.9, autoPlay: true, theme: 'system', onboarded: false, installHintDismissed: false },
+  settings: { voiceURI: '', rate: 0.9, autoPlay: true, theme: 'system', onboarded: false, installHintDismissed: false, level: 'auto' },
 });
 
 /** Combine two copies of the same player's progress without losing work done on either device. */
