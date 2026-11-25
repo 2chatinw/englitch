@@ -95,17 +95,13 @@ img, svg { max-width: 100%; }
 .stage { max-width: 760px; margin: 0 auto; }
 .page { display: flex; flex-direction: column; gap: 16px; }
 
-.hud { position: relative; background: var(--surface-2); border-radius: var(--r-sm); padding: 14px; display: flex; flex-direction: column; gap: 8px; }
-.hud-row { display: flex; align-items: center; justify-content: space-between; }
-.hud-level { display: inline-flex; align-items: baseline; gap: 4px; font-family: var(--f-display); }
-.hud-level small { font-weight: 800; font-size: .8rem; letter-spacing: .12em; color: var(--muted); }
-.hud-level b { font-size: 2.2rem; font-weight: 800; line-height: 1; }
-.hud-level-sm b { font-size: 1.35rem; }
-.hud-xp { font-size: .9rem; color: var(--muted); }
 .streak { display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 999px; background: var(--surface); color: var(--muted); font-size: .9rem; white-space: nowrap; }
 .streak b { font-size: 1.1rem; font-weight: 800; }
 .streak.is-on { background: var(--hot-soft); color: var(--hot); }
 .streak-unit { font-size: .8rem; }
+/* total XP in the top bar (no levels: XP is just a running score) */
+.xp-total { display: inline-flex; align-items: baseline; gap: 4px; padding: 4px 10px; border-radius: 999px; background: var(--accent-soft); color: var(--accent); font-size: .8rem; font-weight: 600; white-space: nowrap; }
+.xp-total b { font-size: 1.1rem; font-weight: 800; }
 
 /* Top bar (phone/tablet) */
 .topbar {
@@ -116,8 +112,6 @@ img, svg { max-width: 100%; }
   border-bottom: 1px solid var(--line);
 }
 .top-hud { position: relative; margin-left: auto; display: flex; align-items: center; gap: 10px; min-width: 0; }
-.top-xp { width: 64px; display: flex; }
-@media (max-width: 360px) { .top-xp { display: none; } }
 .icon-btn {
   display: inline-grid; place-items: center; width: 42px; height: 42px; flex: none;
   border-radius: 12px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); cursor: pointer;
@@ -216,7 +210,6 @@ img, svg { max-width: 100%; }
 .bar-fill { position: absolute; inset: 0 auto 0 0; width: 0; border-radius: inherit; background: var(--accent); }
 .bar-hot .bar-fill { background: var(--hot); }
 .bar-good .bar-fill { background: var(--good); }
-.hud .bar { background: var(--surface); }
 
 /* Chips */
 .chips { display: flex; gap: 8px; flex-wrap: wrap; }
@@ -399,7 +392,7 @@ textarea { resize: vertical; }
 .avatar { display: inline-grid; place-items: center; flex: none; border-radius: 50%; object-fit: cover; background: var(--surface-2); }
 .avatar-letter { background: var(--accent); color: var(--accent-ink); font-family: var(--f-display); font-weight: 800; line-height: 1; }
 .login-btn { min-height: 40px; padding: 0 12px; }
-@media (max-width: 380px) { .topbar .top-xp { display: none; } .topbar .streak-unit { display: none; } }
+@media (max-width: 380px) { .topbar .streak-unit { display: none; } }
 .account-card { display: flex; align-items: center; gap: 14px; }
 .account-id { display: flex; flex-direction: column; min-width: 0; }
 .account-id b { font-size: 1.15rem; }

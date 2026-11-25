@@ -30,12 +30,12 @@ const User = () => (
 
 /**
  * Signed-in account pill (avatar + chevron) with a drop-down, after the scholarship site's user menu:
- * name and level first, then account, settings and theme, and a red sign-out last.
+ * name and XP first, then account, settings and theme, and a red sign-out last.
  * Opens with a small GSAP pop; Escape, Tab, a click outside or picking an item closes it; arrow keys move between items.
  */
 export function AccountMenu({ onAccount, onSettings }: { onAccount: () => void; onSettings: () => void }) {
   const auth = useAuth();
-  const { level, state, setSettings } = useProgress();
+  const { state, setSettings } = useProgress();
   const toast = useToast();
   const [open, setOpen] = useState(false);
   const wrap = useRef<HTMLDivElement>(null);
@@ -117,7 +117,7 @@ export function AccountMenu({ onAccount, onSettings }: { onAccount: () => void; 
             <Avatar name={u.name} photo={u.photo} size={40} />
             <span className="acct-id">
               <b>{u.name}</b>
-              <small>LV {level} · เข้าด้วย {PROVIDER[u.provider] || 'บัญชี'}</small>
+              <small>{state.xp} XP · เข้าด้วย {PROVIDER[u.provider] || 'บัญชี'}</small>
             </span>
           </button>
           <hr className="acct-sep" />

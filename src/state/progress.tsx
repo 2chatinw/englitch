@@ -97,8 +97,6 @@ interface Api {
   state: State;
   day: DayStats;
   streak: number;
-  level: number;
-  levelXp: number;
   xpEvent: XpEvent | null;
   sync: SyncStatus;
   gain: (kind: Kind, pts: number) => void;
@@ -270,8 +268,6 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
       state,
       day: { ...emptyDay(), ...(state.days[t] || {}) },
       streak,
-      level: Math.floor(state.xp / 100) + 1,
-      levelXp: state.xp % 100,
       xpEvent, sync, gain, remember, setSettings, reset, exportCode, importCode,
     };
   }, [state, xpEvent, sync, gain, remember, setSettings, reset, exportCode, importCode]);

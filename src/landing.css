@@ -112,15 +112,6 @@
 .lp-bubble small { display: block; font-weight: 400; font-size: .75rem; opacity: .7; }
 .lp-bubble-in { left: 0; top: 46%; background: var(--surface-2); border-top-left-radius: 4px; }
 .lp-bubble-out { right: 0; top: 64%; background: var(--accent); color: var(--accent-ink); border-top-right-radius: 4px; }
-.lp-xp {
-  left: 14%; bottom: 0; display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 16px;
-  background: var(--surface); border: 1px solid var(--line); min-width: 60%;
-}
-.lp-xp .lv { font-family: var(--f-display); display: inline-flex; align-items: baseline; gap: 3px; }
-.lp-xp .lv small { font-weight: 800; font-size: .75rem; color: var(--muted); letter-spacing: .1em; }
-.lp-xp .lv b { font-size: 1.8rem; font-weight: 800; line-height: 1; }
-.lp-xp-bar { flex: 1; height: 8px; border-radius: 99px; background: var(--surface-2); overflow: hidden; }
-.lp-xp-bar i { display: block; width: 68%; height: 100%; border-radius: inherit; background: var(--hot); }
 
 /* Phrase ticker */
 .lp-ticker { overflow: hidden; border-block: 1px solid var(--line); background: var(--surface); padding: 14px 0; }

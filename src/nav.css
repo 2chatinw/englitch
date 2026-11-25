@@ -263,7 +263,6 @@ html { scroll-padding-top: 88px; }
 .topbar { display: block; }
 .topbar-in { display: flex; align-items: center; gap: 12px; max-width: var(--frame); margin: 0 auto; min-width: 0; }
 .top-hud { margin-left: auto; }
-.top-xp-num { display: none; font-size: .85rem; color: var(--muted); white-space: nowrap; }
 .top-theme { display: none; }
 .top-theme .theme-toggle { width: 40px; height: 40px; }
 @media (min-width: 600px) { .top-theme { display: inline-flex; } .acct-theme { display: none !important; } }
@@ -271,8 +270,6 @@ html { scroll-padding-top: 88px; }
   .topbar { padding: calc(12px + env(safe-area-inset-top)) 24px 12px; }
   .topbar .brandmark { --logo-h: 40px; }
   .top-hud { gap: 12px; }
-  .top-xp { width: 110px; }
-  .top-xp-num { display: inline; }
 }
 
 .app-body { position: relative; }

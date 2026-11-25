@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useRef, type RefObject } from 'react';
 import gsap from 'gsap';
 import { Icon } from './Icon';
-import { Bar } from './ui';
 import { PAGES, ROUTES, type Route } from '../lib/router';
 import { useProgress } from '../state/progress';
 import { MISSIONS } from '../data/content';
@@ -123,9 +122,9 @@ export function QuestRail({ route }: { route: Route }) {
   );
 }
 
-/** Top bar on every screen size: logo, level/XP/streak, theme and the account menu. Clear at the top, glass once scrolled. */
+/** Top bar on every screen size: logo, total XP and streak, theme and the account menu. Clear at the top, glass once scrolled. */
 export function TopBar({ onSettings, onAccount }: { onSettings: () => void; onAccount: () => void }) {
-  const { level, levelXp, streak } = useProgress();
+  const { state, streak } = useProgress();
   const hud = useRef<HTMLDivElement>(null);
   const scrolled = useScrolled();
   useXpPop(hud);
@@ -136,9 +135,7 @@ export function TopBar({ onSettings, onAccount }: { onSettings: () => void; onAc
           <Brand size="sm" />
         </a>
         <div className="top-hud" ref={hud}>
-          <span className="hud-level hud-level-sm"><small>LV</small><b className="num">{level}</b></span>
-          <span className="top-xp"><Bar value={levelXp / 100} tone="hot" label="XP ในเลเวลนี้" /></span>
-          <span className="top-xp-num num">{levelXp}/100 XP</span>
+          <span className="xp-total" title="XP ทั้งหมดที่เก็บได้"><b className="num">{state.xp}</b><span>XP</span></span>
           <Streak n={streak} />
         </div>
         <span className="top-theme"><ThemeToggle /></span>
