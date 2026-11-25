@@ -69,12 +69,14 @@ h1, h2, h3, .lp-hero h1, .page-head h1, .lp-head h2, .lp-final h2, .sheet-head h
 .keypad .is-hot .kp-key-top { fill: #FFC53D; }
 .keypad .is-hot .kp-key-dish { fill: #FFD25E; }
 .keypad .is-hot .kp-key-label { fill: #15275C; }
-.keypad .kp-cable-ink { fill: none; stroke: #15275C; stroke-width: 17; stroke-linecap: round; }
-.keypad .kp-cable { fill: none; stroke: #F4F7FF; stroke-width: 10; stroke-linecap: round; }
+.keypad .kp-cable-shadow { fill: none; stroke: rgba(10, 30, 90, .16); stroke-width: 12; stroke-linecap: round; }
+.keypad .kp-cable-ink { fill: none; stroke: #15275C; stroke-width: 16; stroke-linecap: round; stroke-linejoin: round; }
+.keypad .kp-cable { fill: none; stroke: #DCE6F7; stroke-width: 10; stroke-linecap: round; stroke-linejoin: round; }
+.keypad .kp-cable-shine { fill: none; stroke: #FFFFFF; stroke-width: 3; stroke-linecap: round; opacity: .9; }
 .keypad .kp-plug { fill: #F4F7FF; }
+.keypad .kp-plug-shine { fill: #FFFFFF; }
 .keypad .kp-usb { fill: #C3D2EC; }
-.keypad .kp-knob-side { fill: #C3D2EC; stroke: #15275C; stroke-width: 3; }
-.keypad .kp-knob { fill: #FFFFFF; stroke: #15275C; stroke-width: 3; }
+.keypad .kp-usb-hole { fill: #15275C; }
 .keypad .kp-key { transform-box: view-box; }
 
 /* ---------- Landing hero: the WASD keypad, each key says an in-game callout ---------- */

@@ -19,11 +19,15 @@ const KEYS: KeyDef[] = [
   { id: 'SPACE', label: '', x: 14, y: 142, w: 184, h: 46 },
 ]; // ordered back to front so nearer keys draw over farther ones
 
+// cable path in screen space: starts behind the back-left face, sweeps out and down to the plug
+const CABLE = 'M -40 50 C -110 40, -176 8, -200 56 C -216 90, -214 122, -221 146';
+const PLUG = { x: -221, y: 146, deg: 18 }; // turned to match the cable's last direction
+
 const layers = (h: number) => Array.from({ length: Math.floor(h / STEP) }, (_, i) => i * STEP);
 
 export function Keypad() {
   return (
-    <svg className="keypad" viewBox="-230 -70 460 330" aria-hidden="true">
+    <svg className="keypad" viewBox="-262 -60 492 320" aria-hidden="true">
       <defs>
         {/* an ink outline around each solid shape, like the cel-shaded reference */}
         <filter id="kp-ink" x="-10%" y="-10%" width="120%" height="120%">
@@ -37,12 +41,20 @@ export function Keypad() {
       <g transform={`translate(26 ${BASE_H + 26})`}>
         <rect x="0" y="0" width="212" height="202" rx="26" transform={ISO} fill="rgba(10, 30, 90, .28)" />
       </g>
-      {/* cable and USB plug, coming out of the back left */}
-      <path className="kp-cable-ink" d="M-44 52 C -110 20, -120 -30, -150 -6 S -196 70, -176 110" />
-      <path className="kp-cable" d="M-44 52 C -110 20, -120 -30, -150 -6 S -196 70, -176 110" />
-      <g transform="translate(-176 110) rotate(28)" filter="url(#kp-ink)">
-        <rect className="kp-plug" x="-16" y="0" width="32" height="40" rx="6" />
-        <rect className="kp-usb" x="-11" y="38" width="22" height="20" rx="2" />
+      {/* cable: leaves the back of the case (its start is hidden behind the base), one smooth S-bend,
+          a soft shadow on the ground, an ink edge, a body and a thin highlight so it reads as round */}
+      <path className="kp-cable-shadow" d={CABLE} transform="translate(16 26)" />
+      <path className="kp-cable-ink" d={CABLE} />
+      <path className="kp-cable" d={CABLE} />
+      <path className="kp-cable-shine" d={CABLE} transform="translate(-1.8 -2.2)" />
+      {/* USB plug, turned to follow the end of the cable */}
+      <g transform={`translate(${PLUG.x} ${PLUG.y}) rotate(${PLUG.deg})`} filter="url(#kp-ink)">
+        <rect className="kp-plug" x="-9" y="-4" width="18" height="16" rx="5" />
+        <rect className="kp-plug" x="-15" y="10" width="30" height="40" rx="8" />
+        <rect className="kp-plug-shine" x="-10" y="15" width="5" height="28" rx="2.5" />
+        <rect className="kp-usb" x="-11" y="49" width="22" height="20" rx="2" />
+        <rect className="kp-usb-hole" x="-6" y="55" width="4" height="5" rx="1" />
+        <rect className="kp-usb-hole" x="2" y="55" width="4" height="5" rx="1" />
       </g>
       {/* base: stacked sides, then the top */}
       <g filter="url(#kp-ink)">
@@ -50,11 +62,6 @@ export function Keypad() {
         <rect key={'b' + z} className="kp-base-side" x="0" y="0" width="212" height="202" rx="26" transform={`translate(0 ${BASE_H - z}) ${ISO}`} />
       ))}
       <rect className="kp-base-top" x="0" y="0" width="212" height="202" rx="26" transform={ISO} />
-      </g>
-      {/* knob on the front left face */}
-      <g transform="translate(-62 186)">
-        <ellipse className="kp-knob-side" cx="0" cy="6" rx="15" ry="13" />
-        <ellipse className="kp-knob" cx="0" cy="0" rx="15" ry="13" />
       </g>
       {KEYS.map((k) => (
         <g key={k.id} className={'kp-key' + (k.hot ? ' is-hot' : '')} data-key={k.id} filter="url(#kp-ink)">
