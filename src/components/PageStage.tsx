@@ -2,9 +2,11 @@ import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 're
 import gsap from 'gsap';
 import { PAGES, type Route } from '../lib/router';
 import { prefersReducedMotion } from '../lib/util';
+import { Keypad } from './Keypad';
 
 /**
- * Page transitions: a panel wipes across the content area carrying the next mode's name,
+ * Page transitions: a panel wipes across the content area with a little WASD keypad that taps out
+ * W-A-S-D and the spacebar, plus the next mode's name;
  * the page swaps while covered, then the panel exits and the new page's sections rise in.
  */
 export function PageStage({ route, render }: { route: Route; render: (r: Route) => ReactNode }) {
@@ -17,6 +19,7 @@ export function PageStage({ route, render }: { route: Route; render: (r: Route) 
   const wipe = useRef<HTMLDivElement>(null);
   const label = useRef<HTMLSpanElement>(null);
   const sub = useRef<HTMLSpanElement>(null);
+  const pad = useRef<HTMLDivElement>(null);
   const covering = useRef(false);
   const tl = useRef<gsap.core.Timeline | null>(null);
   const firstRun = useRef(true);
@@ -51,12 +54,19 @@ export function PageStage({ route, render }: { route: Route; render: (r: Route) 
         .to(page.current, { autoAlpha: 0, x: 24, duration: 0.22, ease: 'power2.in' }, 0);
     }
     t.to(w, { xPercent: 0, duration: 0.3, ease: 'power4.inOut' }, 0)
-      .fromTo([label.current, sub.current], { x: -40, autoAlpha: 0 }, { x: 0, autoAlpha: 1, duration: 0.3, stagger: 0.04, ease: 'power3.out' }, 0.12)
-      .add(() => {
+      .fromTo(pad.current, { y: -30, rotation: -8, autoAlpha: 0 }, { y: 0, rotation: 0, autoAlpha: 1, duration: 0.42, ease: 'back.out(2)' }, 0.06)
+      .fromTo([label.current, sub.current], { x: -40, autoAlpha: 0 }, { x: 0, autoAlpha: 1, duration: 0.3, stagger: 0.04, ease: 'power3.out' }, 0.14);
+    // the keys tap W, A, S, D, then the spacebar
+    const keys = ['W', 'A', 'S', 'D', 'SPACE'].map((k) => pad.current?.querySelector<SVGGElement>('[data-key="' + k + '"]')).filter(Boolean) as SVGGElement[];
+    keys.forEach((k, i) => {
+      t.to(k, { y: 9, duration: 0.06, ease: 'power2.in' }, 0.24 + i * 0.08)
+        .to(k, { y: 0, duration: 0.14, ease: 'back.out(3)' }, 0.30 + i * 0.08);
+    });
+    t.add(() => {
         window.scrollTo(0, 0);
         if (shownRef.current === route) reveal();
         else setShown(route);
-      });
+      }, 0.7);
     tl.current = t;
   }, [route]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -79,8 +89,11 @@ export function PageStage({ route, render }: { route: Route; render: (r: Route) 
     <>
       <div className="stage" ref={page}>{render(shown)}</div>
       <div className="wipe" ref={wipe} aria-hidden="true">
-        <span className="wipe-en" ref={label} />
-        <span className="wipe-th" ref={sub} />
+        <div className="wipe-pad" ref={pad}><Keypad /></div>
+        <div className="wipe-text">
+          <span className="wipe-en" ref={label} />
+          <span className="wipe-th" ref={sub} />
+        </div>
       </div>
     </>
   );
