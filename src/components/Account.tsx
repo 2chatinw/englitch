@@ -14,7 +14,7 @@ export function Avatar({ name, photo, size = 36 }: { name: string; photo?: strin
   return <span className="avatar avatar-letter" style={{ width: size, height: size, fontSize: size * 0.45 }} aria-hidden="true">{initial}</span>;
 }
 
-const PROVIDER: Record<string, string> = { discord: 'Discord', google: 'Google', facebook: 'Facebook', password: 'อีเมล', other: 'บัญชี' };
+export const PROVIDER: Record<string, string> = { discord: 'Discord', google: 'Google', facebook: 'Facebook', password: 'อีเมล', other: 'บัญชี' };
 
 export function AccountSheet({ open, onClose }: { open: boolean; onClose: () => void }) {
   const auth = useAuth();

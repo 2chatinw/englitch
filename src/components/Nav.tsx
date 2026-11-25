@@ -4,21 +4,11 @@ import { Icon } from './Icon';
 import { Bar } from './ui';
 import { PAGES, ROUTES, type Route } from '../lib/router';
 import { useProgress } from '../state/progress';
+import { MISSIONS } from '../data/content';
 import { prefersReducedMotion } from '../lib/util';
-import { useAuth } from '../state/auth';
-import { Avatar } from './Account';
 import { Brand, useScrolled } from './Brand';
-
-function AccountButton({ onAccount, compact }: { onAccount: () => void; compact?: boolean }) {
-  const { user } = useAuth();
-  if (!user) return null; // the app only shows after sign-in
-  return (
-    <button type="button" className={compact ? 'icon-btn avatar-btn' : 'side-account'} onClick={onAccount} aria-label={'บัญชีของ ' + user.name}>
-      <Avatar name={user.name} photo={user.photo} size={compact ? 30 : 32} />
-      {compact ? null : <span className="side-account-name">{user.name}</span>}
-    </button>
-  );
-}
+import { ThemeToggle } from './ThemeToggle';
+import { AccountMenu } from './AccountMenu';
 
 /** Plays a floating "+N XP" over the given anchor whenever XP is gained. */
 function useXpPop(anchor: RefObject<HTMLElement | null>) {
@@ -46,9 +36,40 @@ function Streak({ n }: { n: number }) {
   );
 }
 
+/** Today's progress for a menu item: one mission's count, or (for the lobby) all missions together. */
+function useQuest() {
+  const { day } = useProgress();
+  return (r: Route) => {
+    if (r === 'today') {
+      const goal = MISSIONS.reduce((s, m) => s + m.goal, 0);
+      const got = MISSIONS.reduce((s, m) => s + Math.min(day[m.k], m.goal), 0);
+      const done = MISSIONS.filter((m) => day[m.k] >= m.goal).length;
+      return { p: got / goal, done: done === MISSIONS.length, text: 'ภารกิจครบ ' + done + ' จาก ' + MISSIONS.length };
+    }
+    const m = MISSIONS.find((x) => x.k === r)!;
+    const n = Math.min(day[m.k], m.goal);
+    return { p: n / m.goal, done: n >= m.goal, text: 'วันนี้ ' + n + ' จาก ' + m.goal + ' ' + m.unit };
+  };
+}
+
+/** The menu icon inside a quest ring that fills with today's progress; a green ring and a tick once done. */
+function QuestRing({ icon, p, done, lobby }: { icon: Route; p: number; done: boolean; lobby?: boolean }) {
+  return (
+    <span className={'qring' + (done ? ' is-done' : '') + (lobby ? ' is-lobby' : '')} aria-hidden="true">
+      <svg className="qring-svg" viewBox="0 0 40 40">
+        <circle className="qring-track" cx="20" cy="20" r="17" />
+        <circle className="qring-fill" cx="20" cy="20" r="17" pathLength="100"
+          style={{ strokeDasharray: `${Math.max(0, Math.min(1, p)) * 100} 100`, strokeOpacity: p > 0 ? 1 : 0 }} />
+      </svg>
+      <Icon name={PAGES[icon].icon} />
+      {done ? <span className="qring-tick"><Icon name="check" /></span> : null}
+    </span>
+  );
+}
+
 /** Slides an indicator element to the active item with GSAP. */
 function useIndicator(route: Route, axis: 'x' | 'y') {
-  const list = useRef<HTMLDivElement>(null);
+  const list = useRef<HTMLElement>(null);
   const ind = useRef<HTMLSpanElement>(null);
   const first = useRef(true);
   const place = useCallback((animate: boolean) => {
@@ -72,45 +93,37 @@ function useIndicator(route: Route, axis: 'x' | 'y') {
   return { list, ind };
 }
 
-export function Sidebar({ route, onSettings, onAccount }: { route: Route; onSettings: () => void; onAccount: () => void }) {
-  const { level, levelXp, streak } = useProgress();
+/**
+ * Desktop menu: a slim floating rail beside the page (after the scholarship site's icon rail), drawn as a quest log:
+ * each mode's icon sits in a ring that fills with today's mission progress.
+ */
+export function QuestRail({ route }: { route: Route }) {
+  const quest = useQuest();
   const { list, ind } = useIndicator(route, 'y');
-  const hud = useRef<HTMLDivElement>(null);
-  useXpPop(hud);
   return (
-    <aside className="sidebar">
-      <a className="brand" href="#today" aria-label="Englitch หน้าแรก">
-        <Brand />
-      </a>
-      <div className="hud" ref={hud}>
-        <div className="hud-row">
-          <span className="hud-level"><small>LV</small><b className="num">{level}</b></span>
-          <Streak n={streak} />
-        </div>
-        <Bar value={levelXp / 100} tone="hot" label="XP ในเลเวลนี้" />
-        <span className="hud-xp num">{levelXp} / 100 XP</span>
-      </div>
-      <nav className="side-nav" aria-label="โหมดฝึก">
-        <div className="side-nav-list" ref={list}>
-          <span className="side-ind" ref={ind} aria-hidden="true" />
-          {ROUTES.map((r) => (
-            <a key={r} href={'#' + r} className="side-link" aria-current={r === route ? 'page' : undefined}>
-              <Icon name={PAGES[r].icon} />
-              <span>{PAGES[r].th}</span>
-            </a>
-          ))}
-        </div>
+    <aside className="rail" aria-label="โหมดฝึก">
+      <nav className="rail-in" ref={list}>
+        <span className="rail-ind" ref={ind} aria-hidden="true" />
+        {ROUTES.map((r) => {
+          const q = quest(r);
+          return (
+            <div key={r} className="rail-slot">
+              <a href={'#' + r} className="rail-item" title={PAGES[r].th + ' · ' + q.text}
+                aria-current={r === route ? 'page' : undefined}>
+                <QuestRing icon={r} p={q.p} done={q.done} lobby={r === 'today'} />
+                <span className="rail-label">{PAGES[r].short}</span>
+                <span className="sr-only">{PAGES[r].th}, {q.text}</span>
+              </a>
+              {r === 'today' ? <hr className="rail-sep" /> : null}
+            </div>
+          );
+        })}
       </nav>
-      <div className="side-foot">
-      <AccountButton onAccount={onAccount} />
-      <button type="button" className="side-settings" onClick={onSettings}>
-        <Icon name="sliders" /> ตั้งค่า
-      </button>
-      </div>
     </aside>
   );
 }
 
+/** Top bar on every screen size: logo, level/XP/streak, theme and the account menu. Clear at the top, glass once scrolled. */
 export function TopBar({ onSettings, onAccount }: { onSettings: () => void; onAccount: () => void }) {
   const { level, levelXp, streak } = useProgress();
   const hud = useRef<HTMLDivElement>(null);
@@ -118,34 +131,41 @@ export function TopBar({ onSettings, onAccount }: { onSettings: () => void; onAc
   useXpPop(hud);
   return (
     <header className="topbar" data-scrolled={scrolled ? 'true' : 'false'}>
-      <a className="brand brand-sm" href="#today" aria-label="Englitch หน้าแรก">
-        <Brand size="sm" />
-      </a>
-      <div className="top-hud" ref={hud}>
-        <span className="hud-level hud-level-sm"><small>LV</small><b className="num">{level}</b></span>
-        <span className="top-xp"><Bar value={levelXp / 100} tone="hot" label="XP ในเลเวลนี้" /></span>
-        <Streak n={streak} />
+      <div className="topbar-in">
+        <a className="brand brand-sm" href="#today" aria-label="Englitch หน้าแรก">
+          <Brand size="sm" />
+        </a>
+        <div className="top-hud" ref={hud}>
+          <span className="hud-level hud-level-sm"><small>LV</small><b className="num">{level}</b></span>
+          <span className="top-xp"><Bar value={levelXp / 100} tone="hot" label="XP ในเลเวลนี้" /></span>
+          <span className="top-xp-num num">{levelXp}/100 XP</span>
+          <Streak n={streak} />
+        </div>
+        <span className="top-theme"><ThemeToggle /></span>
+        <AccountMenu onAccount={onAccount} onSettings={onSettings} />
       </div>
-      <AccountButton onAccount={onAccount} compact />
-      <button type="button" className="icon-btn" onClick={onSettings} aria-label="ตั้งค่า">
-        <Icon name="sliders" />
-      </button>
     </header>
   );
 }
 
+/** Phone/tablet: thumb-reach tab bar, each icon in the same small quest ring. */
 export function BottomBar({ route }: { route: Route }) {
+  const quest = useQuest();
   const { list, ind } = useIndicator(route, 'x');
   return (
     <nav className="bottombar" aria-label="โหมดฝึก">
-      <div className="bottombar-list" ref={list}>
+      <div className="bottombar-list" ref={list as RefObject<HTMLDivElement>}>
         <span className="bottom-ind" ref={ind} aria-hidden="true" />
-        {ROUTES.map((r) => (
-          <a key={r} href={'#' + r} className="bottom-link" aria-current={r === route ? 'page' : undefined}>
-            <Icon name={PAGES[r].icon} />
-            <span>{PAGES[r].short}</span>
-          </a>
-        ))}
+        {ROUTES.map((r) => {
+          const q = quest(r);
+          return (
+            <a key={r} href={'#' + r} className="bottom-link" aria-current={r === route ? 'page' : undefined}>
+              <QuestRing icon={r} p={q.p} done={q.done} lobby={r === 'today'} />
+              <span>{PAGES[r].short}</span>
+              <span className="sr-only">, {q.text}</span>
+            </a>
+          );
+        })}
       </div>
     </nav>
   );

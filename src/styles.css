@@ -1,6 +1,6 @@
 /* Englitch — taken from the app logo: bright sky blue, cloud white, sunny yellow ("litch"), the mascot's orange,
    navy outlines, and chunky rounded type. Dark theme = the same sky at night.
-   Layout: desktop = fixed sidebar (brand, HUD, nav) + centered content column;
+   Layout: desktop = top bar + floating quest rail beside a centered content column;
            phone   = top HUD bar + content + thumb-reach bottom tab bar. */
 :root {
   --bg: #EAF4FF;
@@ -30,7 +30,6 @@
   --f-body: "Kanit", "Fredoka", "Noto Sans Thai", system-ui, -apple-system, "Segoe UI", sans-serif;
   --r: 22px;
   --r-sm: 14px;
-  --side-w: 264px;
   --bottom-h: 64px;
   color-scheme: light;
 }
@@ -95,19 +94,7 @@ img, svg { max-width: 100%; }
 }
 .stage { max-width: 760px; margin: 0 auto; }
 .page { display: flex; flex-direction: column; gap: 16px; }
-@media (min-width: 900px) {
-  .main { margin-left: var(--side-w); padding: 40px 40px 64px; }
-}
 
-/* Sidebar (desktop) */
-.sidebar { display: none; }
-@media (min-width: 900px) {
-  .sidebar {
-    position: fixed; inset: 0 auto 0 0; width: var(--side-w); z-index: 40;
-    display: flex; flex-direction: column; gap: 22px; padding: 28px 18px 20px;
-    background: var(--surface); border-right: 1px solid var(--line);
-  }
-}
 .hud { position: relative; background: var(--surface-2); border-radius: var(--r-sm); padding: 14px; display: flex; flex-direction: column; gap: 8px; }
 .hud-row { display: flex; align-items: center; justify-content: space-between; }
 .hud-level { display: inline-flex; align-items: baseline; gap: 4px; font-family: var(--f-display); }
@@ -119,20 +106,6 @@ img, svg { max-width: 100%; }
 .streak b { font-size: 1.1rem; font-weight: 800; }
 .streak.is-on { background: var(--hot-soft); color: var(--hot); }
 .streak-unit { font-size: .8rem; }
-.side-nav-list { position: relative; display: flex; flex-direction: column; gap: 2px; }
-.side-ind { position: absolute; left: 0; top: 0; width: 100%; border-radius: var(--r-sm); background: var(--accent); z-index: 0; }
-.side-link {
-  position: relative; z-index: 1; display: flex; align-items: center; gap: 12px;
-  padding: 11px 14px; border-radius: var(--r-sm); text-decoration: none; font-weight: 500; color: var(--muted);
-  transition: color .2s;
-}
-.side-link:hover { color: var(--ink); }
-.side-link[aria-current="page"] { color: var(--accent-ink); font-weight: 600; }
-.side-settings {
-  margin-top: auto; display: flex; align-items: center; gap: 12px; padding: 11px 14px; border-radius: var(--r-sm);
-  border: 1px solid var(--line); background: transparent; color: var(--muted); cursor: pointer;
-}
-.side-settings:hover { color: var(--ink); border-color: var(--ink); }
 
 /* Top bar (phone/tablet) */
 .topbar {
@@ -144,7 +117,6 @@ img, svg { max-width: 100%; }
 }
 .top-hud { position: relative; margin-left: auto; display: flex; align-items: center; gap: 10px; min-width: 0; }
 .top-xp { width: 64px; display: flex; }
-@media (min-width: 900px) { .topbar { display: none; } }
 @media (max-width: 360px) { .top-xp { display: none; } }
 .icon-btn {
   display: inline-grid; place-items: center; width: 42px; height: 42px; flex: none;
@@ -182,7 +154,6 @@ img, svg { max-width: 100%; }
   position: fixed; inset: 0; z-index: 30; display: none; flex-direction: column; justify-content: center;
   padding-left: max(24px, 8vw); background: var(--accent); color: var(--accent-ink); overflow: hidden;
 }
-@media (min-width: 900px) { .wipe { left: var(--side-w); } }
 .wipe::after {
   content: ""; position: absolute; inset: 0;
   background: repeating-linear-gradient(-55deg, transparent 0 22px, color-mix(in srgb, var(--accent-ink) 8%, transparent) 22px 24px);
@@ -427,7 +398,7 @@ textarea { resize: vertical; }
   max-width: min(92vw, 480px); padding: 12px 18px; border-radius: 14px;
   background: var(--ink); color: var(--bg); font-size: .95rem; box-shadow: var(--shadow); pointer-events: none;
 }
-@media (min-width: 900px) { .toast { bottom: 28px; left: calc(50% + var(--side-w) / 2); } }
+@media (min-width: 900px) { .toast { bottom: 28px; } }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
@@ -436,15 +407,6 @@ textarea { resize: vertical; }
 /* ---------- Accounts ---------- */
 .avatar { display: inline-grid; place-items: center; flex: none; border-radius: 50%; object-fit: cover; background: var(--surface-2); }
 .avatar-letter { background: var(--accent); color: var(--accent-ink); font-family: var(--f-display); font-weight: 800; line-height: 1; }
-.side-foot { margin-top: auto; display: flex; flex-direction: column; gap: 8px; }
-.side-foot .side-settings { margin-top: 0; }
-.side-account {
-  display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: var(--r-sm);
-  border: 1px solid var(--line); background: var(--surface-2); cursor: pointer; text-align: left; min-width: 0;
-}
-.side-account:hover { border-color: var(--ink); }
-.side-account-name { font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.avatar-btn { padding: 0; overflow: hidden; border-radius: 50%; width: 42px; }
 .login-btn { min-height: 40px; padding: 0 12px; }
 @media (max-width: 380px) { .topbar .top-xp { display: none; } .topbar .streak-unit { display: none; } }
 .account-card { display: flex; align-items: center; gap: 14px; }

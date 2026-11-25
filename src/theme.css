@@ -28,8 +28,7 @@ h1, h2, h3, .lp-hero h1, .page-head h1, .lp-head h2, .lp-final h2, .sheet-head h
 .btn-primary:disabled { filter: grayscale(.4); opacity: .6; }
 
 /* ---------- Nav accents ---------- */
-.side-ind { background: var(--accent); box-shadow: 0 6px 14px -8px var(--accent); }
-.sidebar, .topbar, .bottombar {
+.topbar, .bottombar {
   background: color-mix(in srgb, var(--surface) 86%, transparent);
   backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
 }
