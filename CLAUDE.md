@@ -48,7 +48,7 @@ Hidden browser panes throttle animation frames; GSAP animations may look paused 
 ## Facebook login (Meta app "Englitch", App ID 1132839822843907)
 
 - Set up and enabled in Firebase. Still in **Development mode** (only the owner can sign in).
-- Owner still needs to: test sign-in on localhost, upload the app icon (`englitch-icon-1024.png` next to this folder),
+- Owner still needs to: test sign-in on localhost, upload the app icon (`englitch-icon-1024.png` in this folder, not committed),
   and later switch to Live (needs privacy.html on the live site; Meta may ask for verification/review).
 
 ## Next upload checklist (only when the owner says so)
