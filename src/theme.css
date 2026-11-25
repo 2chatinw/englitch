@@ -77,33 +77,38 @@ h1, h2, h3, .lp-hero h1, .page-head h1, .lp-head h2, .lp-final h2, .sheet-head h
 .keypad .kp-knob { fill: #FFFFFF; stroke: #15275C; stroke-width: 3; }
 .keypad .kp-key { transform-box: view-box; }
 
-/* ---------- Landing hero: the logo as a floating mascot ---------- */
-.lp-visual { min-height: 460px; }
-.lp-mascot {
-  position: absolute; left: 50%; top: 50%; width: min(78%, 360px); height: auto; translate: -50% -52%;
-  border-radius: 28%; z-index: 0;
-  filter: drop-shadow(0 22px 30px rgba(30, 107, 255, .35));
+/* ---------- Landing hero: the WASD keypad, each key says an in-game callout ---------- */
+.lp-visual { min-height: 0; }
+.hero-keys { position: relative; display: flex; flex-direction: column; align-items: center; gap: 6px; padding-top: 8px; }
+.hk-bubble {
+  position: relative; z-index: 2; display: flex; align-items: center; gap: 12px; max-width: 100%;
+  padding: 12px 18px 12px 12px; border-radius: 20px; background: var(--surface); border: 2px solid #15275C;
+  box-shadow: 0 5px 0 #15275C, 0 18px 30px -16px rgba(21, 39, 92, .55);
 }
-.lp-visual .lp-float { z-index: 1; }
-.lp-card-flash { left: -2%; top: 0; width: 58%; padding: 16px 18px; rotate: -4deg; border-width: 3px; }
-.lp-card-flash b { font-size: clamp(1.15rem, 2.6vw, 1.45rem); }
-.lp-bubble-in { left: -4%; top: 58%; }
-.lp-bubble-out { right: -2%; top: 18%; background: var(--sun); color: var(--sun-ink); border: 2px solid var(--sun-edge); }
-.lp-xp { left: auto; right: 0; bottom: 0; min-width: 0; width: 56%; }
-@media (max-width: 880px) {
-  .lp-visual { min-height: 400px; }
-  .lp-mascot { width: min(70%, 300px); }
+.hk-bubble::after {
+  content: ""; position: absolute; left: 50%; bottom: -13px; width: 22px; height: 22px; translate: -50% 0; rotate: 45deg;
+  background: var(--surface); border-right: 2px solid #15275C; border-bottom: 2px solid #15275C; border-bottom-right-radius: 5px;
 }
-@media (max-width: 420px) {
-  .lp-visual { min-height: 420px; }
-  .lp-mascot { width: 62%; top: 53%; }
-  .lp-card-flash { width: 62%; left: 0; padding: 12px 14px; }
-  .lp-card-flash b { font-size: 1.05rem; }
-  .lp-bubble { font-size: .85rem; padding: 8px 12px; max-width: 60%; }
-  .lp-bubble-out { top: 27%; right: 0; }
-  .lp-bubble-in { top: 72%; left: 0; }
-  .lp-xp { width: 50%; padding: 8px 12px; }
+.hk-key {
+  flex: none; min-width: 46px; height: 46px; padding: 0 10px; display: grid; place-items: center; border-radius: 12px;
+  font: 700 1.25rem "Fredoka", var(--f-display); color: #15275C;
+  background: linear-gradient(180deg, #FFE27A, var(--sun)); border: 2px solid #15275C; box-shadow: 0 4px 0 #15275C;
 }
+.hk-line { display: flex; flex-direction: column; min-width: 0; line-height: 1.25; }
+.hk-line b { font-family: "Fredoka", var(--f-display); font-weight: 700; font-size: clamp(1.25rem, 2.6vw, 1.6rem); color: var(--ink); }
+.hk-line span { color: var(--muted); font-size: .98rem; }
+.hk-pad { width: min(100%, 470px); margin-top: 4px; }
+.hk-pad .keypad { display: block; width: 100%; height: auto; overflow: visible; filter: drop-shadow(0 18px 24px rgba(30, 107, 255, .25)); }
+.hk-pad [data-key] { cursor: pointer; }
+.hk-pad [data-key]:hover .kp-key-top { filter: brightness(1.06); }
+.hk-hint { margin: 0; font-size: .88rem; color: var(--muted); text-align: center; }
+.hk-hint kbd {
+  display: inline-grid; place-items: center; min-width: 24px; height: 24px; padding: 0 5px; border-radius: 6px;
+  font: 700 .78rem "Fredoka", sans-serif; color: #15275C; background: var(--surface); border: 1.5px solid #15275C; box-shadow: 0 2px 0 #15275C;
+}
+.hk-hint-touch { display: none; }
+@media (hover: none) { .hk-hint-desk { display: none; } .hk-hint-touch { display: inline; } }
+@media (max-width: 880px) { .hk-pad { width: min(100%, 400px); } }
 
 /* Headline highlight: a yellow swoosh under the key word, like the logo */
 .lp-hero h1 em, .lp-hero h1 mark {

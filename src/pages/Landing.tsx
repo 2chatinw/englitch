@@ -3,7 +3,8 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
 import { Icon, type IconName } from '../components/Icon';
-import { Brand, LOGO_URL, useScrolled } from '../components/Brand';
+import { Brand, useScrolled } from '../components/Brand';
+import { HeroKeys } from '../components/HeroKeys';
 import { SignInDrop } from '../components/SignInDrop';
 import { ThemeToggle } from '../components/ThemeToggle';
 import { useAuth } from '../state/auth';
@@ -53,12 +54,8 @@ export default function Landing() {
     if (prefersReducedMotion()) return;
     gsap.timeline()
       .from('.lp-hero-copy > *', { y: 28, autoAlpha: 0, duration: 0.7, stagger: 0.08, ease: 'power3.out' })
-      .from('.lp-mascot', { scale: 0.6, rotate: -8, autoAlpha: 0, duration: 0.9, ease: 'back.out(1.7)' }, '-=0.45')
-      .from('.lp-visual .lp-float', { y: 40, autoAlpha: 0, rotate: -4, duration: 0.8, stagger: 0.12, ease: 'back.out(1.6)' }, '-=0.55');
-    gsap.to('.lp-mascot', { y: -14, rotate: 2, duration: 3.2, repeat: -1, yoyo: true, ease: 'sine.inOut', delay: 1.2 });
-    gsap.utils.toArray<HTMLElement>('.lp-visual .lp-float').forEach((el, i) => {
-      gsap.to(el, { y: i % 2 ? 10 : -10, duration: 2.4 + i * 0.4, repeat: -1, yoyo: true, ease: 'sine.inOut', delay: 1 });
-    });
+      .from('.hk-pad', { y: -40, rotation: -6, autoAlpha: 0, duration: 0.8, ease: 'back.out(1.8)' }, '-=0.45')
+      .from('.hk-hint', { y: 10, autoAlpha: 0, duration: 0.4 }, '-=0.3');
     const track = root.current?.querySelector<HTMLElement>('.lp-ticker-track');
     if (track) gsap.to(track, { xPercent: -50, duration: 40, repeat: -1, ease: 'none' });
     gsap.utils.toArray<HTMLElement>('[data-rise]').forEach((el) => {
@@ -115,25 +112,8 @@ export default function Landing() {
             </ul>
           </div>
 
-          <div className="lp-visual" aria-hidden="true">
-            <img className="lp-mascot" src={LOGO_URL} alt="" width={720} height={720} />
-            <div className="lp-float lp-card-flash">
-              <span className="tag">คอลในเกม</span>
-              <b>Enemy behind you!</b>
-              <span className="muted">ศัตรูอยู่ข้างหลังคุณ</span>
-            </div>
-            <div className="lp-float lp-bubble lp-bubble-in">
-              <small>Alex · Canada</small>
-              gg wp! One more game?
-            </div>
-            <div className="lp-float lp-bubble lp-bubble-out">
-              Sure! Let&apos;s team up 🎮
-            </div>
-            <div className="lp-float lp-xp">
-              <span className="lv"><small>LV</small><b className="num">7</b></span>
-              <span className="lp-xp-bar"><i /></span>
-              <span className="streak is-on"><Icon name="flame" /><b className="num">12</b></span>
-            </div>
+          <div className="lp-visual">
+            <HeroKeys />
           </div>
         </section>
 
