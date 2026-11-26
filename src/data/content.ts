@@ -1,11 +1,47 @@
-export type Category = 'basics' | 'help' | 'game' | 'callout' | 'react' | 'friend' | 'slang';
+import { MORE } from './more';
+
+/** The seven main categories (missions), each practised by listening, speaking, reading and writing. */
+export type Group = 'general' | 'travel' | 'gaming' | 'business' | 'academic' | 'entertainment' | 'esp';
+
+/** Subtopics inside the main categories. */
+export type Category =
+  | 'basics' | 'help' | 'react' | 'friend' | 'daily'            // general
+  | 'airport' | 'hotel' | 'directions' | 'emergency'            // travel
+  | 'game' | 'callout' | 'slang'                                // gaming
+  | 'meeting' | 'email' | 'interview' | 'office'                // business
+  | 'class' | 'essay' | 'exam'                                  // academic
+  | 'idiom' | 'media' | 'social'                                // entertainment
+  | 'medical' | 'it' | 'aviation';                              // esp
+
+export const GROUP_OF: Record<Category, Group> = {
+  basics: 'general', help: 'general', react: 'general', friend: 'general', daily: 'general',
+  airport: 'travel', hotel: 'travel', directions: 'travel', emergency: 'travel',
+  game: 'gaming', callout: 'gaming', slang: 'gaming',
+  meeting: 'business', email: 'business', interview: 'business', office: 'business',
+  class: 'academic', essay: 'academic', exam: 'academic',
+  idiom: 'entertainment', media: 'entertainment', social: 'entertainment',
+  medical: 'esp', it: 'esp', aviation: 'esp',
+};
+
+export const GROUPS: Record<Group, { th: string; en: string; short: string; icon: string; blurb: string }> = {
+  general: { th: 'การสื่อสารทั่วไป', en: 'Everyday English', short: 'ทั่วไป', icon: '💬', blurb: 'ทักทาย สั่งอาหาร ซื้อของ นัดเพื่อน' },
+  travel: { th: 'การท่องเที่ยว', en: 'Travel & Tourism', short: 'เที่ยว', icon: '✈️', blurb: 'สนามบิน ตม. โรงแรม ถามทาง เหตุฉุกเฉิน' },
+  gaming: { th: 'เกมและสแลงออนไลน์', en: 'Gaming & Internet Slang', short: 'เกม', icon: '🎮', blurb: 'ชวนเล่น คอลในเกม ศัพท์แชต gg afk' },
+  business: { th: 'การทำงานและธุรกิจ', en: 'Business & Workplace', short: 'งาน', icon: '💼', blurb: 'ประชุม อีเมล สัมภาษณ์งาน ต่อรอง' },
+  academic: { th: 'วิชาการและการศึกษา', en: 'Academic English', short: 'วิชาการ', icon: '🎓', blurb: 'ในห้องเรียน เรียงความ ข้อสอบ IELTS' },
+  entertainment: { th: 'บันเทิงและป๊อปคัลเจอร์', en: 'Entertainment & Pop Culture', short: 'บันเทิง', icon: '🎬', blurb: 'สำนวน หนัง เพลง ซีรีส์ คอมเมนต์โซเชียล' },
+  esp: { th: 'ศัพท์เฉพาะสายอาชีพ', en: 'English for Specific Purposes', short: 'สายอาชีพ', icon: '🩺', blurb: 'แพทย์ & พยาบาล โปรแกรมเมอร์ การบิน' },
+};
 
 export interface Phrase {
   /** English text — also the stable id for spaced repetition. */
   e: string;
   /** Thai meaning. */
   t: string;
+  /** Subtopic. */
   c: Category;
+  /** Main category (mission). */
+  g: Group;
   /** Usage note in Thai. */
   n: string;
   /** What the voice should read (expands chat abbreviations). */
@@ -23,7 +59,7 @@ const levelOf = (e: string): Level => {
   return n <= 3 ? 'easy' : n <= 5 ? 'medium' : 'hard';
 };
 
-type Raw = [string, string, Category, string?, string?];
+export type Raw = [string, string, Category, string?, string?];
 
 const RAW: Raw[] = [
   // basics
@@ -439,7 +475,7 @@ const RAW: Raw[] = [
   ['pog', 'สุดยอด! ว้าว! (มาจาก Twitch)', 'slang'],
 ];
 
-export const PHRASES: Phrase[] = RAW.map(([e, t, c, n, s]) => ({ e, t, c, n: n || '', s: s || e, l: levelOf(e) }));
+export const PHRASES: Phrase[] = [...RAW, ...MORE].map(([e, t, c, n, s]) => ({ e, t, c, g: GROUP_OF[c], n: n || '', s: s || e, l: levelOf(e) }));
 export const SENTENCES: Phrase[] = PHRASES.filter((p) => p.c !== 'slang');
 
 export const CATS: Record<Category, string> = {
@@ -450,6 +486,24 @@ export const CATS: Record<Category, string> = {
   react: 'รีแอคชัน & ความรู้สึก',
   friend: 'คุยทำความรู้จัก',
   slang: 'ศัพท์แชตเกม',
+  daily: 'ชีวิตประจำวัน & นัดเพื่อน',
+  airport: 'สนามบิน & ตม.',
+  hotel: 'โรงแรม',
+  directions: 'ถามทาง & การเดินทาง',
+  emergency: 'เหตุฉุกเฉิน',
+  meeting: 'การประชุม & นำเสนอ',
+  email: 'อีเมลงาน',
+  interview: 'สัมภาษณ์งาน',
+  office: 'ในออฟฟิศ & ต่อรอง',
+  class: 'ในห้องเรียน',
+  essay: 'เรียงความ & งานวิจัย',
+  exam: 'การสอบ & IELTS',
+  idiom: 'สำนวน',
+  media: 'หนัง เพลง ซีรีส์',
+  social: 'โซเชียลมีเดีย',
+  medical: 'แพทย์ & พยาบาล',
+  it: 'โปรแกรมเมอร์ & ไอที',
+  aviation: 'การบิน',
 };
 
 export interface Situation { q: string; a: string; o: string[]; say?: string; why?: string }
@@ -490,6 +544,31 @@ export const SCENARIOS: Scenario[] = [
     id: 'coach', label: 'ผู้เล่นเก่งช่วยสอนเกม', blurb: 'Leo จากอเมริกา ใจเย็นและชอบสอนมือใหม่',
     role: 'Leo, an experienced, patient player from the USA who is happy to help a new player learn the game',
     starters: [["I'm new to this game.", 'ฉันเพิ่งเริ่มเล่นเกมนี้'], ['How do I do this?', 'อันนี้ทำยังไง'], ['Can you teach me?', 'สอนฉันหน่อยได้ไหม']],
+  },
+  {
+    id: 'hotel', label: 'พนักงานโรงแรม (เที่ยว)', blurb: 'Emma พนักงานต้อนรับที่ลอนดอน กำลังช่วยคุณเช็กอิน',
+    role: 'Emma, a friendly hotel receptionist in London who is helping the learner check in and answering questions about the hotel and the city',
+    starters: [['I have a reservation.', 'ฉันจองห้องไว้แล้ว'], ['Is breakfast included?', 'รวมอาหารเช้าไหม'], ['How do I get to the train station?', 'ไปสถานีรถไฟยังไง']],
+  },
+  {
+    id: 'interview', label: 'สัมภาษณ์งาน (ธุรกิจ)', blurb: 'Mr. Brown ผู้จัดการฝ่ายบุคคล สัมภาษณ์แบบใจดี',
+    role: 'Mr. Brown, a kind HR manager interviewing the learner for an office job. Ask common interview questions one at a time',
+    starters: [['Good morning, nice to meet you.', 'สวัสดีตอนเช้า ยินดีที่ได้รู้จัก'], ['I have three years of experience.', 'ฉันมีประสบการณ์ทำงานสามปี'], ['I work well in a team.', 'ฉันทำงานเป็นทีมได้ดี']],
+  },
+  {
+    id: 'classmate', label: 'เพื่อนร่วมชั้น (วิชาการ)', blurb: 'Noah นักศึกษาต่างชาติ ชวนติวและทำรายงานด้วยกัน',
+    role: 'Noah, an international university student who studies with the learner and talks about classes, assignments and exams',
+    starters: [['When is the assignment due?', 'งานนี้ต้องส่งเมื่อไหร่'], ["Let's form a study group.", 'มาตั้งกลุ่มติวกัน'], ['Can I borrow your notes?', 'ขอยืมสมุดจดหน่อยได้ไหม']],
+  },
+  {
+    id: 'popculture', label: 'คุยเรื่องหนัง เพลง ซีรีส์ (บันเทิง)', blurb: 'Zoe คอหนังและเพลง ชอบใช้สำนวนสนุก ๆ',
+    role: 'Zoe, a fan of movies, series and music who loves chatting about pop culture and sometimes uses common idioms, explaining them simply',
+    starters: [['Have you seen this movie?', 'เคยดูหนังเรื่องนี้ไหม'], ['No spoilers, please!', 'ห้ามสปอยล์นะ!'], ['This song is so catchy.', 'เพลงนี้ติดหูมาก']],
+  },
+  {
+    id: 'doctor', label: 'หมอที่คลินิก (สายอาชีพ)', blurb: 'Dr. Lee ถามอาการและให้คำแนะนำอย่างใจเย็น',
+    role: 'Dr. Lee, a calm doctor at a clinic who asks the learner about their symptoms and gives simple advice',
+    starters: [['I have a headache.', 'ฉันปวดหัว'], ['I have a fever.', 'ฉันมีไข้'], ['I feel dizzy.', 'ฉันรู้สึกเวียนหัว']],
   },
   {
     id: 'free', label: 'คุยเรื่องทั่วไป', blurb: 'Sam ชวนคุยได้ทุกเรื่อง ทั้งเกม อาหาร และชีวิตประจำวัน',

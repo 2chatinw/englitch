@@ -38,10 +38,14 @@ npm run build   # tsc -b && vite build → dist/
   recognition, so it falls back to keyboard/Win+H voice typing), `Read.tsx` (situations + meanings, multiple choice),
   `Write.tsx` (Thai → type English, two-step hints), `Chat.tsx`. Flashcards were removed (owner's choice, Nov 2026);
   `remember()` in `state/progress.tsx` keeps a spaced-review schedule from right/wrong answers in every mode.
-- Missions (no daily missions any more, owner's choice): one mission per phrase topic (`lib/missions.ts`,
-  `components/Missions.tsx`). Passed when every phrase in the topic was answered right once, in any mode. The active
-  mission is `settings.mission`; practice then draws only from that topic, short sentences first (3 stages = levels).
-  The slang mission is reading-only. No mission = mixed practice from every topic.
+- Content: 7 main categories (`Group` in `data/content.ts`, owner's list): general, travel, gaming, business,
+  academic, entertainment, esp (medical / IT / aviation). Each phrase has a subtopic `c` and its main category `g`
+  (`GROUP_OF`). Gaming/everyday phrases live in `data/content.ts`, the other categories in `data/more.ts`.
+  English and Thai must stay unique (Write shows the Thai as the question).
+- Missions (no daily missions, owner's choice): one mission per main category (`lib/missions.ts`,
+  `components/Missions.tsx`), each practised by listen/speak/read/write. Passed when every phrase in it was answered
+  right once, in any mode. The active mission is `settings.mission`; practice then draws only from that category,
+  short sentences first (3 stages = levels). No mission = mixed practice from every category.
 - Levels: each phrase's level comes from its word count (`data/content.ts`: 1–3 easy, 4–5 medium, 6+ hard).
   In mixed practice, auto mode opens medium after 25 easy right answers and hard after 20 medium (`UNLOCK` in
   `pages/practice.ts`). Settings can fix one level (applies inside missions too).

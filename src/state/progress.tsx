@@ -1,5 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
-import { INTERVALS, type Category, type Kind, type Level } from '../data/content';
+import { INTERVALS, type Group, type Kind, type Level } from '../data/content';
 import { addDays, today } from '../lib/util';
 import { setVoiceSettings } from '../lib/speech';
 import { useAuth } from './auth';
@@ -16,7 +16,7 @@ export interface Settings {
   /** 'auto' starts with easy sentences and opens harder ones as they're learned; otherwise one fixed level. */
   level: 'auto' | Level;
   /** The topic mission being played, or null to practise every topic mixed. */
-  mission: Category | null;
+  mission: Group | null;
 }
 export interface SrsItem { b: number; d: string }
 export interface State {

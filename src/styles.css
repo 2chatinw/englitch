@@ -524,3 +524,5 @@ input[type="email"]:focus, input[type="password"]:focus { outline: none; border-
 
 /* menu items without a progress ring: the icon sits in a soft circle */
 .qring.is-plain { border-radius: 50%; background: color-mix(in srgb, var(--surface-2) 70%, transparent); }
+.mcard-en { font-weight: 400; font-size: .75rem; color: var(--muted); letter-spacing: .01em; }
+.mcard-blurb { font-size: .82rem; color: var(--muted); line-height: 1.35; }

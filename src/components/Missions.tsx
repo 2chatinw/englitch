@@ -1,10 +1,10 @@
 import { useEffect, useRef } from 'react';
-import { LEVELS, type Category, type Level } from '../data/content';
+import { LEVELS, type Group, type Level } from '../data/content';
 import { Icon } from './Icon';
 import { useProgress } from '../state/progress';
 import { useToast } from '../state/toast';
 import { PAGES, navigate, type Route } from '../lib/router';
-import { activeMission, allMissions, missionStats, readOnlyMission, type MissionStats } from '../lib/missions';
+import { activeMission, allMissions, missionStats, type MissionStats } from '../lib/missions';
 import { levelStatus } from '../pages/practice';
 
 const LEVEL_TH: Record<Level, string> = { easy: 'ง่าย', medium: 'กลาง', hard: 'ยาก' };
@@ -36,27 +36,12 @@ export function MissionChip() {
   );
 }
 
-/**
- * Top of a practice card: the mission's three-stage bar, a "passed" note once every phrase is done,
- * and — for the slang mission on a mode that can't use single words — a pointer to the reading mode.
- */
-export function MissionStrip({ route }: { route: Route }) {
+/** Top of a practice card: the mission's three-stage bar, and a "passed" note once every phrase is done. */
+export function MissionStrip(_: { route: Route }) {
   const { state } = useProgress();
   const c = activeMission(state);
   if (!c) return null;
   const m = missionStats(state, c);
-  if (readOnlyMission(c) && route !== 'read') {
-    return (
-      <div className="mission-done" role="status">
-        <span className="mission-done-ic" aria-hidden="true">{m.icon}</span>
-        <span className="mission-done-txt">
-          <b>Mission {m.short} ฝึกในโหมดอ่าน</b>
-          <span>ศัพท์แชตเป็นคำย่อสั้น ๆ ตอนนี้โหมดนี้เลยสุ่มประโยคจากทุกหมวดให้แทน</span>
-        </span>
-        <a className="btn btn-primary btn-sm" href="#read">ไปโหมดอ่าน <Icon name="arrow" /></a>
-      </div>
-    );
-  }
   return (
     <div className="mstrip">
       <MissionBar m={m} />
@@ -74,13 +59,13 @@ export function MissionStrip({ route }: { route: Route }) {
   );
 }
 
-/** Today page: every topic as a mission card; the chosen one opens its four practice modes. */
+/** Today page: the seven main categories as mission cards; the chosen one opens listen, speak, read and write. */
 export function MissionBoard() {
   const { state, setSettings } = useProgress();
   const active = activeMission(state);
   const ms = allMissions(state);
   const passed = ms.filter((m) => m.complete).length;
-  const choose = (c: Category | null) => setSettings({ mission: c });
+  const choose = (c: Group | null) => setSettings({ mission: c });
 
   return (
     <section className="card" data-reveal aria-labelledby="mboard-h">
@@ -96,7 +81,8 @@ export function MissionBoard() {
               <button type="button" className="mcard-pick" aria-pressed={on} onClick={() => choose(on ? null : m.c)}>
                 <span className="mcard-icon" aria-hidden="true">{m.icon}</span>
                 <span className="mcard-body">
-                  <span className="mcard-title">{m.name}</span>
+                  <span className="mcard-title">{m.name} <small className="mcard-en">{m.en}</small></span>
+                  <span className="mcard-blurb">{m.blurb}</span>
                   <span className="mcard-meta">
                     {m.complete ? <><Icon name="check" /> ผ่านแล้ว</> : <>ผ่าน <b className="num">{m.done}/{m.total}</b> ประโยค · ขั้น{LEVEL_TH[m.stage ?? 'easy']}</>}
                   </span>
@@ -105,7 +91,7 @@ export function MissionBoard() {
               </button>
               {on ? (
                 <div className="mcard-modes" role="group" aria-label={'ฝึก Mission ' + m.short + ' ด้วย'}>
-                  {(readOnlyMission(m.c) ? (['read'] as Route[]) : MODES).map((r) => (
+                  {MODES.map((r) => (
                     <button key={r} type="button" className="btn btn-ghost btn-sm" onClick={() => navigate(r)}>
                       <Icon name={PAGES[r].icon} /> {PAGES[r].short}
                     </button>
@@ -136,7 +122,7 @@ export function useProgressToasts() {
     // progress arriving from the cloud right after opening the app isn't news
     if (Date.now() - was.at < 4000) return;
     const newly = passed.split(',').filter((c) => c && !was.passed.split(',').includes(c));
-    if (newly.length === 1) toast('ผ่าน Mission ' + missionStats(state, newly[0] as Category).short + ' แล้ว! 🎉');
+    if (newly.length === 1) toast('ผ่าน Mission ' + missionStats(state, newly[0] as Group).short + ' แล้ว! 🎉');
     else if (state.settings.level === 'auto' && !activeMission(state) && opened === was.opened + 1) {
       toast('เปิดระดับ' + LEVEL_TH[LEVELS[opened - 1].k] + 'แล้ว! ต่อไปจะมีประโยคที่ยาวขึ้นนิดนึง');
     }

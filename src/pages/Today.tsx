@@ -5,7 +5,7 @@ import { useProgress } from '../state/progress';
 import { today } from '../lib/util';
 import { PAGES, navigate, type Route } from '../lib/router';
 import { MissionBar, MissionBoard } from '../components/Missions';
-import { activeMission, allMissions, missionStats, readOnlyMission } from '../lib/missions';
+import { activeMission, allMissions, missionStats } from '../lib/missions';
 
 const isIOS = typeof navigator !== 'undefined' && /iPhone|iPad|iPod/.test(navigator.userAgent);
 const isStandalone = typeof window !== 'undefined' &&
@@ -62,7 +62,7 @@ export default function Today() {
                   {streak > 0 ? ' · ฝึกต่อเนื่อง ' + streak + ' วัน' : ''}
                 </p>
                 <div className="row">
-                  {(readOnlyMission(m.c) ? (['read'] as Route[]) : MODES).map((r, i) => (
+                  {MODES.map((r, i) => (
                     <button key={r} type="button" className={'btn ' + (i === 0 ? 'btn-primary' : 'btn-ghost')} onClick={() => navigate(r)}>
                       <Icon name={PAGES[r].icon} /> {PAGES[r].th}
                     </button>

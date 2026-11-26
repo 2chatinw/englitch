@@ -1,7 +1,7 @@
 import { LEVELS, PHRASES, SENTENCES, type Level, type Phrase } from '../data/content';
 import type { State } from '../state/progress';
 import { pick, today } from '../lib/util';
-import { activeMission, missionStats, readOnlyMission } from '../lib/missions';
+import { activeMission, missionStats } from '../lib/missions';
 
 /** Mixed practice (no mission): right answers needed at one level to open the next (auto mode). */
 export const UNLOCK: Record<Exclude<Level, 'easy'>, { from: Level; need: number }> = {
@@ -30,8 +30,8 @@ function pool(state: State, withSlang: boolean): Phrase[] {
   const m = activeMission(state);
   const st = levelStatus(state);
   const base = withSlang ? PHRASES : SENTENCES;
-  if (m && (withSlang || !readOnlyMission(m))) {
-    const inMission = base.filter((p) => p.c === m);
+  if (m) {
+    const inMission = base.filter((p) => p.g === m);
     const fixed = st.fixed ? inMission.filter((p) => p.l === st.fixed) : [];
     return fixed.length ? fixed : inMission;
   }
@@ -53,7 +53,7 @@ export function pickSentence(state: State, prev?: string): Phrase {
   const due = all.filter((p) => state.srs[p.e] && state.srs[p.e].d <= t);
   const unseen = all.filter((p) => !state.srs[p.e]);
   const m = activeMission(state);
-  const stage = m && !readOnlyMission(m) ? missionStats(state, m).stage : levelStatus(state).top;
+  const stage = m ? missionStats(state, m).stage : levelStatus(state).top;
   const focus = unseen.filter((p) => p.l === stage);
   // in a mission, sentences answered wrong before also count as "not done" for the stage
   const notDone = m ? all.filter((p) => (state.srs[p.e]?.b ?? 0) < 1 && p.l === stage) : [];
