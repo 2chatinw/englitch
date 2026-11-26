@@ -46,7 +46,9 @@ npm run build   # tsc -b && vite build → dist/
   `components/Missions.tsx`), each practised by listen/speak/read/write. Passed when every phrase in it was answered
   right once, in any mode. The active mission is `settings.mission`; practice then draws only from that category,
   short sentences first (3 stages = levels). No mission = mixed practice from every category.
-- Levels: each phrase's level comes from its word count (`data/content.ts`: 1–3 easy, 4–5 medium, 6+ hard).
+- Levels: `difficulty()` in `data/content.ts` scores length, long words, grammar (if/would, perfect, passive,
+  linking clauses, formal words) and kind of language (idioms, academic, job jargon); <3 easy, <5.2 medium, else hard.
+  Phrases: `RAW` (content.ts), `MORE` (more.ts), `MORE2` (more2.ts) — 1,220 in total.
   In mixed practice, auto mode opens medium after 25 easy right answers and hard after 20 medium (`UNLOCK` in
   `pages/practice.ts`). Settings can fix one level (applies inside missions too).
 - Owner's preferences: no timers or "minutes per day" anywhere (no pressure), no XP or levels-as-score on screen,

@@ -1,4 +1,5 @@
 import { MORE } from './more';
+import { MORE2 } from './more2';
 
 /** The seven main categories (missions), each practised by listening, speaking, reading and writing. */
 export type Group = 'general' | 'travel' | 'gaming' | 'business' | 'academic' | 'entertainment' | 'esp';
@@ -46,7 +47,7 @@ export interface Phrase {
   n: string;
   /** What the voice should read (expands chat abbreviations). */
   s: string;
-  /** Difficulty, from the sentence length: 1–3 words easy, 4–5 medium, 6+ hard. */
+  /** Difficulty from length, vocabulary, grammar and kind of language (see difficulty()). */
   l: Level;
 }
 
@@ -54,9 +55,36 @@ export type Level = 'easy' | 'medium' | 'hard';
 export const LEVELS: { k: Level; th: string }[] = [
   { k: 'easy', th: 'ง่าย' }, { k: 'medium', th: 'กลาง' }, { k: 'hard', th: 'ยาก' },
 ];
-const levelOf = (e: string): Level => {
-  const n = e.trim().split(/\s+/).length;
-  return n <= 3 ? 'easy' : n <= 5 ? 'medium' : 'hard';
+/*
+ * Difficulty, scored from four things a Thai beginner finds hard:
+ *  1. length (more words, more to hold in mind; a bonus for 8+ words),
+ *  2. long words (9+ letters, e.g. "participants", "restaurant"),
+ *  3. grammar: conditionals (if / would), perfect tenses (have been), passive (was moved),
+ *     linking clauses (because / although / which), plus formal or technical words,
+ *  4. the kind of language: idioms (meaning isn't literal), academic writing and job jargon score higher.
+ * Score under 3 = easy, under 5.2 = medium, else hard. Chat slang (single abbreviations) is always easy.
+ */
+const DOMAIN: Partial<Record<Category, number>> = {
+  idiom: 2, essay: 2, medical: 1, it: 1, aviation: 1, exam: 0.5, email: 0.5, meeting: 0.5, interview: 0.5, office: 0.5, social: 0.5,
+};
+const FORMAL = /\b(however|therefore|furthermore|moreover|consequently|according|addition|summarize|conclusion|firstly|secondly|finally|whereas|although|despite|regarding|significant|statistically|hypothesis|evidence|participants|limitation|approximately|estimated|expectations|inconvenience|apologies|approved|negotiate|authentication|migrating|refactor|prescribe|antibiotics|symptoms|medication|turbulence|descent|maintain|questionnaire|consistent|proposed|isolates|outweigh)\b/i;
+const GRAMMAR = [
+  /\bif\b|\bunless\b|\bwould\b|\bcould have\b|\bshould have\b|\bmight\b/i,
+  /\b(have|has|had|'ve|’ve)\s+(been|\w+ed|seen|done|gone|played|heard|had|got|made|known|taken|written)\b/i,
+  /\b(is|are|was|were|be|been|being)\s+\w+(ed|en)\b/i,
+  /\b(which|whose|whom|although|though|whereas|while|because|since|until|when)\b/i,
+];
+export function difficulty(e: string, c: Category): number {
+  const words = e.replace(/[^A-Za-z'’ -]/g, ' ').trim().split(/\s+/).filter(Boolean);
+  const n = words.length;
+  const long = words.filter((w) => w.replace(/['’-]/g, '').length >= 9).length;
+  const grammar = GRAMMAR.filter((r) => r.test(e)).length + (FORMAL.test(e) ? 1 : 0);
+  return 0.55 * n + (n >= 8 ? 1 : 0) + long + 1.3 * grammar + (DOMAIN[c] ?? 0);
+}
+const levelOf = (e: string, c: Category): Level => {
+  if (c === 'slang') return 'easy';
+  const s = difficulty(e, c);
+  return s < 3 ? 'easy' : s < 5.2 ? 'medium' : 'hard';
 };
 
 export type Raw = [string, string, Category, string?, string?];
@@ -475,7 +503,7 @@ const RAW: Raw[] = [
   ['pog', 'สุดยอด! ว้าว! (มาจาก Twitch)', 'slang'],
 ];
 
-export const PHRASES: Phrase[] = [...RAW, ...MORE].map(([e, t, c, n, s]) => ({ e, t, c, g: GROUP_OF[c], n: n || '', s: s || e, l: levelOf(e) }));
+export const PHRASES: Phrase[] = [...RAW, ...MORE, ...MORE2].map(([e, t, c, n, s]) => ({ e, t, c, g: GROUP_OF[c], n: n || '', s: s || e, l: levelOf(e, c) }));
 export const SENTENCES: Phrase[] = PHRASES.filter((p) => p.c !== 'slang');
 
 export const CATS: Record<Category, string> = {
