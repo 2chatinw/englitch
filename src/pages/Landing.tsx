@@ -108,8 +108,8 @@ export default function Landing() {
               <button type="button" className="btn btn-ghost btn-lg" onClick={toFeatures}>ดูว่ามีอะไรบ้าง</button>
             </div>
             <ul className="lp-facts">
-              <li><b className="num">{PHRASES.length}</b> วลีจากเกมจริง</li>
-              <li><b className="num">5</b> โหมดฝึก</li>
+              <li><b className="num">{PHRASES.length.toLocaleString()}</b> วลีที่ใช้จริง</li>
+              <li><b className="num">7</b> หมวด × 4 ทักษะ</li>
               <li><b className="num">0</b> บาท ฟรีทั้งหมด</li>
             </ul>
           </div>
