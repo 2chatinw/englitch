@@ -14,6 +14,7 @@
   --accent-soft: #DCEAFF;
   --cap-mix: 82%; /* how much plain surface is in a skill keycap face (rest = the skill colour) */
   --pod-a: #1E6BFF; --pod-b: #6C8CFF; --pod-c: #9C7BFF; /* lobby phrase-of-the-day card gradient */
+  --ring-track: .3; /* opacity of the not-yet-done part of the category rings */
   --navy: #1B3A8C;
   --sun: #FFC53D;
   --sun-2: #FFB01F;
@@ -37,7 +38,7 @@
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #000000; --surface: #121212; --surface-2: #1C1C1E; --ink: #FFFFFF; --muted: #A0A0A8; --line: #2A2A2E; --cap-mix: 52%; --pod-a: #1B3F9E; --pod-b: #3A3FA8; --pod-c: #5B3CA6;
+    --bg: #000000; --surface: #121212; --surface-2: #1C1C1E; --ink: #FFFFFF; --muted: #A0A0A8; --line: #2A2A2E; --cap-mix: 52%; --pod-a: #1B3F9E; --pod-b: #3A3FA8; --pod-c: #5B3CA6; --ring-track: .5;
     --accent: #7DB0FF; --accent-ink: #000000; --accent-soft: #172338; --navy: #000000;
     --sun: #FFD25A; --sun-2: #FFBE2E; --sun-edge: #C98200; --sun-ink: #1B2A5E;
     --hot: #FF9A4D; --hot-soft: #3D2313; --good: #3FD08F; --good-soft: #0F3A2A; --bad: #FF7C80; --bad-soft: #43181C;
@@ -47,7 +48,7 @@
   }
 }
 :root[data-theme="dark"] {
-  --bg: #000000; --surface: #121212; --surface-2: #1C1C1E; --ink: #FFFFFF; --muted: #A0A0A8; --line: #2A2A2E; --cap-mix: 52%; --pod-a: #1B3F9E; --pod-b: #3A3FA8; --pod-c: #5B3CA6;
+  --bg: #000000; --surface: #121212; --surface-2: #1C1C1E; --ink: #FFFFFF; --muted: #A0A0A8; --line: #2A2A2E; --cap-mix: 52%; --pod-a: #1B3F9E; --pod-b: #3A3FA8; --pod-c: #5B3CA6; --ring-track: .5;
   --accent: #7DB0FF; --accent-ink: #000000; --accent-soft: #172338; --navy: #000000;
   --sun: #FFD25A; --sun-2: #FFBE2E; --sun-edge: #C98200; --sun-ink: #1B2A5E;
   --hot: #FF9A4D; --hot-soft: #3D2313; --good: #3FD08F; --good-soft: #0F3A2A; --bad: #FF7C80; --bad-soft: #43181C;
@@ -501,7 +502,7 @@ input[type="email"]:focus, input[type="password"]:focus { outline: none; border-
 .cp-node.is-mini { width: var(--m); height: var(--m); }
 .sring { position: absolute; inset: 0; width: 100%; height: 100%; rotate: -90deg; overflow: visible; }
 .sring circle { fill: none; stroke-width: 7; stroke-linecap: round; transition: stroke-dasharray .7s cubic-bezier(.22, 1, .36, 1); }
-.sring-track { stroke-opacity: .3; }
+.sring-track { stroke-opacity: var(--ring-track); }
 .sring-easy circle { stroke: var(--good); }
 .sring-medium circle { stroke: var(--sun-2); }
 .sring-hard circle { stroke: var(--hot); }
