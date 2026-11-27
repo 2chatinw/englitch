@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 import { PHRASES } from '../data/content';
 import { Icon } from '../components/Icon';
-import { Kbd, NextButton, PageHead, Result, SpeakButton, WordDiff } from '../components/ui';
+import { Kbd, NextButton, Result, WordDiff } from '../components/ui';
 import { useProgress } from '../state/progress';
-import { MissionChip, MissionStrip } from '../components/Missions';
+import { Story } from '../components/Story';
 import { useSession } from '../state/session';
 import { compare, type Comparison } from '../lib/compare';
 import { isBrave, listen, micErrorText, micSupported, say, type Listener } from '../lib/speech';
@@ -11,7 +11,9 @@ import { useToast } from '../state/toast';
 import { MicBrowsers } from '../components/MicBrowsers';
 import { pickSentence } from './practice';
 
-interface Sess { id: string; result: Comparison | null; said: string; scored?: boolean; typed: string; keyboard: boolean }
+/** `n`: sentences done in this visit, for the story dashes (sets of 10) */
+interface Sess { id: string; result: Comparison | null; said: string; scored?: boolean; typed: string; keyboard: boolean; n?: number }
+const SET = 10;
 const byId = new Map(PHRASES.map((p) => [p.e, p]));
 
 export default function Speak() {
@@ -56,37 +58,23 @@ export default function Speak() {
     rec.current?.abort(); rec.current = null; setListening(false); setLive('');
     const n = pickSentence(state, p.e);
     if (state.settings.autoPlay) say(n.e);
-    setS({ ...s, id: n.e, result: null, said: '', typed: '', scored: false });
+    setS({ ...s, id: n.e, result: null, said: '', typed: '', scored: false, n: (s.n ?? 0) + 1 });
   };
 
   const pass = s.result ? s.result.score >= 0.8 : false;
 
   return (
     <div className="page">
-      <PageHead route="speak" aside={<MissionChip />}>
-        ฟังตัวอย่าง แล้วพูดตามให้ชัด ระบบจะบอกว่าคำไหนยังฟังไม่ชัด
-      </PageHead>
-      <section className="card play" data-reveal>
-        <MissionStrip route="speak" />
-        <div className="say-line">
-          <p className="say-en">{p.e}</p>
-          <p className="muted">{p.t}</p>
-          <div className="row center">
-            <SpeakButton text={p.s} label="ฟังตัวอย่าง" />
-            <SpeakButton text={p.s} slow />
-          </div>
-        </div>
-        {!s.result ? <MicBrowsers /> : null}
-
-        {s.result ? (
+      <Story route="speak" set={{ total: SET, done: (s.n ?? 0) % SET }} onSwipeUp={s.result ? next : undefined}
+        sheet={s.result ? (
           <>
             <Result ok={pass} title={pass ? 'ชัดเจนดีมาก' : 'ได้ ' + Math.round(s.result.score * 100) + '% ลองฟังตัวอย่างแล้วพูดใหม่'}>
               <WordDiff r={s.result} />
               <p className="small muted">ระบบได้ยินว่า: {s.said || '—'}</p>
             </Result>
-            <div className="row">
+            <div className="story-row">
               <NextButton auto={pass} onNext={next}>ประโยคต่อไป <Icon name="arrow" /></NextButton>
-              <button type="button" className="btn btn-ghost" onClick={() => { setS({ ...s, result: null, said: '' }); setLive(''); }}><Icon name="retry" /> พูดใหม่</button>
+              <button type="button" className="story-icon-btn" onClick={() => { setS({ ...s, result: null, said: '' }); setLive(''); }}><Icon name="retry" /> พูดใหม่</button>
             </div>
           </>
         ) : hasMic ? (
@@ -97,6 +85,7 @@ export default function Speak() {
             </button>
             <p className="mic-label">{listening ? 'กำลังฟัง… พูดจบแล้วแตะอีกครั้ง' : 'แตะไมค์แล้วพูดประโยคด้านบน'}</p>
             <p className="live" aria-live="polite">{live}</p>
+            <MicBrowsers />
             <div className="row center">
               <button type="button" className="btn-text" onClick={() => setS({ ...s, keyboard: true })}><Icon name="keyboard" /> ใช้ไมค์บนคีย์บอร์ดแทน</button>
               <button type="button" className="btn-text" onClick={next}>ข้ามประโยคนี้</button>
@@ -109,6 +98,7 @@ export default function Speak() {
                 <b>Brave ใช้ไมค์ของเว็บนี้ไม่ได้</b> Brave ปิดระบบแปลงเสียงเป็นข้อความไว้ เปิดเว็บนี้ใน Chrome หรือ Edge จะกดไมค์พูดได้เลย หรือใช้การพิมพ์ด้วยเสียงตามด้านล่าง
               </div>
             ) : null}
+            <MicBrowsers />
             <div className="note">
               <b>พูดผ่านการพิมพ์ด้วยเสียง</b> เปลี่ยนคีย์บอร์ดเป็นภาษาอังกฤษ แตะช่องด้านล่าง แล้ว
               <br />· <b>มือถือ</b> กดปุ่มไมค์บนคีย์บอร์ด (บน iPhone อยู่มุมล่างขวา)
@@ -118,14 +108,21 @@ export default function Speak() {
             <label className="sr-only" htmlFor="speak-input">ข้อความจากการพูด</label>
             <input id="speak-input" type="text" autoComplete="off" autoCapitalize="off" autoCorrect="off" spellCheck={false}
               placeholder="แตะที่นี่ แล้วกดไมค์บนคีย์บอร์ด" value={s.typed} onChange={(e) => setS({ ...s, typed: e.target.value })} />
-            <div className="row">
+            <div className="story-row">
               <button type="submit" className="btn btn-primary grow">ตรวจการออกเสียง</button>
-              <button type="button" className="btn btn-ghost" onClick={next}>ข้าม</button>
+              <button type="button" className="story-icon-btn" onClick={next}>ข้าม</button>
             </div>
             {micSupported() ? <button type="button" className="btn-text" onClick={() => setS({ ...s, keyboard: false })}><Icon name="mic" /> กลับไปใช้ไมค์ของเว็บ</button> : null}
           </form>
-        )}
-      </section>
+        )}>
+        <span className="kicker">พูดตามประโยคนี้</span>
+        <p className="story-big" lang="en">{p.e}</p>
+        <p className="story-sub">{p.t}</p>
+        <div className="story-chips">
+          <button type="button" className="story-chip" onClick={() => { if (!say(p.s)) toast('อุปกรณ์นี้อ่านออกเสียงไม่ได้'); }}><Icon name="speaker" /> ฟังตัวอย่าง</button>
+          <button type="button" className="story-chip" onClick={() => { if (!say(p.s, true)) toast('อุปกรณ์นี้อ่านออกเสียงไม่ได้'); }}><Icon name="slow" /> ฟังช้า</button>
+        </div>
+      </Story>
     </div>
   );
 }

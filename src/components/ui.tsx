@@ -4,7 +4,6 @@ import { Icon } from './Icon';
 import { say } from '../lib/speech';
 import type { Comparison } from '../lib/compare';
 import { useToast } from '../state/toast';
-import { PAGES, type Route } from '../lib/router';
 
 export function SpeakButton({ text, slow, label, quiet }: { text: string; slow?: boolean; label?: string; quiet?: boolean }) {
   const toast = useToast();
@@ -40,20 +39,6 @@ export function WordDiff({ r }: { r: Comparison }) {
     <div className="words">
       {r.toks.map((t, i) => <span key={i} className={'w-' + r.marks[i]}>{t}</span>)}
     </div>
-  );
-}
-
-export function PageHead({ route, children, aside }: { route: Route; children?: ReactNode; aside?: ReactNode }) {
-  const p = PAGES[route];
-  return (
-    <header className="page-head" data-reveal>
-      <div className="page-head-main">
-        <span className="kicker">{p.en}</span>
-        <h1>{p.th}</h1>
-        {children ? <p className="lede">{children}</p> : null}
-      </div>
-      {aside ? <div className="page-head-aside">{aside}</div> : null}
-    </header>
   );
 }
 

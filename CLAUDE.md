@@ -42,6 +42,11 @@ npm run build   # tsc -b && vite build → dist/
   recognition, so it falls back to keyboard/Win+H voice typing), `Read.tsx` (situations + meanings, multiple choice),
   `Write.tsx` (Thai → type English, two-step hints). Flashcards and the AI chat page were removed (owner's choice, Nov 2026; `#chat` goes to the lobby);
   `remember()` in `state/progress.tsx` keeps a spaced-review schedule from right/wrong answers in every mode.
+- Practice pages look like a social-media story (owner picked design 4 of 5, Nov 2026): `components/Story.tsx` — one tall
+  card per question (colour per skill: listen blue, speak pink, read green-blue, write purple), dashes on top for the set
+  of 10 (`n` in each page's session; Read uses its round), category tag + progress in the top row, big content in the
+  middle (`StoryButton`: round play button, long-press = slow), and a white answer sheet at the bottom. Swipe up after
+  answering = next. The old page header / mission strip were removed.
 - Content: 7 main categories (`Group` in `data/content.ts`, owner's list): general, travel, gaming, business,
   academic, entertainment, esp (medical / IT / aviation). Each phrase has a subtopic `c` and its main category `g`
   (`GROUP_OF`). Gaming/everyday phrases live in `data/content.ts`, the other categories in `data/more.ts`.

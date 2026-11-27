@@ -1,16 +1,18 @@
 import { useEffect, useMemo, useRef } from 'react';
 import { PHRASES } from '../data/content';
 import { Icon } from '../components/Icon';
-import { NextButton, PageHead, Result, SpeakButton, WordDiff } from '../components/ui';
+import { NextButton, Result, SpeakButton, WordDiff } from '../components/ui';
 import { useProgress } from '../state/progress';
-import { MissionChip, MissionStrip } from '../components/Missions';
+import { Story } from '../components/Story';
 import { useSession } from '../state/session';
 import { compare, firstLetters, type Comparison } from '../lib/compare';
 import { useToast } from '../state/toast';
 import { shuffle } from '../lib/util';
 import { pickSentence } from './practice';
 
-interface Sess { id: string; typed: string; hint: 0 | 1 | 2; result: Comparison | null; scored?: boolean }
+/** `n`: sentences done in this visit, for the story dashes (sets of 10) */
+interface Sess { id: string; typed: string; hint: 0 | 1 | 2; result: Comparison | null; scored?: boolean; n?: number }
+const SET = 10;
 const byId = new Map(PHRASES.map((p) => [p.e, p]));
 
 /**
@@ -44,7 +46,7 @@ export default function Write() {
   };
   const next = () => {
     const n = pickSentence(state, p.e);
-    setS({ id: n.e, typed: '', hint: 0, result: null });
+    setS({ id: n.e, typed: '', hint: 0, result: null, n: (s.n ?? 0) + 1 });
   };
   const addWord = (w: string) => {
     setS({ ...s, typed: (s.typed.trimEnd() + ' ' + w).trimStart() });
@@ -53,42 +55,31 @@ export default function Write() {
 
   const ok = s.result ? (s.result.score === 1 ? (s.result.exact ? true : 'near') : false) : false;
 
+  const hintLabel = s.hint === 0 ? 'ขอคำใบ้' : s.hint === 1 ? 'ดูคำที่ใช้' : 'ใช้คำใบ้ครบแล้ว';
+
   return (
     <div className="page">
-      <PageHead route="write" aside={<MissionChip />}>
-        อ่านภาษาไทย แล้วเขียนเป็นประโยคภาษาอังกฤษ ไม่ต้องสนใจตัวพิมพ์ใหญ่และเครื่องหมายวรรคตอน
-      </PageHead>
-      <section className="card play" data-reveal>
-        <MissionStrip route="write" />
-        <div className="say-line">
-          <span className="kicker">เขียนเป็นภาษาอังกฤษ</span>
-          <p className="say-en write-th">{p.t}</p>
-          <div className="row center">
-            <button type="button" className="btn btn-ghost btn-sm" disabled={s.hint >= 2 || !!s.result}
-              onClick={() => setS({ ...s, hint: (Math.min(2, s.hint + 1) as 0 | 1 | 2) })}>
-              <Icon name="bulb" /> {s.hint === 0 ? 'ขอคำใบ้' : s.hint === 1 ? 'ดูคำที่ใช้' : 'ใช้คำใบ้ครบแล้ว'}
-            </button>
-          </div>
-        </div>
-        {s.hint >= 1 && !s.result ? (
-          <div className="hint-box">
-            <span className="hint-letters">{firstLetters(p.e)}</span>
-            {s.hint >= 2 ? (
-              <div className="word-bank" role="group" aria-label="คำที่ใช้ในประโยค แตะเพื่อเติม">
-                {bank.map((w, i) => <button key={w + i} type="button" className="chip" onClick={() => addWord(w)}>{w}</button>)}
+      <Story route="write" set={{ total: SET, done: (s.n ?? 0) % SET }} onSwipeUp={s.result ? next : undefined}
+        sheet={!s.result ? (
+          <form className="stack" onSubmit={(e) => { e.preventDefault(); check(); }}>
+            {s.hint >= 1 ? (
+              <div className="hint-box">
+                <span className="hint-letters">{firstLetters(p.e)}</span>
+                {s.hint >= 2 ? (
+                  <div className="word-bank" role="group" aria-label="คำที่ใช้ในประโยค แตะเพื่อเติม">
+                    {bank.map((w, i) => <button key={w + i} type="button" className="chip" onClick={() => addWord(w)}>{w}</button>)}
+                  </div>
+                ) : null}
               </div>
             ) : null}
-          </div>
-        ) : null}
-
-        {!s.result ? (
-          <form className="stack" onSubmit={(e) => { e.preventDefault(); check(); }}>
             <label className="sr-only" htmlFor="write-input">ประโยคภาษาอังกฤษ</label>
             <input id="write-input" ref={input} type="text" autoComplete="off" autoCapitalize="off" autoCorrect="off" spellCheck={false}
               placeholder="พิมพ์ประโยคภาษาอังกฤษที่นี่" value={s.typed} onChange={(e) => setS({ ...s, typed: e.target.value })} />
-            <div className="row">
+            <div className="story-row">
+              <button type="button" className="story-icon-btn" disabled={s.hint >= 2} title={hintLabel} aria-label={hintLabel}
+                onClick={() => setS({ ...s, hint: (Math.min(2, s.hint + 1) as 0 | 1 | 2) })}><Icon name="bulb" /></button>
               <button type="submit" className="btn btn-primary grow">ตรวจคำตอบ</button>
-              <button type="button" className="btn btn-ghost" onClick={next}>ข้าม</button>
+              <button type="button" className="story-icon-btn" onClick={next}>ข้าม</button>
             </div>
           </form>
         ) : (
@@ -100,13 +91,16 @@ export default function Write() {
               {ok === false ? <p className="small muted">ถ้าความหมายเหมือนกันแต่ใช้คำต่างไป ก็พูดแบบนั้นได้เหมือนกัน ลองจำแบบตัวอย่างไว้อีกแบบ</p> : null}
               <div className="row"><SpeakButton text={p.s} label="ฟังประโยคนี้" /></div>
             </Result>
-            <div className="row">
+            <div className="story-row">
               <NextButton auto={ok !== false} btnRef={nextBtn} onNext={next}>ประโยคต่อไป <Icon name="arrow" /></NextButton>
-              {ok !== true ? <button type="button" className="btn btn-ghost" onClick={() => setS({ ...s, result: null })}><Icon name="retry" /> แก้คำตอบ</button> : null}
+              {ok !== true ? <button type="button" className="story-icon-btn" onClick={() => setS({ ...s, result: null })}><Icon name="retry" /> แก้</button> : null}
             </div>
           </>
-        )}
-      </section>
+        )}>
+        <span className="kicker">เขียนเป็นภาษาอังกฤษ</span>
+        <p className="story-big">{p.t}</p>
+        <p className="muted small">ไม่ต้องสนใจตัวพิมพ์ใหญ่และเครื่องหมายวรรคตอน</p>
+      </Story>
     </div>
   );
 }

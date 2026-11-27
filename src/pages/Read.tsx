@@ -2,8 +2,8 @@ import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { PHRASES, SITUATIONS } from '../data/content';
 import { Icon } from '../components/Icon';
-import { Bar, Kbd, NextButton, PageHead, Result, SpeakButton } from '../components/ui';
-import { MissionChip, MissionStrip } from '../components/Missions';
+import { Kbd, NextButton, Result, SpeakButton } from '../components/ui';
+import { Story, StoryButton } from '../components/Story';
 import { useProgress, type State } from '../state/progress';
 import { useSession } from '../state/session';
 import { shuffle, prefersReducedMotion } from '../lib/util';
@@ -94,14 +94,17 @@ export default function Read() {
   if (!s) {
     return (
       <div className="page">
-        <PageHead route="read" aside={<MissionChip />}>อ่านสถานการณ์หรือประโยค แล้วเลือกคำตอบที่ถูก รอบละ 10 ข้อ</PageHead>
-        <MissionStrip route="read" />
-        <section className="card done-card" data-reveal>
-          <span className="done-badge"><Icon name="book" size={28} /></span>
-          <h2>พร้อมเริ่มไหม</h2>
-          <p className="muted">มีทั้งสถานการณ์จริง ความหมายของประโยค และประโยคที่คุณเคยฝึก</p>
-          <button type="button" className="btn btn-primary btn-lg" onClick={start}>เริ่มอ่าน <Icon name="arrow" /></button>
-        </section>
+        <Story route="read" set={{ total: 10, done: 0 }}
+          sheet={(
+            <>
+              <p className="muted small center-text">มีทั้งสถานการณ์จริง ความหมายของประโยค และประโยคที่คุณเคยฝึก รอบละ 10 ข้อ</p>
+              <button type="button" className="btn btn-primary btn-lg" onClick={start}>เริ่มอ่าน <Icon name="arrow" /></button>
+            </>
+          )}>
+          <StoryButton label="เริ่มอ่าน" onClick={start}><Icon name="book" /></StoryButton>
+          <p className="story-big">พร้อมเริ่มไหม</p>
+          <p className="story-sub">อ่านแล้วเลือกคำตอบที่ถูก</p>
+        </Story>
       </div>
     );
   }
@@ -110,31 +113,33 @@ export default function Read() {
     const great = s.score >= 8;
     return (
       <div className="page">
-        <PageHead route="read" aside={<MissionChip />} />
-        <MissionStrip route="read" />
-        <section className="card done-card" data-reveal>
+        <Story route="read" set={{ total: s.qs.length, done: s.qs.length }}
+          sheet={(
+            <>
+              <div className="story-row">
+                <button type="button" className="btn btn-primary grow" onClick={start}><Icon name="retry" /> อ่านอีกรอบ</button>
+                <button type="button" className="story-icon-btn" onClick={() => navigate('write')}>ไปฝึกเขียน</button>
+              </div>
+              {s.misses.length ? (
+                <>
+                  <h2 className="story-sheet-h">ข้อที่พลาด</h2>
+                  <ul className="miss-list">
+                    {s.misses.map((m, i) => (
+                      <li key={i}>
+                        <p className="small muted">{m.prompt}</p>
+                        <p><Icon name="check" /> <b>{m.answer}</b></p>
+                        <p className="small strike">คุณตอบ: {m.picked}</p>
+                      </li>
+                    ))}
+                  </ul>
+                </>
+              ) : null}
+            </>
+          )}>
           <span className="kicker">{great ? 'เก่งมาก' : 'จบรอบนี้แล้ว'}</span>
-          <p className="score num">{s.score}<small>/{s.qs.length}</small></p>
-          <p className="muted">{great ? 'เยี่ยมมาก พร้อมไปคุยกับเพื่อนต่างชาติแล้ว' : 'ทบทวนข้อที่พลาดด้านล่าง แล้วลองอีกรอบ จะดีขึ้นเรื่อย ๆ'}</p>
-          <div className="row center">
-            <button type="button" className="btn btn-primary" onClick={start}><Icon name="retry" /> อ่านอีกรอบ</button>
-            <button type="button" className="btn btn-ghost" onClick={() => navigate('write')}>ไปฝึกเขียน</button>
-          </div>
-        </section>
-        {s.misses.length ? (
-          <section className="card" data-reveal>
-            <h2>ข้อที่พลาด</h2>
-            <ul className="miss-list">
-              {s.misses.map((m, i) => (
-                <li key={i}>
-                  <p className="small muted">{m.prompt}</p>
-                  <p><Icon name="check" /> <b>{m.answer}</b></p>
-                  <p className="small strike">คุณตอบ: {m.picked}</p>
-                </li>
-              ))}
-            </ul>
-          </section>
-        ) : null}
+          <p className="story-score num">{s.score}<small>/{s.qs.length}</small></p>
+          <p className="story-sub">{great ? 'เยี่ยมมาก พร้อมไปคุยกับเพื่อนต่างชาติแล้ว' : 'ทบทวนข้อที่พลาดด้านล่าง แล้วลองอีกรอบ จะดีขึ้นเรื่อย ๆ'}</p>
+        </Story>
       </div>
     );
   }
@@ -143,38 +148,38 @@ export default function Read() {
   const right = s.picked === q.answer;
   return (
     <div className="page">
-      <PageHead route="read" aside={<span className="pill num">ถูก {s.score} ข้อ</span>} />
-      <section className="card play" data-reveal>
-        <div className="play-top">
-          <Bar value={s.i / s.qs.length} label="ความคืบหน้ารอบนี้" />
-          <span className="muted small num">ข้อ {s.i + 1}/{s.qs.length}</span>
-        </div>
-        <span className="kicker">{q.sub}</span>
-        <p className="q-prompt">{q.prompt}</p>
-        <div className="opts" ref={optsRef}>
-          {q.options.map((o, idx) => {
-            let cls = 'opt';
-            if (answered && o === q.answer) cls += ' is-right';
-            else if (answered && o === s.picked) cls += ' is-wrong';
-            return (
-              <button key={o} type="button" className={cls} disabled={answered} onClick={() => choose(o)}>
-                <Kbd>{idx + 1}</Kbd><span>{o}</span>
-              </button>
-            );
-          })}
-        </div>
-        {answered ? (
+      <Story route="read" set={{ total: s.qs.length, done: s.i }} top={<span className="num">· ถูก {s.score} ข้อ</span>}
+        onSwipeUp={answered ? next : undefined}
+        sheet={(
           <>
-            <Result ok={right} title={right ? 'ถูกต้อง' : 'ยังไม่ถูก คำตอบคือ: ' + q.answer}>
-              {q.why ? <p className="small">{q.why}</p> : null}
-              {q.say ? <div className="row"><SpeakButton text={q.say} label="ฟังคำตอบ" /></div> : null}
-            </Result>
-            <NextButton auto={right} onNext={next} className="btn btn-primary btn-block" autoFocus>
-              {s.i + 1 >= s.qs.length ? 'ดูผลคะแนน' : 'ข้อต่อไป'} <Icon name="arrow" />
-            </NextButton>
+            <div className="opts" ref={optsRef}>
+              {q.options.map((o, idx) => {
+                let cls = 'opt';
+                if (answered && o === q.answer) cls += ' is-right';
+                else if (answered && o === s.picked) cls += ' is-wrong';
+                return (
+                  <button key={o} type="button" className={cls} disabled={answered} onClick={() => choose(o)}>
+                    <Kbd>{idx + 1}</Kbd><span>{o}</span>
+                  </button>
+                );
+              })}
+            </div>
+            {answered ? (
+              <>
+                <Result ok={right} title={right ? 'ถูกต้อง' : 'ยังไม่ถูก คำตอบคือ: ' + q.answer}>
+                  {q.why ? <p className="small">{q.why}</p> : null}
+                  {q.say ? <div className="row"><SpeakButton text={q.say} label="ฟังคำตอบ" /></div> : null}
+                </Result>
+                <NextButton auto={right} onNext={next} className="btn btn-primary btn-block" autoFocus>
+                  {s.i + 1 >= s.qs.length ? 'ดูผลคะแนน' : 'ข้อต่อไป'} <Icon name="arrow" />
+                </NextButton>
+              </>
+            ) : null}
           </>
-        ) : null}
-      </section>
+        )}>
+        <span className="kicker">{q.sub} · ข้อ {s.i + 1}/{s.qs.length}</span>
+        <p className="story-big story-q">{q.prompt}</p>
+      </Story>
     </div>
   );
 }
