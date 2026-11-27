@@ -85,9 +85,12 @@ npm run build   # tsc -b && vite build → dist/
   content below slides with `y` instead of tweening the stage height; inline transform styles are removed on complete
   (a left-over `scale: none` blocks the hover grow). Owner: the chosen circle grows steadily all the way while it moves
   (`sine.inOut`) and nothing may grow past its final size then shrink back — no `back.out` on the skill keys.
-  The hover grow (`scale: 1.05`) on the tapped circle made it swell ~10% past its final size: GSAP moves a CSS
-  `scale` into its inline transform, which stayed in the end size. `capture()` clears that after `Flip.getState` and
-  keeps hover off until tidy(). Tests must HOVER before tapping (a mouse always does) — a plain `.click()` hid this.
+  Hover grow: NEVER put `scale`/transform on `.cp-node` itself — Flip folded it into the end size, so the tapped
+  (hovered) circle grew past its final size and shrank back (owner's videos; clearing it after getState did not help).
+  The 1.05 hover is on `> .sring` / `> .cp-face`; `capture()` eases it off over the whole move with a Web Animation
+  (same curve), so ring size only grows. Tests must HOVER before tapping (a plain `.click()` hid this). This pane's
+  timers/frames get throttled to ~1 fps, so measure by stepping `gsap.globalTimeline.time()` + setting the Web
+  Animations' `currentTime`, with a test rule that copies the hover style.
   A circle that changes kind (grid ↔ chosen ↔ small): `capture()` keeps a copy of its old look on `.cp-ghosts`, which
   fades out in 0.15 s (its old words go at once; scaling the small look up showed a huge bare icon — owner's Medal
   video); the circle travels with its icon, and just before it arrives its new name appears one letter at a time in a

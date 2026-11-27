@@ -525,8 +525,11 @@ input[type="email"]:focus, input[type="password"]:focus { outline: none; border-
   grid-template-rows: auto calc(14px + var(--D) / 2 + var(--R) * .9 + 64px) auto var(--m); }
 
 .cp-node { position: relative; width: var(--d); height: var(--d); border-radius: 50%; padding: 0; border: 0; background: none; color: var(--ink);
-  cursor: pointer; container-type: size; transition: scale .2s; -webkit-tap-highlight-color: transparent; }
-.cp-node:hover:not(.is-chosen) { scale: 1.05; }
+  cursor: pointer; container-type: size; -webkit-tap-highlight-color: transparent; }
+/* the hover grow is on the ring + face, never on the circle itself: GSAP Flip folded a `scale` on the circle into its
+   end size, so a tapped (hovered) circle grew past its final size and then shrank back (owner's videos) */
+.cp-node > .sring, .cp-node > .cp-face { transition: scale .2s; }
+.cp-node:hover:not(.is-chosen) > .sring, .cp-node:hover:not(.is-chosen) > .cp-face { scale: 1.05; }
 .cp-node:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
 .cp-node.is-chosen { width: var(--D); height: var(--D); align-self: start; margin-top: 14px; z-index: 1; }
 .cp-node.is-mini { width: var(--m); height: var(--m); }
@@ -584,7 +587,7 @@ input[type="email"]:focus, input[type="password"]:focus { outline: none; border-
 .cp-skill:focus-visible { outline: none; }
 .cp-skill:focus-visible .cp-cap { outline: 3px solid var(--accent); outline-offset: 4px; }
 .cp-strip-label { grid-column: 1 / -1; grid-row: 3; }
-@media (prefers-reduced-motion: reduce) { .cp-node, .cp-cap, .sring circle { transition: none; } }
+@media (prefers-reduced-motion: reduce) { .cp-node > .sring, .cp-node > .cp-face, .cp-cap, .sring circle { transition: none; } }
 
 /* ---------- Lobby bento (owner's pick, design 1): phrase-of-the-day player + progress numbers ---------- */
 .bento { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); gap: 12px; }

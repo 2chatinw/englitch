@@ -117,7 +117,7 @@ export function CategoryPicker() {
   const focus = useCategoryOpen();
   const stage = useRef<HTMLDivElement>(null);
   const ghostLayer = useRef<HTMLDivElement>(null);
-  const pending = useRef<{ flip: Flip.FlipState; belowTop: number | null; snaps: Map<string, Snap>; extras: Snap[] } | null>(null);
+  const pending = useRef<{ flip: Flip.FlipState; belowTop: number | null; snaps: Map<string, Snap>; extras: Snap[]; hovered: { parts: HTMLElement[]; from: string }[] } | null>(null);
   const prevFocus = useRef<boolean | null>(null);
 
   const setFocus = setCategoryOpen;
@@ -132,14 +132,21 @@ export function CategoryPicker() {
     // the skill keys, the back link and the "other categories" label: faded out when going back to the eight circles
     const extras = Array.from(el.querySelectorAll<HTMLElement>('.cp-skills, .cp-back, .cp-strip-label')).map(snap);
     const below = el.closest('.cp')?.nextElementSibling;
-    pending.current = { flip: Flip.getState(nodes), belowTop: below ? below.getBoundingClientRect().top : null, snaps, extras };
-    // The circle under the mouse has the hover grow (CSS `scale: 1.05`, eased by a transition). Reading it, GSAP
-    // moves that `scale` into an inline `transform`, which then stayed on as part of the END size: the chosen circle
-    // swelled past its final size and dropped back when tidy() took it off (owner's video). The start spot is already
-    // recorded above, so drop GSAP's copy and keep the hover grow off until tidy() (no paint before the move starts).
-    gsap.killTweensOf(nodes); // a tap during the last move: stop it, the new move starts from the spot recorded above
-    gsap.set(nodes, { clearProps: 'transform,translate,rotate,scale' });
-    nodes.forEach((n) => { n.style.transition = 'none'; n.style.scale = 'none'; });
+    // The tapped circle is under the mouse, so its ring + face have the hover grow (CSS `scale: 1.05`). Once it is
+    // no longer hoverable that grow would ease off in 0.2 s while the circle only starts to grow — a dip. Instead it
+    // eases off over the whole move with the same curve (see after Flip.from), so circle × ring only ever grows. The copy of
+    // the old look keeps the same grow.
+    const hovered: { parts: HTMLElement[]; from: string }[] = [];
+    for (const n of nodes) {
+      const parts = Array.from(n.querySelectorAll<HTMLElement>(':scope > .sring, :scope > .cp-face'));
+      const from = parts.length ? getComputedStyle(parts[0]).scale : 'none';
+      if (from === 'none' || from === '1') continue;
+      const look = snaps.get(n.dataset.flipId ?? '')?.look;
+      const copies = look ? Array.from(look.querySelectorAll<HTMLElement>(':scope > .sring, :scope > .cp-face')) : [];
+      for (const x of [...parts, ...copies]) { x.style.transition = 'none'; x.style.scale = from; }
+      hovered.push({ parts: [...parts, ...copies], from });
+    }
+    pending.current = { flip: Flip.getState(nodes), belowTop: below ? below.getBoundingClientRect().top : null, snaps, extras, hovered };
   };
   const pick = (id: Id) => {
     capture();
@@ -160,7 +167,7 @@ export function CategoryPicker() {
       // cost ~20 ms before the first frame. The stage takes its new height at once and the content under it
       // slides from the old spot instead of the stage's height being tweened.
       // afterwards take GSAP's inline transform styles off again (a left-over `scale: none` stopped the hover grow)
-      const tidy = (els: Element[]) => () => els.forEach((t) => ['transform', 'translate', 'rotate', 'scale', 'transition'].forEach((k) => (t as HTMLElement).style.removeProperty(k)));
+      const tidy = (els: Element[]) => () => els.forEach((t) => ['transform', 'translate', 'rotate', 'scale'].forEach((k) => (t as HTMLElement).style.removeProperty(k)));
       // owner: the chosen circle grows steadily all the way while it travels, and nothing goes past its final size —
       // so a gentle in-out ease (power3 left it small for the first 0.15 s, then grew it all at once) and no overshoot
       const nodes = Array.from(el.querySelectorAll<HTMLElement>('.cp-node'));
@@ -173,6 +180,14 @@ export function CategoryPicker() {
         return s && s.kind !== kindOf(n) ? [{ n, s, to: n.getBoundingClientRect() }] : [];
       });
       Flip.from(p.flip, { duration: MOVE, ease: 'sine.inOut', scale: true, onComplete: tidy(nodes) });
+      for (const { parts, from } of p.hovered) {
+        for (const x of parts) {
+          x.style.removeProperty('scale');
+          // cubic-bezier(.37,0,.63,1) = sine.inOut; a Web Animation, so GSAP never reads it into a transform
+          x.animate([{ scale: from }, { scale: '1' }], { duration: MOVE * 1000, easing: 'cubic-bezier(.37, 0, .63, 1)' })
+            .finished.finally(() => x.style.removeProperty('transition')).catch(() => {});
+        }
+      }
       // Owner's pick ("ตัวอักษรโผล่ทีละตัว", option 6 of the artifact "Englitch circle label"): the old words fade out
       // at once (the copy of the old look, 0.15 s), the circle travels with its icon, and just before it arrives the
       // new name appears one letter at a time in a small wave, then the count. Small circles show no words.
