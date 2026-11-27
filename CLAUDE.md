@@ -46,8 +46,9 @@ npm run build   # tsc -b && vite build → dist/
   (7 categories + "รวมทุกหมวด"), each in a 3-colour level ring (`StageRing`: green easy, yellow medium, orange hard).
   Tapping one sets the mission; GSAP Flip slides it to the middle and grows it, the others drop into a row below,
   and listen/speak/read/write pop out on an arc around it. A full reload starts back at the 8 circles.
-  The side rail / bottom bar stay hidden over the 8 circles and slide in once a category is opened or a practice
-  page is visited (`lib/lobby.ts`, `data-menus` on `.shell`; owner's choice).
+  The side rail / bottom bar are hidden in the whole lobby and slide in only on the practice (quiz) pages
+  (`data-menus` on `.shell`; owner's choice). `lib/lobby.ts` remembers the opened category for the session.
+  Ring style (owner's sketch): rounded arcs with clear gaps, a little space, then the outlined inner circle.
 - Missions (no daily missions, owner's choice): one mission per main category (`lib/missions.ts`,
   `components/Missions.tsx`), each practised by listen/speak/read/write. Passed when every phrase in it was answered
   right once, in any mode. The active mission is `settings.mission`; practice then draws only from that category,

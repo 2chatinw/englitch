@@ -12,7 +12,7 @@ import Landing from './pages/Landing';
 import { Backdrop } from './components/Backdrop';
 import Today from './pages/Today';
 import { useProgressToasts } from './components/Missions';
-import { setCategoryOpen, useCategoryOpen } from './lib/lobby';
+import { setCategoryOpen } from './lib/lobby';
 import Listen from './pages/Listen';
 import Speak from './pages/Speak';
 import Read from './pages/Read';
@@ -24,10 +24,10 @@ function Shell() {
   const route = useRoute();
   useProgressToasts();
   const mission = useProgress().state.settings.mission;
-  // the practice menus appear once a category is opened (or on any practice page), not over the eight circles
-  const opened = useCategoryOpen();
+  // the practice menus show only on the practice (quiz) pages; the lobby keeps just the circles and skill buttons
+  // after practising, the lobby opens on the chosen category (its skill buttons), not the eight circles
   useEffect(() => { if (route !== 'today') setCategoryOpen(true); }, [route]);
-  const menus = route !== 'today' || opened;
+  const menus = route !== 'today';
   const [settings, setSettings] = useState(false);
   const openSettings = useCallback(() => setSettings(true), []);
   const closeSettings = useCallback(() => setSettings(false), []);

@@ -28,14 +28,15 @@ const PICK_AT: [number, number][] = [[1, 1], [3, 1], [5, 1], [2, 2], [4, 2], [1,
  */
 export function StageRing({ stages }: { stages: Node['stages'] }) {
   const sum = stages.reduce((a, s) => a + s.total, 0) || 1;
-  const gap = stages.length > 1 ? 1.6 : 0;
+  // round caps reach past each arc's end by about 1.3 units, so this leaves a clear ~3-unit gap between arcs
+  const gap = stages.length > 1 ? 5.6 : 0;
   let at = 0;
   return (
     <svg className="sring" viewBox="0 0 100 100" aria-hidden="true">
       {stages.map((s) => {
         const len = Math.max(0.5, (s.total / sum) * 100 - gap);
         const fill = s.total ? (s.done / s.total) * len : 0;
-        const off = -at;
+        const off = -(at + gap / 2);
         at += (s.total / sum) * 100;
         return (
           <g key={s.k} className={'sring-' + s.k}>

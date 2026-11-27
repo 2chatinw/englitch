@@ -415,8 +415,8 @@ html { scroll-padding-top: 88px; }
 /* room for the mission label that floats above the phone tab bar */
 @media (max-width: 899px) { .main { padding-bottom: calc(var(--bottom-h) + 72px + env(safe-area-inset-bottom)); } }
 
-/* The practice menus (side rail, bottom bar) stay hidden over the lobby's eight category circles and slide in
-   once a category is opened. */
+/* The practice menus (side rail, bottom bar) are hidden in the lobby and slide in on the practice (quiz) pages.
+ */
 .rail, .bottombar { transition: opacity .45s ease .2s, translate .6s cubic-bezier(.22, 1, .36, 1) .2s, visibility 0s linear 0s; }
 .shell[data-menus="off"] .rail, .shell[data-menus="off"] .bottombar {
   opacity: 0; visibility: hidden; pointer-events: none;
