@@ -12,6 +12,7 @@
   --accent: #1E6BFF;
   --accent-ink: #FFFFFF;
   --accent-soft: #DCEAFF;
+  --cap-mix: 82%; /* how much plain surface is in a skill keycap face (rest = the skill colour) */
   --navy: #1B3A8C;
   --sun: #FFC53D;
   --sun-2: #FFB01F;
@@ -35,7 +36,7 @@
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #000000; --surface: #121212; --surface-2: #1C1C1E; --ink: #FFFFFF; --muted: #A0A0A8; --line: #2A2A2E;
+    --bg: #000000; --surface: #121212; --surface-2: #1C1C1E; --ink: #FFFFFF; --muted: #A0A0A8; --line: #2A2A2E; --cap-mix: 52%;
     --accent: #7DB0FF; --accent-ink: #000000; --accent-soft: #172338; --navy: #000000;
     --sun: #FFD25A; --sun-2: #FFBE2E; --sun-edge: #C98200; --sun-ink: #1B2A5E;
     --hot: #FF9A4D; --hot-soft: #3D2313; --good: #3FD08F; --good-soft: #0F3A2A; --bad: #FF7C80; --bad-soft: #43181C;
@@ -45,7 +46,7 @@
   }
 }
 :root[data-theme="dark"] {
-  --bg: #000000; --surface: #121212; --surface-2: #1C1C1E; --ink: #FFFFFF; --muted: #A0A0A8; --line: #2A2A2E;
+  --bg: #000000; --surface: #121212; --surface-2: #1C1C1E; --ink: #FFFFFF; --muted: #A0A0A8; --line: #2A2A2E; --cap-mix: 52%;
   --accent: #7DB0FF; --accent-ink: #000000; --accent-soft: #172338; --navy: #000000;
   --sun: #FFD25A; --sun-2: #FFBE2E; --sun-edge: #C98200; --sun-ink: #1B2A5E;
   --hot: #FF9A4D; --hot-soft: #3D2313; --good: #3FD08F; --good-soft: #0F3A2A; --bad: #FF7C80; --bad-soft: #43181C;
@@ -490,12 +491,12 @@ input[type="email"]:focus, input[type="password"]:focus { outline: none; border-
 
 /* ---------- Lobby category picker: eight circles in three-level rings; the chosen one moves to the middle ---------- */
 .cp { --d: min(136px, 27vw); --D: min(214px, 42vw); --m: min(60px, 11.4vw); --R: calc(var(--D) / 2 + min(62px, 14vw));
-  display: flex; flex-direction: column; gap: 10px; padding: 6px 0 4px; }
+  display: flex; flex-direction: column; gap: clamp(20px, 4vw, 32px); padding: 6px 0 clamp(24px, 5vw, 40px); }
 .cp-head { text-align: center; display: flex; flex-direction: column; gap: 4px; padding: 0 8px; }
 .cp-title { font-size: clamp(1.6rem, 5vw, 2.2rem); font-weight: 700; }
 .cp-stage { position: relative; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); grid-template-rows: repeat(3, var(--d));
   row-gap: 12px; justify-items: center; align-items: center; max-width: 560px; width: 100%; margin: 0 auto; }
-.cp-stage.is-focus { grid-template-columns: repeat(7, minmax(0, 1fr)); column-gap: 4px; row-gap: 6px;
+.cp-stage.is-focus { grid-template-columns: repeat(7, minmax(0, 1fr)); column-gap: 4px; row-gap: 14px;
   grid-template-rows: auto calc(14px + var(--D) / 2 + var(--R) * .9 + 64px) auto var(--m); }
 
 .cp-node { position: relative; width: var(--d); height: var(--d); border-radius: 50%; padding: 0; border: 0; background: none; color: var(--ink);
@@ -526,29 +527,27 @@ input[type="email"]:focus, input[type="password"]:focus { outline: none; border-
 .cp-back .icon { width: 17px; height: 17px; scale: -1 1; }
 .cp-back:hover { color: var(--accent); }
 .cp-skills { grid-column: 1 / -1; grid-row: 2; align-self: stretch; justify-self: stretch; position: relative; pointer-events: none; }
-/* skill orbs (owner picked design 1): a glossy ball in the skill's colour holding a small shaded picture */
-.cp-skill { position: absolute; width: 84px; margin: -36px 0 0 -42px; pointer-events: auto; padding: 0; border: 0; background: none;
+/* skill buttons (owner picked design 3, made round): raised round keycaps with a number key, a shaded picture and the
+   skill's name; the pastel side shows the key's depth and sinks when pressed (mouse, or keys 1-4) */
+.cp-skill { --cap: min(86px, 21vw); position: absolute; width: var(--cap); height: var(--cap); margin: calc(var(--cap) / -2) 0 0 calc(var(--cap) / -2); pointer-events: auto; padding: 0; border: 0; background: none;
   left: calc(50% + var(--R) * var(--sx)); top: calc(14px + var(--D) / 2 + var(--R) * var(--sy));
-  display: flex; flex-direction: column; align-items: center; gap: 7px; color: var(--ink); font: inherit; cursor: pointer;
-  -webkit-tap-highlight-color: transparent; }
-.cp-skill-listen { --o: #8DB6FF; --o2: #D6E5FF; --oe: #5C8EE6; }
-.cp-skill-speak { --o: #FFA3C2; --o2: #FFDCE8; --oe: #E36C96; }
-.cp-skill-read { --o: #86DDB4; --o2: #D4F5E5; --oe: #45B482; }
-.cp-skill-write { --o: #BBA6FF; --o2: #E6DEFF; --oe: #8A6FE0; }
-.cp-orb { position: relative; width: 72px; height: 72px; border-radius: 50%; display: grid; place-items: center;
-  background: radial-gradient(circle at 32% 26%, var(--o2), var(--o) 64%);
-  box-shadow: 0 5px 0 var(--oe), 0 14px 22px -10px var(--o), inset 0 -5px 10px rgba(21, 39, 92, .08), inset 0 2px 0 rgba(255, 255, 255, .6);
-  transition: translate .15s, box-shadow .15s; animation: cp-bob 3.2s ease-in-out infinite; }
-.cp-orb::after { content: ""; position: absolute; left: 13px; top: 8px; width: 20px; height: 11px; border-radius: 50%; background: rgba(255, 255, 255, .7); rotate: -25deg; pointer-events: none; }
-.cp-orb .skill-art { position: relative; z-index: 1; }
-.cp-skill-speak .cp-orb { animation-delay: -.8s; }
-.cp-skill-read .cp-orb { animation-delay: -1.6s; }
-.cp-skill-write .cp-orb { animation-delay: -2.4s; }
-@keyframes cp-bob { 50% { transform: translateY(-4px); } }
-.cp-skill-lbl { font-weight: 600; font-size: .98rem; line-height: 1; }
-.cp-skill:hover .cp-orb { translate: 0 -3px; box-shadow: 0 8px 0 var(--oe), 0 18px 26px -10px var(--o), inset 0 -5px 10px rgba(21, 39, 92, .08), inset 0 2px 0 rgba(255, 255, 255, .6); }
-.cp-skill:active .cp-orb { translate: 0 4px; box-shadow: 0 1px 0 var(--oe), 0 5px 10px -6px var(--o), inset 0 -5px 10px rgba(21, 39, 92, .08), inset 0 2px 0 rgba(255, 255, 255, .6); }
+  color: var(--ink); font: inherit; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.cp-skill-listen { --o: #8DB6FF; --oe: #5C8EE6; }
+.cp-skill-speak { --o: #FFA3C2; --oe: #E36C96; }
+.cp-skill-read { --o: #86DDB4; --oe: #45B482; }
+.cp-skill-write { --o: #BBA6FF; --oe: #8A6FE0; }
+.cp-cap { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px;
+  width: 100%; height: 100%; border-radius: 50%; padding-top: 6px;
+  background: radial-gradient(circle at 50% 30%, color-mix(in srgb, var(--surface) calc(var(--cap-mix) + 14%), var(--o)), color-mix(in srgb, var(--surface) var(--cap-mix), var(--o)));
+  border: 2px solid color-mix(in srgb, var(--o) 70%, var(--line));
+  box-shadow: 0 6px 0 var(--oe), 0 14px 20px -10px var(--oe), inset 0 2px 0 rgba(255, 255, 255, .5);
+  transition: translate .08s, box-shadow .08s; }
+.cp-cap-key { position: absolute; top: 7px; left: 50%; translate: -50% 0; font-family: var(--f-display, inherit); font-size: .7rem; font-weight: 700;
+  line-height: 1; color: var(--oe); }
+.cp-skill-lbl { font-weight: 600; font-size: .86rem; line-height: 1; }
+.cp-skill:hover .cp-cap { translate: 0 -2px; box-shadow: 0 8px 0 var(--oe), 0 16px 22px -10px var(--oe), inset 0 2px 0 rgba(255, 255, 255, .5); }
+.cp-skill:active .cp-cap, .cp-skill.is-down .cp-cap { translate: 0 5px; box-shadow: 0 1px 0 var(--oe), 0 4px 8px -6px var(--oe), inset 0 2px 0 rgba(255, 255, 255, .5); }
 .cp-skill:focus-visible { outline: none; }
-.cp-skill:focus-visible .cp-orb { outline: 3px solid var(--accent); outline-offset: 4px; }
+.cp-skill:focus-visible .cp-cap { outline: 3px solid var(--accent); outline-offset: 4px; }
 .cp-strip-label { grid-column: 1 / -1; grid-row: 3; }
-@media (prefers-reduced-motion: reduce) { .cp-node, .cp-orb, .sring circle { transition: none; } .cp-orb { animation: none; } }
+@media (prefers-reduced-motion: reduce) { .cp-node, .cp-cap, .sring circle { transition: none; } }

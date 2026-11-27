@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef } from 'react';
+import { useEffect, useLayoutEffect, useRef } from 'react';
 import { setCategoryOpen, useCategoryOpen } from '../lib/lobby';
 import gsap from 'gsap';
 import { Flip } from 'gsap/Flip';
@@ -107,6 +107,20 @@ export function CategoryPicker() {
     }
   }, [focus, current]);
 
+  // round keycaps: on a computer, keys 1-4 press the matching skill
+  useEffect(() => {
+    if (!focus) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.ctrlKey || e.metaKey || e.altKey || (e.target as HTMLElement)?.closest?.('input, textarea, [contenteditable]')) return;
+      const btn = stage.current?.querySelector<HTMLButtonElement>('.cp-skill[data-key="' + e.key + '"]');
+      if (!btn) return;
+      btn.classList.add('is-down');
+      setTimeout(() => { btn.classList.remove('is-down'); btn.click(); }, 140);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [focus]);
+
   const chosen = nodes.find((n) => n.id === current)!;
   const others = nodes.filter((n) => n.id !== current);
 
@@ -153,11 +167,15 @@ export function CategoryPicker() {
         {focus ? (
           <>
             <div className="cp-skills" role="group" aria-label={'ฝึก ' + chosen.name}>
-              {SKILLS.map(({ r, a }) => (
-                <button key={r} type="button" className={'cp-skill cp-skill-' + r} onClick={() => navigate(r)} aria-label={PAGES[r].th}
+              {SKILLS.map(({ r, a }, i) => (
+                <button key={r} type="button" className={'cp-skill cp-skill-' + r} data-key={i + 1} onClick={() => navigate(r)}
+                  aria-label={PAGES[r].th} aria-keyshortcuts={String(i + 1)}
                   style={{ ['--sx' as string]: Math.sin((a * Math.PI) / 180).toFixed(3), ['--sy' as string]: (-Math.cos((a * Math.PI) / 180)).toFixed(3) }}>
-                  <span className="cp-orb"><SkillArt kind={r as Skill} /></span>
-                  <span className="cp-skill-lbl">{PAGES[r].short}</span>
+                  <span className="cp-cap">
+                    <kbd className="cp-cap-key">{i + 1}</kbd>
+                    <SkillArt kind={r as Skill} size={36} />
+                    <span className="cp-skill-lbl">{PAGES[r].short}</span>
+                  </span>
                 </button>
               ))}
             </div>
