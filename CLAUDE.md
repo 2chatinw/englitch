@@ -16,6 +16,10 @@ English-practice web app for Thai learners of English (everyday, travel, work, s
 
 - React 19 + Vite + TypeScript, GSAP 3 (`@gsap/react`, ScrollTrigger), hash router (`src/lib/router.ts`).
 - Fonts: Fredoka (display) + Kanit (Thai/body) via `@fontsource`.
+- Logo: `public/brand/englitch-logo.webp` (836×400, word + graduation cap + cloud mascot, transparent background), cut out
+  from the owner's picture (Nov 2026). `Brand.tsx` draws it with a light sweep (masked by the logo) and twinkling CSS
+  stars; heights in `nav.css` (`--logo-h`). The old `englitch-wordmark.webp` was removed. `englitch-720.webp` is still
+  the square mascot icon (`LOGO_URL`).
 - Firebase (modular SDK, lazy-loaded), project `englitch-da50c`: Auth (Discord via Cloudflare Functions custom token,
   Google, Facebook) + Firestore (`users/{uid}`, `members/{uid}`). Rules in `firestore.rules`.
 - Cloudflare Pages Functions in `functions/` (Discord OAuth, `/__/auth/*` proxy to Firebase in `_middleware.ts`).

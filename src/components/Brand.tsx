@@ -1,15 +1,15 @@
 import { useEffect, useState } from 'react';
 
 const MASCOT = './brand/englitch-720.webp';
-const WORDMARK = './brand/englitch-wordmark.webp';
+const WORDMARK = './brand/englitch-logo.webp';
 
-/** The ENGLITCH logo with a light sweep across it and stars twinkling around it. */
+/** The Englitch logo (word, cap and cloud mascot) with a light sweep across it and stars twinkling around it. */
 export function Brand({ size = 'md' }: { size?: 'sm' | 'md' | 'lg' }) {
   // the shine is masked by the logo itself, so it only lights up the logo, never the space around it
   const mask = { WebkitMaskImage: `url(${WORDMARK})`, maskImage: `url(${WORDMARK})` };
   return (
     <span className={'brandmark brandmark-' + size}>
-      <img className="brandmark-logo" src={WORDMARK} alt="Englitch" width={628} height={200} decoding="async" />
+      <img className="brandmark-logo" src={WORDMARK} alt="Englitch" width={836} height={400} decoding="async" />
       <span className="brand-shine" style={mask} aria-hidden="true" />
       <i className="brand-spark s1" aria-hidden="true" />
       <i className="brand-spark s2" aria-hidden="true" />
