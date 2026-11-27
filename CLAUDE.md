@@ -126,6 +126,9 @@ Hidden browser panes throttle animation frames; GSAP animations may look paused 
 
 ## Next upload checklist (only when the owner says so)
 
+Last upload: 27 Nov 2026 (main = b4c1825, 48 commits incl. the whole redesign). After it the owner still had to publish
+firestore.rules and test sign-in on the live site (the browser pane cannot finish sign-in popups).
+
 1. Merge `dev` into `main` and push.
 2. Publish `firestore.rules` in the Firebase console (members: owner may read/delete own doc — used by delete-account).
 3. Check the live site (sign-in with Discord / Google / Facebook, dark mode, phone).
