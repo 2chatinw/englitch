@@ -47,6 +47,11 @@ npm run build   # tsc -b && vite build → dist/
   of 10 (`n` in each page's session; Read uses its round), category tag + progress in the top row, big content in the
   middle (`StoryButton`: round play button, long-press = slow), and a white answer sheet at the bottom. Swipe up after
   answering = next. The old page header / mission strip were removed.
+- After every answer: `components/Explain.tsx` "📖 อธิบายประโยคนี้" (owner's request: explain meaning and usage, not just right/wrong) —
+  meaning, when to use it (per-subtopic `USAGE` + tone + the phrase note), sentence patterns (`PATTERNS` in `lib/explain.ts`,
+  Thai explanations, fallback by sentence type), word meanings (`data/glossary.ts`: `GLOSS` ~1,130 words + `MULTI` phrases
+  like "check in"), and 2 similar sentences. Open after a wrong answer, folded after a right one (keeps the 3-second
+  auto-next; opening it stops it). Loaded lazily as its own chunk. New words in phrases need a GLOSS line.
 - Content: 7 main categories (`Group` in `data/content.ts`, owner's list): general, travel, gaming, business,
   academic, entertainment, esp (medical / IT / aviation). Each phrase has a subtopic `c` and its main category `g`
   (`GROUP_OF`). Gaming/everyday phrases live in `data/content.ts`, the other categories in `data/more.ts`.

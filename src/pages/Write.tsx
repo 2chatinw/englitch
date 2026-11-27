@@ -4,6 +4,7 @@ import { Icon } from '../components/Icon';
 import { NextButton, Result, SpeakButton, WordDiff } from '../components/ui';
 import { useProgress } from '../state/progress';
 import { Story } from '../components/Story';
+import { Explain } from '../components/Explain';
 import { useSession } from '../state/session';
 import { compare, firstLetters, type Comparison } from '../lib/compare';
 import { useToast } from '../state/toast';
@@ -91,6 +92,7 @@ export default function Write() {
               {ok === false ? <p className="small muted">ถ้าความหมายเหมือนกันแต่ใช้คำต่างไป ก็พูดแบบนั้นได้เหมือนกัน ลองจำแบบตัวอย่างไว้อีกแบบ</p> : null}
               <div className="row"><SpeakButton text={p.s} label="ฟังประโยคนี้" /></div>
             </Result>
+            <Explain key={p.e} phrase={p} open={ok === false} />
             <div className="story-row">
               <NextButton auto={ok !== false} btnRef={nextBtn} onNext={next}>ประโยคต่อไป <Icon name="arrow" /></NextButton>
               {ok !== true ? <button type="button" className="story-icon-btn" onClick={() => setS({ ...s, result: null })}><Icon name="retry" /> แก้</button> : null}

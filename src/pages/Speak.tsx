@@ -4,6 +4,7 @@ import { Icon } from '../components/Icon';
 import { Kbd, NextButton, Result, WordDiff } from '../components/ui';
 import { useProgress } from '../state/progress';
 import { Story } from '../components/Story';
+import { Explain } from '../components/Explain';
 import { useSession } from '../state/session';
 import { compare, type Comparison } from '../lib/compare';
 import { isBrave, listen, micErrorText, micSupported, say, type Listener } from '../lib/speech';
@@ -72,6 +73,7 @@ export default function Speak() {
               <WordDiff r={s.result} />
               <p className="small muted">ระบบได้ยินว่า: {s.said || '—'}</p>
             </Result>
+            <Explain key={p.e} phrase={p} open={!pass} />
             <div className="story-row">
               <NextButton auto={pass} onNext={next}>ประโยคต่อไป <Icon name="arrow" /></NextButton>
               <button type="button" className="story-icon-btn" onClick={() => { setS({ ...s, result: null, said: '' }); setLive(''); }}><Icon name="retry" /> พูดใหม่</button>

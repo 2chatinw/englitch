@@ -4,6 +4,7 @@ import { PHRASES, SITUATIONS } from '../data/content';
 import { Icon } from '../components/Icon';
 import { Kbd, NextButton, Result, SpeakButton } from '../components/ui';
 import { Story, StoryButton } from '../components/Story';
+import { Explain } from '../components/Explain';
 import { useProgress, type State } from '../state/progress';
 import { useSession } from '../state/session';
 import { shuffle, prefersReducedMotion } from '../lib/util';
@@ -17,6 +18,7 @@ interface Q { prompt: string; sub?: string; answer: string; options: string[]; s
 interface Miss { prompt: string; answer: string; picked: string }
 interface Sess { qs: Q[]; i: number; score: number; picked: string | null; misses: Miss[] }
 
+const byId = new Map(PHRASES.map((p) => [p.e, p]));
 const ascii = (s: string) => /^[\x20-\x7E]+$/.test(s);
 
 const LEVEL_RANK = { easy: 0, medium: 1, hard: 2 } as const;
@@ -170,6 +172,7 @@ export default function Read() {
                   {q.why ? <p className="small">{q.why}</p> : null}
                   {q.say ? <div className="row"><SpeakButton text={q.say} label="ฟังคำตอบ" /></div> : null}
                 </Result>
+                {q.id && byId.get(q.id) ? <Explain key={q.id} phrase={byId.get(q.id)!} open={!right} /> : null}
                 <NextButton auto={right} onNext={next} className="btn btn-primary btn-block" autoFocus>
                   {s.i + 1 >= s.qs.length ? 'ดูผลคะแนน' : 'ข้อต่อไป'} <Icon name="arrow" />
                 </NextButton>
