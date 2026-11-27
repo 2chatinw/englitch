@@ -101,10 +101,6 @@ img, svg { max-width: 100%; }
 .stage { max-width: 760px; margin: 0 auto; }
 .page { display: flex; flex-direction: column; gap: 16px; }
 
-.streak { display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 999px; background: var(--surface); color: var(--muted); font-size: .9rem; white-space: nowrap; }
-.streak b { font-size: 1.1rem; font-weight: 800; }
-.streak.is-on { background: var(--hot-soft); color: var(--hot); }
-.streak-unit { font-size: .8rem; }
 
 /* Top bar (phone/tablet) */
 .topbar {
@@ -114,7 +110,7 @@ img, svg { max-width: 100%; }
   backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
   border-bottom: 1px solid var(--line);
 }
-.top-hud { position: relative; margin-left: auto; display: flex; align-items: center; gap: 10px; min-width: 0; }
+.top-hud { position: relative; display: flex; align-items: center; justify-content: center; min-width: 0; }
 .icon-btn {
   display: inline-grid; place-items: center; width: 42px; height: 42px; flex: none;
   border-radius: 12px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); cursor: pointer;
@@ -357,7 +353,7 @@ textarea { resize: vertical; }
 .avatar { display: inline-grid; place-items: center; flex: none; border-radius: 50%; object-fit: cover; background: var(--surface-2); }
 .avatar-letter { background: var(--accent); color: var(--accent-ink); font-family: var(--f-display); font-weight: 800; line-height: 1; }
 .login-btn { min-height: 40px; padding: 0 12px; }
-@media (max-width: 380px) { .topbar .streak-unit { display: none; } }
+@media (max-width: 430px) { .streak-long { display: none; } }
 .account-card { display: flex; align-items: center; gap: 14px; }
 .account-id { display: flex; flex-direction: column; min-width: 0; }
 .account-id b { font-size: 1.15rem; }
@@ -626,3 +622,10 @@ input[type="email"]:focus, input[type="password"]:focus { outline: none; border-
 .dp-note { margin: -4px 0 0; font-size: .82rem; color: var(--muted); }
 @media (max-width: 480px) { .dp { padding: 18px; } .dp-play { width: 60px; height: 60px; } .dp-play svg { width: 26px; height: 26px; } .dp-main { gap: 12px; } }
 @media (prefers-reduced-motion: reduce) { .dp-play, .dp-en span, .dp-wave i, .bento-ring-fill { transition: none; } .dp.is-playing .dp-play, .dp-liquid i { animation: none; } }
+
+/* top bar middle: the practice streak as plain text, no pill (owner's pick) */
+.streak-mid { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; font-weight: 600; font-size: 1rem; color: var(--ink); }
+.streak-mid .icon { width: 20px; height: 20px; color: var(--hot); }
+.streak-mid b { font-family: var(--f-display); font-size: 1.25rem; font-weight: 700; color: var(--hot); }
+.streak-long { margin-right: .3em; }
+.streak-mid.is-off { color: var(--muted); font-weight: 500; font-size: .92rem; }

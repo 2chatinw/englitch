@@ -10,10 +10,13 @@ import { ThemeToggle } from './ThemeToggle';
 import { AccountMenu } from './AccountMenu';
 import { MissionTag } from './MissionMenu';
 
+/** Middle of the top bar (owner's pick): "ฝึกต่อเนื่องวันที่ N", shortened to "วันที่ N" on narrow phones. */
 function Streak({ n }: { n: number }) {
+  if (n <= 0) return <span className="streak-mid is-off">เริ่มฝึกวันนี้ได้เลย</span>;
   return (
-    <span className={'streak' + (n > 0 ? ' is-on' : '')} title="จำนวนวันที่ฝึกต่อเนื่อง">
-      <Icon name="flame" /><b className="num">{n}</b><span className="streak-unit">วัน</span>
+    <span className="streak-mid" title={'ฝึกต่อเนื่องวันที่ ' + n}>
+      <Icon name="flame" />
+      <span><span className="streak-long">ฝึกต่อเนื่อง</span>วันที่ <b className="num">{n}</b></span>
     </span>
   );
 }
@@ -119,8 +122,10 @@ export function TopBar({ onSettings, onAccount }: { onSettings: () => void; onAc
         <div className="top-hud">
           <Streak n={streak} />
         </div>
-        <span className="top-theme"><ThemeToggle /></span>
-        <AccountMenu onAccount={onAccount} onSettings={onSettings} />
+        <div className="top-right">
+          <span className="top-theme"><ThemeToggle /></span>
+          <AccountMenu onAccount={onAccount} onSettings={onSettings} />
+        </div>
       </div>
     </header>
   );
