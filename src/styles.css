@@ -250,9 +250,10 @@ textarea { resize: vertical; }
 /* writing mode: the Thai prompt, and the tap-to-add word hints */
 .word-bank { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
 .word-bank .chip { font-size: .95rem; }
-/* a word already in the answer can't be added again; it greys out and comes back if deleted from the answer */
+/* a word already in the answer greys out (can't be added twice); tapping it again takes it back out of the answer */
 .word-bank .chip { transition: opacity .2s, transform .2s; }
-.word-bank .chip.is-used { opacity: .35; text-decoration: line-through; cursor: default; transform: scale(.94); }
+.word-bank .chip.is-used { opacity: .4; text-decoration: line-through; transform: scale(.94); }
+.word-bank .chip.is-used:hover { opacity: .7; }
 .note-warn { background: var(--near-soft); }
 .score { font-size: 5rem; font-weight: 800; line-height: .9; }
 .score small { font-size: 2rem; color: var(--muted); }

@@ -40,7 +40,7 @@ npm run build   # tsc -b && vite build → dist/
 - `src/components/PageStage.tsx` — page-change wipe (the same keypad taps four keys and Space).
 - Practice modes = the four skills only: `pages/Listen.tsx` (hear → type), `Speak.tsx` (mic; Brave blocks web speech
   recognition, so it falls back to keyboard/Win+H voice typing), `Read.tsx` (situations + meanings, multiple choice),
-  `Write.tsx` (Thai → type English, two-step hints; in the word bank a word already in the answer is greyed out and can't be added again, freed if deleted — owner). Flashcards and the AI chat page were removed (owner's choice, Nov 2026; `#chat` goes to the lobby);
+  `Write.tsx` (Thai → type English, two-step hints; in the word bank a word already in the answer is greyed out and can't be added again; tapping it again removes it from the answer — owner). Flashcards and the AI chat page were removed (owner's choice, Nov 2026; `#chat` goes to the lobby);
   `remember()` in `state/progress.tsx` keeps a spaced-review schedule from right/wrong answers in every mode.
 - Practice pages look like a social-media story (owner picked design 4 of 5, Nov 2026): `components/Story.tsx` — one tall
   card per question (colour per skill: listen blue, speak pink, read green-blue, write purple), dashes on top for the set

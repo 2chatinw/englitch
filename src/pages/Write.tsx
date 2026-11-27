@@ -29,8 +29,8 @@ export default function Write() {
   const nextBtn = useRef<HTMLButtonElement>(null);
   // words without end punctuation, so the last word isn't given away by its full stop
   const bank = useMemo(() => shuffle(p.e.split(/\s+/).map((w) => w.replace(/[.,!?]+$/, ''))), [p.e]);
-  // a word chip is used up once the answer already has that word as many times as the chips before it (owner: a
-  // word can't be added twice); deleting it from the answer frees the chip again
+  // a word chip is used once the answer already has that word as many times as the chips before it (owner: a word
+  // can't be added twice); tapping a used chip takes that word back out of the answer (owner), so does deleting it
   const norm = (w: string) => w.toLowerCase().replace(/[’]/g, "'").replace(/[^a-z0-9']/g, '');
   const used = useMemo(() => {
     const have = new Map<string, number>();
@@ -57,6 +57,12 @@ export default function Write() {
     const n = pickSentence(state, p.e);
     setS({ id: n.e, typed: '', hint: 0, result: null, n: (s.n ?? 0) + 1 });
   };
+  const removeWord = (w: string) => {
+    const toks = s.typed.split(/\s+/).filter(Boolean);
+    for (let i = toks.length - 1; i >= 0; i--) if (norm(toks[i]) === norm(w)) { toks.splice(i, 1); break; }
+    setS({ ...s, typed: toks.join(' ') });
+    input.current?.focus();
+  };
   const addWord = (w: string) => {
     setS({ ...s, typed: (s.typed.trimEnd() + ' ' + w).trimStart() });
     input.current?.focus();
@@ -78,8 +84,9 @@ export default function Write() {
                 {s.hint >= 2 ? (
                   <div className="word-bank" role="group" aria-label="คำที่ใช้ในประโยค แตะเพื่อเติม">
                     {bank.map((w, i) => (
-                      <button key={w + i} type="button" className={'chip' + (used[i] ? ' is-used' : '')} disabled={used[i]}
-                        aria-label={used[i] ? w + ' (ใช้แล้ว)' : 'เติมคำ ' + w} onClick={() => addWord(w)}>{w}</button>
+                      <button key={w + i} type="button" className={'chip' + (used[i] ? ' is-used' : '')} aria-pressed={used[i]}
+                        aria-label={used[i] ? 'เอาคำ ' + w + ' ออกจากคำตอบ' : 'เติมคำ ' + w} title={used[i] ? 'แตะอีกครั้งเพื่อเอาออก' : undefined}
+                        onClick={() => (used[i] ? removeWord(w) : addWord(w))}>{w}</button>
                     ))}
                   </div>
                 ) : null}
