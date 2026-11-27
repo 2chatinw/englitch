@@ -1,4 +1,5 @@
-import { useLayoutEffect, useRef, useState } from 'react';
+import { useLayoutEffect, useRef } from 'react';
+import { setCategoryOpen, useCategoryOpen } from '../lib/lobby';
 import gsap from 'gsap';
 import { Flip } from 'gsap/Flip';
 import { LEVELS, type Group, type Level } from '../data/content';
@@ -20,9 +21,6 @@ const SKILLS: { r: Route; a: number }[] = [{ r: 'listen', a: 252 }, { r: 'speak'
 
 /** picking: three, two, three circles on a six-column grid, each spanning two columns ([column, row]) */
 const PICK_AT: [number, number][] = [[1, 1], [3, 1], [5, 1], [2, 2], [4, 2], [1, 3], [3, 3], [5, 3]];
-
-/** Remembered while the app is open: coming back to the lobby from a practice page shows the chosen category again. */
-let focusedThisVisit = false;
 
 /**
  * A ring in three arcs, one per level (green short, yellow longer, orange long sentences), each as long as
@@ -72,11 +70,12 @@ export function CategoryPicker() {
     },
   ];
   const current: Id = activeMission(state) ?? 'all';
-  const [focus, setFocusState] = useState(focusedThisVisit);
+  // remembered while the app is open: coming back from a practice page shows the chosen category again
+  const focus = useCategoryOpen();
   const stage = useRef<HTMLDivElement>(null);
   const pending = useRef<{ flip: Flip.FlipState; h: number } | null>(null);
 
-  const setFocus = (on: boolean) => { focusedThisVisit = on; setFocusState(on); };
+  const setFocus = setCategoryOpen;
   /** record where every circle is now, so the layout change can be animated from there */
   const capture = () => {
     const el = stage.current;

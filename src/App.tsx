@@ -12,18 +12,22 @@ import Landing from './pages/Landing';
 import { Backdrop } from './components/Backdrop';
 import Today from './pages/Today';
 import { useProgressToasts } from './components/Missions';
+import { setCategoryOpen, useCategoryOpen } from './lib/lobby';
 import Listen from './pages/Listen';
 import Speak from './pages/Speak';
 import Read from './pages/Read';
 import Write from './pages/Write';
-import Chat from './pages/Chat';
 
-const PAGES: Record<Route, ComponentType> = { today: Today, listen: Listen, speak: Speak, read: Read, write: Write, chat: Chat };
+const PAGES: Record<Route, ComponentType> = { today: Today, listen: Listen, speak: Speak, read: Read, write: Write };
 
 function Shell() {
   const route = useRoute();
   useProgressToasts();
   const mission = useProgress().state.settings.mission;
+  // the practice menus appear once a category is opened (or on any practice page), not over the eight circles
+  const opened = useCategoryOpen();
+  useEffect(() => { if (route !== 'today') setCategoryOpen(true); }, [route]);
+  const menus = route !== 'today' || opened;
   const [settings, setSettings] = useState(false);
   const openSettings = useCallback(() => setSettings(true), []);
   const closeSettings = useCallback(() => setSettings(false), []);
@@ -36,7 +40,7 @@ function Shell() {
     return () => window.removeEventListener('gg:account', onOpen);
   }, []);
   return (
-    <div className="shell has-bd">
+    <div className="shell has-bd" data-menus={menus ? 'on' : 'off'}>
       <Backdrop kind="sky" />
       <a className="skip" href="#main">ข้ามไปที่เนื้อหา</a>
       <TopBar onSettings={openSettings} onAccount={openAccount} />
@@ -44,7 +48,7 @@ function Shell() {
         <QuestRail route={route} />
         <main id="main" className="main">
           {/* keyed by the mission too, so switching it mid-practice starts the page fresh with the new category */}
-          <PageStage route={route} render={(r) => { const P = PAGES[r]; return <P key={r === 'today' || r === 'chat' ? r : r + ':' + (mission ?? 'all')} />; }} />
+          <PageStage route={route} render={(r) => { const P = PAGES[r]; return <P key={r === 'today' ? r : r + ':' + (mission ?? 'all')} />; }} />
           <footer className="copyright app-copy">© {Math.max(2026, new Date().getFullYear())} Chatchathep Meekaew</footer>
         </main>
       </div>

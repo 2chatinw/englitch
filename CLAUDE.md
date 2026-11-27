@@ -34,9 +34,9 @@ npm run build   # tsc -b && vite build → dist/
 - `src/pages/Landing.tsx` — landing; `HeroKeys.tsx` (keypad hero: one key per category, shows a sample sentence), `Keypad.tsx` (isometric SVG),
   `SectionNav.tsx` (scroll-spy links), `SignInDrop.tsx` (rope-ladder sign-in badges), `ThemeToggle.tsx` (sun/moon).
 - `src/components/PageStage.tsx` — page-change wipe (the same keypad taps four keys and Space).
-- Practice modes = the four skills + AI chat: `pages/Listen.tsx` (hear → type), `Speak.tsx` (mic; Brave blocks web speech
+- Practice modes = the four skills only: `pages/Listen.tsx` (hear → type), `Speak.tsx` (mic; Brave blocks web speech
   recognition, so it falls back to keyboard/Win+H voice typing), `Read.tsx` (situations + meanings, multiple choice),
-  `Write.tsx` (Thai → type English, two-step hints), `Chat.tsx`. Flashcards were removed (owner's choice, Nov 2026);
+  `Write.tsx` (Thai → type English, two-step hints). Flashcards and the AI chat page were removed (owner's choice, Nov 2026; `#chat` goes to the lobby);
   `remember()` in `state/progress.tsx` keeps a spaced-review schedule from right/wrong answers in every mode.
 - Content: 7 main categories (`Group` in `data/content.ts`, owner's list): general, travel, gaming, business,
   academic, entertainment, esp (medical / IT / aviation). Each phrase has a subtopic `c` and its main category `g`
@@ -46,6 +46,8 @@ npm run build   # tsc -b && vite build → dist/
   (7 categories + "รวมทุกหมวด"), each in a 3-colour level ring (`StageRing`: green easy, yellow medium, orange hard).
   Tapping one sets the mission; GSAP Flip slides it to the middle and grows it, the others drop into a row below,
   and listen/speak/read/write pop out on an arc around it. A full reload starts back at the 8 circles.
+  The side rail / bottom bar stay hidden over the 8 circles and slide in once a category is opened or a practice
+  page is visited (`lib/lobby.ts`, `data-menus` on `.shell`; owner's choice).
 - Missions (no daily missions, owner's choice): one mission per main category (`lib/missions.ts`,
   `components/Missions.tsx`), each practised by listen/speak/read/write. Passed when every phrase in it was answered
   right once, in any mode. The active mission is `settings.mission`; practice then draws only from that category,

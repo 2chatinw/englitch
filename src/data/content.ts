@@ -574,69 +574,7 @@ export const SITUATIONS: Situation[] = [
   { q: 'เพื่อนพูดคำที่คุณไม่รู้ความหมาย', a: 'What does that mean?', o: ['What is your name?', "That's awesome!", 'See you later!'] },
 ];
 
-export interface Scenario { id: string; label: string; blurb: string; role: string; starters: [string, string][] }
-
-const ALL_SCENARIOS: Scenario[] = [
-  {
-    id: 'team', label: 'เพื่อนร่วมทีมในเกมยิง (เกม)', blurb: 'Alex จากแคนาดา กำลังรอเริ่มรอบถัดไปกับคุณ',
-    role: 'Alex, a friendly teammate from Canada in an online shooter game. You two are in the same squad, waiting for the next round to start',
-    starters: [['Hi! Are you ready?', 'สวัสดี พร้อมยัง'], ['Where should we go?', 'เราควรไปทางไหนดี'], ["Let's go!", 'ลุยกันเลย']],
-  },
-  {
-    id: 'discord', label: 'เพื่อนใหม่ใน Discord (เกม)', blurb: 'Mia จากออสเตรเลีย เพิ่งเจอกันในเซิร์ฟเวอร์เกม',
-    role: 'Mia, a friendly gamer from Australia who just met the learner on a Discord server for game fans',
-    starters: [['Hi! Nice to meet you.', 'สวัสดี ยินดีที่ได้รู้จัก'], ['What games do you play?', 'คุณเล่นเกมอะไรบ้าง'], ["I'm from Thailand.", 'ฉันมาจากประเทศไทย']],
-  },
-  {
-    id: 'coach', label: 'ผู้เล่นเก่งช่วยสอนเกม (เกม)', blurb: 'Leo จากอเมริกา ใจเย็นและชอบสอนมือใหม่',
-    role: 'Leo, an experienced, patient player from the USA who is happy to help a new player learn the game',
-    starters: [["I'm new to this game.", 'ฉันเพิ่งเริ่มเล่นเกมนี้'], ['How do I do this?', 'อันนี้ทำยังไง'], ['Can you teach me?', 'สอนฉันหน่อยได้ไหม']],
-  },
-  {
-    id: 'hotel', label: 'พนักงานโรงแรม (เที่ยว)', blurb: 'Emma พนักงานต้อนรับที่ลอนดอน กำลังช่วยคุณเช็กอิน',
-    role: 'Emma, a friendly hotel receptionist in London who is helping the learner check in and answering questions about the hotel and the city',
-    starters: [['I have a reservation.', 'ฉันจองห้องไว้แล้ว'], ['Is breakfast included?', 'รวมอาหารเช้าไหม'], ['How do I get to the train station?', 'ไปสถานีรถไฟยังไง']],
-  },
-  {
-    id: 'interview', label: 'สัมภาษณ์งาน (ธุรกิจ)', blurb: 'Mr. Brown ผู้จัดการฝ่ายบุคคล สัมภาษณ์แบบใจดี',
-    role: 'Mr. Brown, a kind HR manager interviewing the learner for an office job. Ask common interview questions one at a time',
-    starters: [['Good morning, nice to meet you.', 'สวัสดีตอนเช้า ยินดีที่ได้รู้จัก'], ['I have three years of experience.', 'ฉันมีประสบการณ์ทำงานสามปี'], ['I work well in a team.', 'ฉันทำงานเป็นทีมได้ดี']],
-  },
-  {
-    id: 'classmate', label: 'เพื่อนร่วมชั้น (วิชาการ)', blurb: 'Noah นักศึกษาต่างชาติ ชวนติวและทำรายงานด้วยกัน',
-    role: 'Noah, an international university student who studies with the learner and talks about classes, assignments and exams',
-    starters: [['When is the assignment due?', 'งานนี้ต้องส่งเมื่อไหร่'], ["Let's form a study group.", 'มาตั้งกลุ่มติวกัน'], ['Can I borrow your notes?', 'ขอยืมสมุดจดหน่อยได้ไหม']],
-  },
-  {
-    id: 'popculture', label: 'คุยเรื่องหนัง เพลง ซีรีส์ (บันเทิง)', blurb: 'Zoe คอหนังและเพลง ชอบใช้สำนวนสนุก ๆ',
-    role: 'Zoe, a fan of movies, series and music who loves chatting about pop culture and sometimes uses common idioms, explaining them simply',
-    starters: [['Have you seen this movie?', 'เคยดูหนังเรื่องนี้ไหม'], ['No spoilers, please!', 'ห้ามสปอยล์นะ!'], ['This song is so catchy.', 'เพลงนี้ติดหูมาก']],
-  },
-  {
-    id: 'doctor', label: 'หมอที่คลินิก (สายอาชีพ)', blurb: 'Dr. Lee ถามอาการและให้คำแนะนำอย่างใจเย็น',
-    role: 'Dr. Lee, a calm doctor at a clinic who asks the learner about their symptoms and gives simple advice',
-    starters: [['I have a headache.', 'ฉันปวดหัว'], ['I have a fever.', 'ฉันมีไข้'], ['I feel dizzy.', 'ฉันรู้สึกเวียนหัว']],
-  },
-  {
-    id: 'free', label: 'คุยเรื่องทั่วไป (ทั่วไป)', blurb: 'Sam ชวนคุยได้ทุกเรื่อง ทั้งอาหาร เพลง การเที่ยว และชีวิตประจำวัน',
-    role: 'Sam, a friendly English speaker who likes to chat about food, music, travel, daily life and Thailand',
-    starters: [['Hi! How are you?', 'สวัสดี สบายดีไหม'], ['What do you do for fun?', 'ปกติชอบทำอะไรสนุก ๆ'], ['Have you been to Thailand?', 'เคยมาประเทศไทยไหม']],
-  },
-];
-
-/** Everyday and work/study roles first, the gaming ones last. */
-const SCENARIO_ORDER = ['free', 'hotel', 'interview', 'classmate', 'popculture', 'doctor', 'discord', 'team', 'coach'];
-export const SCENARIOS: Scenario[] = [...ALL_SCENARIOS].sort((a, b) => SCENARIO_ORDER.indexOf(a.id) - SCENARIO_ORDER.indexOf(b.id));
-
-export function chatPrompt(sc: Scenario): string {
-  return 'ช่วยเล่นบทบาทสมมติเพื่อฝึกภาษาอังกฤษให้หน่อย\n\n' +
-    'You are ' + sc.role + '. Chat with me in very simple English (I am a Thai beginner, CEFR A1-A2). ' +
-    'Keep each reply to 1-2 short sentences and ask me one easy question each time. ' +
-    'After each of my messages, if my English has mistakes, first show the corrected sentence and explain the mistake briefly in Thai, then continue the chat in character. ' +
-    'If I write in Thai, show me how to say it in English. Start now with a short greeting.';
-}
-
-export type Kind = 'listen' | 'speak' | 'read' | 'write' | 'chat';
+export type Kind = 'listen' | 'speak' | 'read' | 'write';
 
 
 /** Days until a sentence comes back for review, by how many times in a row it was right. */

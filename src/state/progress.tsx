@@ -5,7 +5,7 @@ import { setVoiceSettings } from '../lib/speech';
 import { useAuth } from './auth';
 import { saveProgress, watchProgress } from '../lib/cloud';
 
-export interface DayStats { listen: number; speak: number; read: number; write: number; chat: number; xp: number }
+export interface DayStats { listen: number; speak: number; read: number; write: number; xp: number }
 export interface Settings {
   voiceURI: string;
   rate: number;
@@ -35,7 +35,7 @@ export type SyncStatus = 'off' | 'syncing' | 'synced' | 'error';
 
 const KEY = 'englitch-v1';
 const OLD_KEY = 'gg-english-v1'; // before the rename; read once so earlier progress isn't lost
-const emptyDay = (): DayStats => ({ listen: 0, speak: 0, read: 0, write: 0, chat: 0, xp: 0 });
+const emptyDay = (): DayStats => ({ listen: 0, speak: 0, read: 0, write: 0, xp: 0 });
 const fresh = (): State => ({
   v: 1, xp: 0, streak: 0, lastActive: null, days: {}, srs: {}, updatedAt: 0, owner: null,
   settings: { voiceURI: '', rate: 0.9, autoPlay: true, theme: 'system', onboarded: false, installHintDismissed: false, level: 'auto', mission: null },
