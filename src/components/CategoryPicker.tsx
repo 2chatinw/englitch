@@ -118,15 +118,18 @@ export function CategoryPicker() {
       // slides from the old spot instead of the stage's height being tweened.
       // afterwards take GSAP's inline transform styles off again (a left-over `scale: none` stopped the hover grow)
       const tidy = (els: Element[]) => () => els.forEach((t) => ['transform', 'translate', 'rotate', 'scale'].forEach((k) => (t as HTMLElement).style.removeProperty(k)));
-      Flip.from(p.flip, { duration: 0.62, ease: 'power3.inOut', scale: true, stagger: 0.015, onComplete: tidy(Array.from(el.querySelectorAll('.cp-node'))) });
+      // owner: the chosen circle grows steadily all the way while it travels, and nothing goes past its final size —
+      // so a gentle in-out ease (power3 left it small for the first 0.15 s, then grew it all at once) and no overshoot
+      Flip.from(p.flip, { duration: 0.62, ease: 'sine.inOut', scale: true, stagger: 0.015, onComplete: tidy(Array.from(el.querySelectorAll('.cp-node'))) });
       const dh = p.h - el.offsetHeight;
       const below: Element[] = [];
       for (let n = el.closest('.cp')?.nextElementSibling; n; n = n.nextElementSibling) below.push(n);
-      if (dh && below.length) gsap.fromTo(below, { y: dh }, { y: 0, duration: 0.62, ease: 'power3.inOut', onComplete: tidy(below) });
+      if (dh && below.length) gsap.fromTo(below, { y: dh }, { y: 0, duration: 0.62, ease: 'sine.inOut', onComplete: tidy(below) });
     }
     if (focus && !prefersReducedMotion()) {
-      gsap.fromTo(el.querySelectorAll('.cp-skill'), { scale: 0.3, autoAlpha: 0 },
-        { scale: 1, autoAlpha: 1, duration: 0.45, stagger: 0.07, delay: p ? 0.4 : 0.1, ease: 'back.out(2.2)' });
+      // the skill keys grow out to their size and stop there (they used to pop to 111 % and settle back)
+      gsap.fromTo(el.querySelectorAll('.cp-skill'), { scale: 0.4, autoAlpha: 0 },
+        { scale: 1, autoAlpha: 1, duration: 0.4, stagger: 0.06, delay: p ? 0.45 : 0.1, ease: 'power2.out' });
       gsap.fromTo(el.querySelectorAll('.cp-back, .cp-strip-label'), { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.3, delay: p ? 0.35 : 0 });
     }
   }, [focus, current]);

@@ -83,7 +83,8 @@ npm run build   # tsc -b && vite build → dist/
   and listen/speak/read/write pop out on an arc around it. A full reload starts back at the 8 circles.
   Smoothness (owner said it stuttered, fixed Nov 2026): Flip uses `scale: true` (transforms only, no `absolute`) and the
   content below slides with `y` instead of tweening the stage height; inline transform styles are removed on complete
-  (a left-over `scale: none` blocks the hover grow). Measure with the `preview` launch config (production build) —
+  (a left-over `scale: none` blocks the hover grow). Owner: the chosen circle grows steadily all the way while it moves
+  (`sine.inOut`) and nothing may grow past its final size then shrink back — no `back.out` on the skill keys. Measure with the `preview` launch config (production build) —
   dev mode is ~2× slower; a hidden browser pane runs no animation frames (advance `gsap.globalTimeline` by hand).
   The phone bottom bar is hidden in the whole lobby and slides in only on the practice (quiz) pages
   (`data-menus` on `.shell`; owner's choice). `lib/lobby.ts` remembers the opened category for the session.
