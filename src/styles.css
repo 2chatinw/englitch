@@ -1,6 +1,6 @@
 /* Englitch — taken from the app logo: bright sky blue, cloud white, sunny yellow ("litch"), the mascot's orange,
    navy outlines, and chunky rounded type. Dark theme = pure black (OLED), owner's pick from six night palettes.
-   Layout: desktop = top bar + floating quest rail beside a centered content column;
+   Layout: desktop = top bar (skills menu in its middle on practice pages) + a centred content column;
            phone   = top HUD bar + content + thumb-reach bottom tab bar. */
 :root {
   --bg: #EAF4FF;

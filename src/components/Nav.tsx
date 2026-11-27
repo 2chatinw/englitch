@@ -77,48 +77,46 @@ function useIndicator(route: Route, axis: 'x' | 'y') {
   return { list, ind };
 }
 
+const SKILLS: Route[] = ['listen', 'speak', 'read', 'write'];
+
 /**
- * Desktop menu: a slim floating rail beside the page (after the scholarship site's icon rail), drawn as a quest log:
- * each mode's icon sits in a ring that fills with today's mission progress.
+ * Desktop: on the practice pages the four skills sit in the middle of the top bar (owner's choice, replacing the
+ * side rail and the streak there), a pill sliding to the open one. Phones keep the bottom tab bar.
  */
-export function QuestRail({ route }: { route: Route }) {
-  const quest = useQuest();
-  const { list, ind } = useIndicator(route, 'y');
+function TopMenu({ route }: { route: Route }) {
+  const { list, ind } = useIndicator(route, 'x');
   return (
-    <aside className="rail" aria-label="โหมดฝึก">
-      <nav className="rail-in" ref={list}>
-        <span className="rail-ind" ref={ind} aria-hidden="true" />
-        {ROUTES.map((r) => {
-          const q = quest(r);
-          return (
-            <div key={r} className="rail-slot">
-              <a href={'#' + r} className="rail-item" title={PAGES[r].th + (q.text ? ' · ' + q.text : '')}
-                aria-current={r === route ? 'page' : undefined}>
-                <QuestRing icon={r} p={q.p} done={q.done} lobby={r === 'today'} />
-                <span className="rail-label">{PAGES[r].short}</span>
-                <span className="sr-only">{PAGES[r].th}{q.text ? ', ' + q.text : ''}</span>
-              </a>
-              {r === 'today' ? <hr className="rail-sep" /> : null}
-            </div>
-          );
-        })}
-      </nav>
-    </aside>
+    <nav className="top-menu" aria-label="ทักษะที่ฝึก" ref={list as RefObject<HTMLElement>}>
+      <span className="top-menu-ind" ref={ind} aria-hidden="true" />
+      {SKILLS.map((r) => (
+        <a key={r} href={'#' + r} className="top-menu-item" aria-current={r === route ? 'page' : undefined}>
+          <Icon name={PAGES[r].icon} /><span>{PAGES[r].short}</span>
+        </a>
+      ))}
+    </nav>
   );
 }
 
-/** Top bar on every screen size: logo, streak, theme and the account menu. Clear at the top, glass once scrolled. */
-export function TopBar({ onSettings, onAccount }: { onSettings: () => void; onAccount: () => void }) {
+/**
+ * Top bar on every screen size: logo (back to the home page), the streak in the middle (on the practice pages the
+ * skills menu instead, on desktop), theme and the account menu. Clear at the top, glass once scrolled.
+ */
+export function TopBar({ route, onSettings, onAccount }: { route: Route; onSettings: () => void; onAccount: () => void }) {
   const { streak } = useProgress();
   const scrolled = useScrolled();
   return (
     <header className="topbar" data-scrolled={scrolled ? 'true' : 'false'}>
       <div className="topbar-in">
-        <a className="brand brand-sm" href="#today" aria-label="Englitch หน้าแรก">
+        <a className="brand brand-sm" href="#today" aria-label="Englitch กลับหน้าหลัก" title="กลับหน้าหลัก">
           <Brand size="sm" />
         </a>
         <div className="top-hud">
-          <Streak n={streak} />
+          {route === 'today' ? <Streak n={streak} /> : (
+            <>
+              <TopMenu route={route} />
+              <span className="top-streak-phone"><Streak n={streak} /></span>
+            </>
+          )}
         </div>
         <div className="top-right">
           <span className="top-theme"><ThemeToggle /></span>

@@ -256,8 +256,8 @@ html { scroll-padding-top: 88px; }
 @media (prefers-reduced-motion: reduce) { .lp-links-bar { transition: opacity .2s; } }
 
 /* =========================================================================
-   App shell: top bar on every screen, a floating quest rail beside the page on desktop
-   (after the scholarship site's icon rail), and a scholarship-style account pill + menu
+   App shell: top bar on every screen (on desktop practice pages the skills menu sits in its middle),
+   a centred page, the bottom tab bar on phones, and a scholarship-style account pill + menu
    ========================================================================= */
 .shell { --frame: 1000px; --top-h: 78px; }
 .topbar { display: block; }
@@ -276,30 +276,25 @@ html { scroll-padding-top: 88px; }
 }
 
 .app-body { position: relative; }
-.rail { display: none; }
 @media (min-width: 900px) {
-  .app-body { display: flex; align-items: flex-start; gap: 28px; max-width: calc(var(--frame) + 48px); margin: 0 auto; padding: 0 24px; }
-  .app-body > .main { flex: 1 1 auto; min-width: 0; padding: 20px 0 64px; }
-  .rail { display: block; flex: 0 0 84px; position: sticky; top: calc(var(--top-h) + 20px); margin-top: 20px; z-index: 35; }
+  .app-body { max-width: calc(var(--frame) + 48px); margin: 0 auto; padding: 0 24px; }
+  .app-body > .main { min-width: 0; padding: 20px 0 64px; }
 }
-.rail-in {
-  position: relative; display: flex; flex-direction: column; gap: 2px; padding: 8px 6px; border-radius: 22px;
-  background: color-mix(in srgb, var(--surface) 88%, transparent);
-  backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
-  border: 1px solid color-mix(in srgb, var(--line) 70%, transparent);
-  box-shadow: var(--shadow);
-}
-.rail-ind { position: absolute; left: 6px; right: 6px; top: 0; border-radius: 16px; background: var(--accent-soft); z-index: 0; }
-.rail-item {
-  position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; gap: 4px;
-  padding: 9px 2px 8px; border-radius: 16px; color: var(--muted); font-size: .8rem; line-height: 1.2; text-align: center;
-  text-decoration: none; transition: color .2s, background-color .2s, transform .2s cubic-bezier(.34, 1.56, .64, 1);
-}
-.rail-item:hover { color: var(--ink); background: color-mix(in srgb, var(--accent-soft) 50%, transparent); }
-.rail-item[aria-current="page"] { color: var(--accent); font-weight: 600; background: transparent; }
-.rail-item:active { transform: scale(.94); }
-.rail-item:hover .qring > .icon { transform: scale(1.12); }
-.rail-sep { width: 56%; margin: 4px auto; border: 0; border-top: 1px solid var(--line); }
+
+/* skills menu in the middle of the top bar (desktop practice pages): a glass pill with a sliding highlight */
+.top-menu { position: relative; display: none; align-items: center; gap: 2px; padding: 4px; border-radius: 999px;
+  background: linear-gradient(145deg, var(--glass-1), var(--glass-2)); border: 1px solid var(--glass-line);
+  backdrop-filter: blur(16px) saturate(160%); -webkit-backdrop-filter: blur(16px) saturate(160%);
+  box-shadow: inset 0 1px 0 var(--glass-hi), 0 10px 26px -16px rgba(21, 39, 92, .5); }
+.top-menu-ind { position: absolute; top: 4px; bottom: 4px; left: 0; border-radius: 999px; z-index: 0;
+  background: linear-gradient(135deg, var(--accent), #6C4DE6); box-shadow: 0 6px 16px -8px var(--accent); }
+.top-menu-item { position: relative; z-index: 1; display: inline-flex; align-items: center; gap: 7px; padding: 9px 18px; border-radius: 999px;
+  color: var(--muted); font-weight: 600; text-decoration: none; transition: color .3s; white-space: nowrap; }
+.top-menu-item .icon { width: 19px; height: 19px; }
+.top-menu-item:hover { color: var(--ink); }
+.top-menu-item[aria-current="page"] { color: #FFFFFF; }
+.top-menu-item:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+@media (min-width: 900px) { .top-menu { display: flex; } .top-streak-phone { display: none; } }
 
 /* quest ring: fills with today's progress; yellow while going, green with a tick once the mission is done */
 .qring { position: relative; display: grid; place-items: center; width: 40px; height: 40px; flex: none; }
@@ -356,18 +351,13 @@ html { scroll-padding-top: 88px; }
 .acct-sep { border: 0; border-top: 1px solid var(--line); margin: 6px 4px; }
 .acct-out, .acct-out > .icon { color: var(--bad); }
 .acct-out:hover, .acct-out:focus-visible { background: var(--bad-soft); }
-@media (prefers-reduced-motion: reduce) { .acct-chev, .qring-fill, .rail-item { transition: none; } }
+@media (prefers-reduced-motion: reduce) { .acct-chev, .qring-fill, .top-menu-item { transition: none; } }
 
 
-/* The practice menus (side rail, bottom bar) are hidden in the lobby and slide in on the practice (quiz) pages.
- */
-.rail, .bottombar { transition: opacity .45s ease .2s, translate .6s cubic-bezier(.22, 1, .36, 1) .2s, visibility 0s linear 0s; }
-.shell[data-menus="off"] .rail, .shell[data-menus="off"] .bottombar {
-  opacity: 0; visibility: hidden; pointer-events: none;
+/* The phone tab bar is hidden in the lobby and slides in on the practice (quiz) pages. */
+.bottombar { transition: opacity .45s ease .2s, translate .6s cubic-bezier(.22, 1, .36, 1) .2s, visibility 0s linear 0s; }
+.shell[data-menus="off"] .bottombar {
+  opacity: 0; visibility: hidden; pointer-events: none; translate: 0 110%;
   transition: opacity .25s ease, translate .3s ease, visibility 0s linear .3s;
 }
-.shell[data-menus="off"] .rail { translate: -36px 0; }
-/* in the lobby the hidden rail takes no room, so the page lines up with the centre of the top bar */
-@media (min-width: 900px) { .shell[data-menus="off"] .app-body { gap: 0; } .shell[data-menus="off"] .rail { flex-basis: 0; width: 0; overflow: hidden; } }
-.shell[data-menus="off"] .bottombar { translate: 0 110%; }
-@media (prefers-reduced-motion: reduce) { .rail, .bottombar, .shell[data-menus="off"] .rail, .shell[data-menus="off"] .bottombar { transition: none; } }
+@media (prefers-reduced-motion: reduce) { .bottombar, .shell[data-menus="off"] .bottombar { transition: none; } }

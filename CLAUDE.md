@@ -33,7 +33,7 @@ npm run build   # tsc -b && vite build → dist/
 ## Where things are
 
 - `src/App.tsx` — Gate (landing vs app) and the app Shell.
-- `src/components/Nav.tsx` — TopBar: three columns — logo left, "ฝึกต่อเนื่องวันที่ N" centred (plain text, "วันที่ N" on phones; owner's pick), theme + account right (the Mission button was removed, owner's choice — categories are picked only in the lobby). In the lobby the hidden rail takes no width so the page centre matches the bar's centre. QuestRail (desktop icon rail) and BottomBar (phone). The category label by the menus was removed (owner: the practice page header already shows the category). `MissionMenu.tsx` only keeps `useChooseMission`. Changing mission restarts the open practice page (App keys it by mission).
+- `src/components/Nav.tsx` — TopBar: three columns — logo left (links back to the home page), centre = "ฝึกต่อเนื่องวันที่ N" in the lobby (plain text, "วันที่ N" on phones) and, on desktop practice pages, the skills menu `TopMenu` (glass pill, sliding highlight) instead; theme + account right. No side rail any more (owner: keep the content centred). Phones keep `BottomBar` (thumb reach) and the streak in the top bar. The Mission button and the category label by the menus were removed (owner's choice — categories are picked only in the lobby). `MissionMenu.tsx` only keeps `useChooseMission`. Changing mission restarts the open practice page (App keys it by mission).
 - `src/components/AccountMenu.tsx` — avatar pill + drop-down (copied from the owner's scholarship project, `C:\ProjectWeb\scholarship`).
 - `src/pages/Landing.tsx` — landing (kept in the app's look: feature cards use the pastel skill keys / level ring, the closing call to action is liquid glass; "How it works" = sign in → tap a category → pick a skill); `HeroKeys.tsx` (keypad hero: one key per category, shows a sample sentence), `Keypad.tsx` (isometric SVG),
   `SectionNav.tsx` (scroll-spy links), `SignInDrop.tsx` (rope-ladder sign-in badges), `ThemeToggle.tsx` (sun/moon).
@@ -55,7 +55,7 @@ npm run build   # tsc -b && vite build → dist/
   (7 categories + "รวมทุกหมวด"), each in a 3-colour level ring (`StageRing`: green easy, yellow medium, orange hard).
   Tapping one sets the mission; GSAP Flip slides it to the middle and grows it, the others drop into a row below,
   and listen/speak/read/write pop out on an arc around it. A full reload starts back at the 8 circles.
-  The side rail / bottom bar are hidden in the whole lobby and slide in only on the practice (quiz) pages
+  The phone bottom bar is hidden in the whole lobby and slides in only on the practice (quiz) pages
   (`data-menus` on `.shell`; owner's choice). `lib/lobby.ts` remembers the opened category for the session.
   Ring style (owner's sketch): rounded arcs with clear gaps, a little space, then the outlined inner circle. Each level
   gets at least 10% of the ring (`MIN` in `StageRing`) so a level with few sentences is not a dot touching its neighbour.
