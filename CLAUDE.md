@@ -69,7 +69,9 @@ npm run build   # tsc -b && vite build → dist/
   (`data-menus` on `.shell`; owner's choice). `lib/lobby.ts` remembers the opened category for the session.
   Ring style (owner's sketch): rounded arcs with clear gaps, a little space, then the outlined inner circle. Each level
   gets at least 10% of the ring (`MIN` in `StageRing`) so a level with few sentences is not a dot touching its neighbour.
-  Under the title the ring colours are a three-part bar with labels (`.cp-legend`, owner picked design 3 of 6).
+  Under the title the ring colours are a bar (`.cp-legend`, owner picked design 3 of 6) that is also the LEVEL PICKER
+  (owner): อัตโนมัติ (rainbow) / สั้น / ยาวขึ้น / ยาว = `settings.level`; the chosen one is coloured and larger, the rest grey;
+  a hint line under it explains the choice. Same setting as in Settings.
   Skill buttons = design 3 "keyboard keys" made round (owner's pick): raised round keycaps with a number 1-4 (keys 1-4
   press them on a computer), a shaded SVG picture from `components/SkillArt.tsx` (owner wants pictures, not flat icons/emoji)
   and the name; pastel side colours (listen blue, speak pink, read mint, write lavender). Dark mode tints the keycap face

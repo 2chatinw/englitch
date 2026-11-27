@@ -10,6 +10,15 @@ import { useChooseMission } from './MissionMenu';
 import { activeMission, allMissions } from '../lib/missions';
 import { PAGES, navigate, type Route } from '../lib/router';
 import { prefersReducedMotion } from '../lib/util';
+import { clearSessions } from '../state/session';
+
+/** the level picker under the title (owner's design): Auto plus the three ring colours */
+const LEVEL_PICK: { k: 'auto' | Level; label: string; hint: string }[] = [
+  { k: 'auto', label: 'อัตโนมัติ', hint: 'เริ่มจากประโยคสั้น แล้วค่อยเปิดประโยคยาวขึ้นให้เอง' },
+  { k: 'easy', label: 'สั้น', hint: 'ฝึกเฉพาะประโยคสั้น คำพื้นฐาน' },
+  { k: 'medium', label: 'ยาวขึ้น', hint: 'ฝึกเฉพาะประโยคยาวขึ้น ไวยากรณ์ระดับกลาง' },
+  { k: 'hard', label: 'ยาว', hint: 'ฝึกเฉพาะประโยคยาว คำทางการ สำนวน ศัพท์เฉพาะ' },
+];
 
 gsap.registerPlugin(Flip);
 
@@ -135,11 +144,17 @@ export function CategoryPicker() {
       <div className="cp-head">
         <h1 id="cp-h" className="cp-title">{focus ? 'เลือกทักษะที่จะฝึก' : 'เลือกหมวดหมู่'}</h1>
         {/* the ring colours as a three-part bar under the title (owner's pick, design 3) */}
-        <div className="cp-legend" role="list" aria-label="สีวงแหวนรอบปุ่มบอกความคืบหน้า">
-          <span role="listitem" className="cp-legend-easy"><i aria-hidden="true" /><small><span className="sr-only">สีเขียว: </span>สั้น</small></span>
-          <span role="listitem" className="cp-legend-medium"><i aria-hidden="true" /><small><span className="sr-only">สีเหลือง: </span>ยาวขึ้น</small></span>
-          <span role="listitem" className="cp-legend-hard"><i aria-hidden="true" /><small><span className="sr-only">สีส้ม: </span>ยาว</small></span>
+        {/* the ring colours double as the level picker (owner's design): the chosen one is coloured and larger, the rest grey */}
+        <div className="cp-legend" role="radiogroup" aria-label="ระดับความยาก (สีเดียวกับวงแหวนรอบปุ่ม)">
+          {LEVEL_PICK.map((x) => (
+            <button key={x.k} type="button" role="radio" aria-checked={state.settings.level === x.k}
+              className={'cp-legend-' + x.k + (state.settings.level === x.k ? ' is-on' : '')} title={x.hint}
+              onClick={() => { if (state.settings.level !== x.k) { setSettings({ level: x.k }); clearSessions(); } }}>
+              <i aria-hidden="true" /><small>{x.label}</small>
+            </button>
+          ))}
         </div>
+        <p className="cp-legend-hint muted small">{LEVEL_PICK.find((x) => x.k === state.settings.level)?.hint}</p>
         {focus ? <p className="muted small">ฝึกครบทั้ง 4 ทักษะได้ในหมวดเดียวกัน ตอบถูกครบทุกประโยค = ผ่าน Mission</p> : null}
       </div>
       <div className={'cp-stage' + (focus ? ' is-focus' : '')} ref={stage}>
