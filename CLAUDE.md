@@ -28,6 +28,7 @@ English-practice web app for Thai learners of English (everyday, travel, work, s
 npm install
 npm run dev     # http://localhost:5173
 npm run build   # tsc -b && vite build → dist/
+# production check: build, then launch config "preview" (http://localhost:4173)
 ```
 
 ## Where things are
@@ -35,7 +36,7 @@ npm run build   # tsc -b && vite build → dist/
 - `src/App.tsx` — Gate (landing vs app) and the app Shell.
 - `src/components/Nav.tsx` — TopBar: three columns — logo left (links back to the home page), centre = "ฝึกต่อเนื่องวันที่ N" in the lobby (plain text, "วันที่ N" on phones) and, on desktop practice pages, the skills menu `TopMenu` (glass pill, sliding highlight) instead; theme + account right. No side rail any more (owner: keep the content centred). Phones keep `BottomBar` (thumb reach) and the streak in the top bar. The Mission button and the category label by the menus were removed (owner's choice — categories are picked only in the lobby). `MissionMenu.tsx` only keeps `useChooseMission`. Changing mission restarts the open practice page (App keys it by mission).
 - `src/components/AccountMenu.tsx` — avatar pill + drop-down (copied from the owner's scholarship project, `C:\ProjectWeb\scholarship`).
-- `src/pages/Landing.tsx` — landing (kept in the app's look: feature cards use the pastel skill keys / level ring, the closing call to action is liquid glass; "How it works" = sign in → tap a category → pick a skill); `HeroKeys.tsx` (keypad hero: one key per category, shows a sample sentence), `Keypad.tsx` (isometric SVG),
+- `src/pages/Landing.tsx` — landing (kept in the app's look: feature cards use the pastel skill keys / level ring, the closing call to action is liquid glass; "How it works" = sign in → tap a category → pick a skill; the phrase ticker runs at a set reading speed, `TICKER_PX_PER_S` = 45 — owner found ~160 px/s too fast); `HeroKeys.tsx` (keypad hero: one key per category, shows a sample sentence), `Keypad.tsx` (isometric SVG),
   `SectionNav.tsx` (scroll-spy links), `SignInDrop.tsx` (rope-ladder sign-in badges), `ThemeToggle.tsx` (sun/moon).
 - `src/components/PageStage.tsx` — page-change wipe. Going to a skill page shows that skill's mascot (`WipeMascot.tsx`,
   owner picked from 12 drawings, Nov 2026: speak = yellow podcast mic rocking + sound waves, listen = the cloud with
@@ -80,6 +81,10 @@ npm run build   # tsc -b && vite build → dist/
   (7 categories + "รวมทุกหมวด"), each in a 3-colour level ring (`StageRing`: green easy, yellow medium, orange hard).
   Tapping one sets the mission; GSAP Flip slides it to the middle and grows it, the others drop into a row below,
   and listen/speak/read/write pop out on an arc around it. A full reload starts back at the 8 circles.
+  Smoothness (owner said it stuttered, fixed Nov 2026): Flip uses `scale: true` (transforms only, no `absolute`) and the
+  content below slides with `y` instead of tweening the stage height; inline transform styles are removed on complete
+  (a left-over `scale: none` blocks the hover grow). Measure with the `preview` launch config (production build) —
+  dev mode is ~2× slower; a hidden browser pane runs no animation frames (advance `gsap.globalTimeline` by hand).
   The phone bottom bar is hidden in the whole lobby and slides in only on the practice (quiz) pages
   (`data-menus` on `.shell`; owner's choice). `lib/lobby.ts` remembers the opened category for the session.
   Ring style (owner's sketch): rounded arcs with clear gaps, a little space, then the outlined inner circle. Each level
@@ -121,8 +126,17 @@ Hidden browser panes throttle animation frames; GSAP animations may look paused 
 ## Facebook login (Meta app "Englitch", App ID 1132839822843907)
 
 - Set up and enabled in Firebase. Still in **Development mode** (only the owner can sign in).
-- Owner still needs to: test sign-in on localhost, upload the app icon (`englitch-icon-1024.png` in this folder, not committed),
-  and later switch to Live (needs privacy.html on the live site; Meta may ask for verification/review).
+- Owner still needs to: upload the app icon (`englitch-icon-1024.png` in this folder, not committed), set Privacy Policy URL
+  `https://englitch.pages.dev/privacy.html` and data-deletion URL `…/privacy.html#delete` (both live since 27 Nov 2026),
+  then switch to Live (Meta may ask for verification/review).
+
+## Owner's open to-dos (saved 27 Nov 2026 at the owner's request — remind them when relevant)
+
+1. Publish `firestore.rules` in the Firebase console (copy the file → Firestore → Rules → paste → Publish):
+   https://console.firebase.google.com/project/englitch-da50c/firestore/rules
+2. Test sign-in on the live site in a private window: Discord, Google, Facebook (owner's own account only for now); then the
+   four skill pages and the phone.
+3. Facebook → Live (see the section above).
 
 ## Next upload checklist (only when the owner says so)
 

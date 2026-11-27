@@ -112,8 +112,17 @@ export function CategoryPicker() {
     pending.current = null;
     if (!el) return;
     if (p) {
-      Flip.from(p.flip, { duration: 0.62, ease: 'power3.inOut', absolute: true, stagger: 0.015 });
-      gsap.fromTo(el, { height: p.h }, { height: el.offsetHeight, duration: 0.62, ease: 'power3.inOut', clearProps: 'height' });
+      // Transforms only (owner: the old version stuttered). The circles are square, so moving + scaling them from
+      // where they were is the same picture as resizing them, without a layout every frame; `absolute: true`
+      // cost ~20 ms before the first frame. The stage takes its new height at once and the content under it
+      // slides from the old spot instead of the stage's height being tweened.
+      // afterwards take GSAP's inline transform styles off again (a left-over `scale: none` stopped the hover grow)
+      const tidy = (els: Element[]) => () => els.forEach((t) => ['transform', 'translate', 'rotate', 'scale'].forEach((k) => (t as HTMLElement).style.removeProperty(k)));
+      Flip.from(p.flip, { duration: 0.62, ease: 'power3.inOut', scale: true, stagger: 0.015, onComplete: tidy(Array.from(el.querySelectorAll('.cp-node'))) });
+      const dh = p.h - el.offsetHeight;
+      const below: Element[] = [];
+      for (let n = el.closest('.cp')?.nextElementSibling; n; n = n.nextElementSibling) below.push(n);
+      if (dh && below.length) gsap.fromTo(below, { y: dh }, { y: 0, duration: 0.62, ease: 'power3.inOut', onComplete: tidy(below) });
     }
     if (focus && !prefersReducedMotion()) {
       gsap.fromTo(el.querySelectorAll('.cp-skill'), { scale: 0.3, autoAlpha: 0 },

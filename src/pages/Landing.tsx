@@ -50,6 +50,8 @@ const STEPS = [
 // a few phrases from every main category, in turn
 const TICKER = (['general', 'travel', 'business', 'academic', 'entertainment', 'esp', 'gaming'] as const)
   .flatMap((g) => PHRASES.filter((p) => p.g === g && p.c !== 'slang').slice(0, 3));
+/** how fast the phrase ticker moves, in pixels per second (owner: slow enough to read) */
+const TICKER_PX_PER_S = 45;
 
 // a sample ring for the mission card: some short sentences done, a few longer ones
 const SAMPLE_RING = [{ k: 'easy' as const, total: 10, done: 6 }, { k: 'medium' as const, total: 7, done: 2 }, { k: 'hard' as const, total: 3, done: 0 }];
@@ -78,7 +80,8 @@ export default function Landing() {
       .from('.hk-pad', { y: -40, rotation: -6, autoAlpha: 0, duration: 0.8, ease: 'back.out(1.8)' }, '-=0.45')
       .from('.hk-hint', { y: 10, autoAlpha: 0, duration: 0.4 }, '-=0.3');
     const track = root.current?.querySelector<HTMLElement>('.lp-ticker-track');
-    if (track) gsap.to(track, { xPercent: -50, duration: 40, repeat: -1, ease: 'none' });
+    // a set reading speed (owner: the old 40 s loop ran ~160 px/s, too fast to read); the track holds the phrases twice
+    if (track) gsap.to(track, { xPercent: -50, duration: track.scrollWidth / 2 / TICKER_PX_PER_S, repeat: -1, ease: 'none' });
     gsap.utils.toArray<HTMLElement>('[data-rise]').forEach((el) => {
       gsap.from(el, { y: 36, autoAlpha: 0, duration: 0.7, ease: 'power3.out', scrollTrigger: { trigger: el, start: 'top 88%' } });
     });
