@@ -50,9 +50,12 @@ npm run build   # tsc -b && vite build → dist/
 - After every answer: `components/Explain.tsx` "📖 อธิบายประโยคนี้" (owner's request) — meaning, when to use it
   (per-subtopic `USAGE` + tone + the phrase note), sentence patterns (`PATTERNS` in `lib/explain.ts`, fallback by
   sentence type), word meanings (`data/glossary.ts`: `GLOSS` ~1,130 words + `MULTI` phrases like "check in"), up to 2
-  similar sentences (`similar()` in `lib/explain.ts`; owner: must really be alike, not just the same topic): scored by
-  close Thai meaning (letter pairs, little words like คุณ/ไหม ignored), shared English words and the same specific pattern,
-  each shown with its reason tag; slang only matches slang; nothing close → the section is hidden (~16% of phrases). Shown in `Story`'s `side` slot: on screens ≥1180px the card stays CENTRED (owner) and the explanation sits in
+  similar sentences (`similar()` in `lib/explain.ts`; owner: must MEAN the same / have the same purpose — one shared
+  word like "new" is NOT enough, nor is close-looking Thai or the same grammar pattern; those gave wrong pairs): only
+  sentences in the same meaning group (`lib/meanings.ts`, ~130 hand-made groups: Thai label + regex on "english | thai")
+  count; Thai letter pairs / shared words / same subtopic only rank them. The tag under each shows the most specific
+  shared group's label. Slang only matches slang; no group → section hidden (~20% of phrases). New phrases: add them to
+  a group's regex if one fits. `.story-side` has `overflow-x: hidden` (it showed a sideways scrollbar). Shown in `Story`'s `side` slot: on screens ≥1180px the card stays CENTRED (owner) and the explanation sits in
   the space to its right (practice pages widen the frame; a dashed placeholder waits there before answering); narrower,
   it goes under the card and the answer sheet has a "ดูคำอธิบาย ↓" jump button. Loaded lazily. New words need a GLOSS line. Names keep their capital in the word list (Mike); a capital "May"
   mid-sentence = the month. Don't give names radio-alphabet meanings (mike/tango/oscar were wrong before).

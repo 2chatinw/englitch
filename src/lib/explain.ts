@@ -1,5 +1,6 @@
 import { CATS, PHRASES, type Category, type Phrase } from '../data/content';
 import { GLOSS, MULTI } from '../data/glossary';
+import { MEANINGS } from './meanings';
 
 /**
  * "Explain this sentence" after an answer (owner's request): what it means, when to use it, how it is built
@@ -124,9 +125,9 @@ function tone(p: Phrase): string | null {
 }
 
 /**
- * "Similar sentences" (owner: they must really be alike, not just any two from the same topic). Each candidate is
- * scored by how close the Thai meaning is (shared Thai letter pairs), shared English content words and the same
- * sentence pattern. Only ones that pass get shown, each with the reason; none pass → the section is hidden.
+ * "Similar sentences" (owner: they must mean the same thing / be used for the same purpose; sharing one word like
+ * "new" is not enough). Two sentences are similar when they are in the same meaning group (`MEANINGS` in
+ * meanings.ts). Close-looking Thai alone gave wrong pairs, so it only helps the ranking, like shared English words. None → section hidden.
  */
 export interface Similar extends Phrase { why: string }
 /** Common words that don't make two sentences alike. */
@@ -148,21 +149,25 @@ const thPairs = (s: string) => {
   for (let i = 0; i < t.length - 1; i++) if (t[i] !== ' ' && t[i + 1] !== ' ') out.add(t.slice(i, i + 2));
   return out;
 };
-type Keys = { en: Set<string>; th: Set<string>; pat: number };
+type Keys = { en: Set<string>; th: Set<string>; mean: number[] };
 const keyCache = new Map<string, Keys>();
 const keysOf = (x: Phrase): Keys => {
   let k = keyCache.get(x.e);
   if (!k) {
-    const e = x.e.replace(/’/g, "'");
-    // only patterns specific enough to mean "built the same way" (not the generic Wh-/statement/past ones)
-    const pat = PATTERNS.findIndex((y) => y.re.test(e));
-    k = { en: enWords(x.e), th: thPairs(x.t), pat: pat >= 0 && !GENERIC.test(PATTERNS[pat].title) ? pat : -1 };
+    const text = x.e.toLowerCase().replace(/’/g, "'") + ' | ' + x.t;
+    const mean: number[] = [];
+    MEANINGS.forEach(([, re], i) => { if (re.test(text)) mean.push(i); });
+    k = { en: enWords(x.e), th: thPairs(x.t), mean };
     keyCache.set(x.e, k);
   }
   return k;
 };
-/** Patterns too general to count as "built the same way" (tense, linking words, plain statements …). */
-const GENERIC = /^(คำถามขึ้นต้นด้วย Wh-|will|need \+|should|ประโยคเงื่อนไข|would \+|Present Perfect|Passive|กำลัง|อดีต|บอกเหตุผล|แย้ง|คำเชื่อม|บอกความเห็น|can't|Is \/ Are \+ ประธาน|Can \/ Will|like \/ love|ประธาน \+ be|It's|have \+|ประโยคคำสั่ง|please)/;
+
+let sizes: number[] | null = null;
+const groupSize = (i: number) => {
+  if (!sizes) { sizes = MEANINGS.map(() => 0); for (const x of PHRASES) for (const m of keysOf(x).mean) sizes[m]++; }
+  return sizes[i];
+};
 
 function similar(p: Phrase): Similar[] {
   const a = keysOf(p);
@@ -171,20 +176,16 @@ function similar(p: Phrase): Similar[] {
     // chat slang only goes with chat slang (an abbreviation isn't a good model for a normal sentence)
     if (x.e === p.e || (x.c === 'slang') !== (p.c === 'slang')) continue;
     const b = keysOf(x);
+    const same = a.mean.filter((m) => b.mean.includes(m));
     let inTh = 0;
     for (const g of a.th) if (b.th.has(g)) inTh++;
     const dice = a.th.size && b.th.size ? (2 * inTh) / (a.th.size + b.th.size) : 0;
-    const shared = [...a.en].filter((w) => b.en.has(w));
-    const samePat = a.pat >= 0 && a.pat === b.pat;
-    const near = dice >= 0.45;
-    if (!near && !shared.length && !samePat) continue;
-    // a shared word or pattern alone is weak: also need some closeness in meaning or the same topic
-    if (!near && !(shared.length >= 2) && !(dice >= 0.2 || x.c === p.c)) continue;
-    const s = dice * 6 + shared.length * 2 + (samePat ? 1.5 : 0) + (x.c === p.c ? 1 : 0) + (x.g === p.g ? 0.5 : 0);
-    const why = near ? 'ความหมายใกล้กัน'
-      : shared.length ? `ใช้คำว่า ${shared.slice(0, 2).join(', ')} เหมือนกัน`
-      : 'รูปประโยคเดียวกัน: ' + PATTERNS[a.pat].title;
-    scored.push({ x, s, why });
+    if (!same.length) continue;
+    const shared = [...a.en].filter((w) => b.en.has(w)).length;
+    const s = same.length * 4 + dice * 6 + Math.min(shared, 2) * 0.5 + (x.c === p.c ? 1 : 0) + (x.g === p.g ? 1 : 0);
+    // name the most specific shared group (the one with the fewest sentences)
+    const best = same.reduce((m, n) => (groupSize(n) < groupSize(m) ? n : m));
+    scored.push({ x, s, why: MEANINGS[best][0] });
   }
   scored.sort((m, n) => n.s - m.s);
   return scored.slice(0, 2).map(({ x, why }) => ({ ...x, why }));
