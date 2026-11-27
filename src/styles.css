@@ -519,7 +519,6 @@ input[type="email"]:focus, input[type="password"]:focus { outline: none; border-
 .mcard-meta b { color: var(--ink); }
 .mcard.is-done .mcard-meta { color: var(--good); font-weight: 600; }
 .mcard-meta .icon { width: 15px; height: 15px; }
-.mcard-modes { display: flex; flex-wrap: wrap; gap: 8px; padding: 0 12px 12px; }
 @media (prefers-reduced-motion: reduce) { .mcard-icon, .mbar-seg i { transition: none; } }
 
 /* menu items without a progress ring: the icon sits in a soft circle */

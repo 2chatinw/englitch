@@ -29,7 +29,7 @@ npm run build   # tsc -b && vite build → dist/
 ## Where things are
 
 - `src/App.tsx` — Gate (landing vs app) and the app Shell.
-- `src/components/Nav.tsx` — TopBar, QuestRail (desktop icon rail with mission progress rings), BottomBar (phone).
+- `src/components/Nav.tsx` — TopBar (with the Mission switcher, `MissionMenu.tsx`), QuestRail (desktop icon rail) and BottomBar (phone), each with a `MissionTag` saying which mission the menu practises. Changing mission restarts the open practice page (App keys it by mission).
 - `src/components/AccountMenu.tsx` — avatar pill + drop-down (copied from the owner's scholarship project, `C:\ProjectWeb\scholarship`).
 - `src/pages/Landing.tsx` — landing; `HeroKeys.tsx` (keypad hero: one key per category, shows a sample sentence), `Keypad.tsx` (isometric SVG),
   `SectionNav.tsx` (scroll-spy links), `SignInDrop.tsx` (rope-ladder sign-in badges), `ThemeToggle.tsx` (sun/moon).

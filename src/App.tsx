@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState, type ComponentType } from 'react';
 import { ToastProvider } from './state/toast';
-import { ProgressProvider } from './state/progress';
+import { ProgressProvider, useProgress } from './state/progress';
 import { useRoute, type Route } from './lib/router';
 import { BottomBar, QuestRail, TopBar } from './components/Nav';
 import { PageStage } from './components/PageStage';
@@ -23,6 +23,7 @@ const PAGES: Record<Route, ComponentType> = { today: Today, listen: Listen, spea
 function Shell() {
   const route = useRoute();
   useProgressToasts();
+  const mission = useProgress().state.settings.mission;
   const [settings, setSettings] = useState(false);
   const openSettings = useCallback(() => setSettings(true), []);
   const closeSettings = useCallback(() => setSettings(false), []);
@@ -42,7 +43,8 @@ function Shell() {
       <div className="app-body">
         <QuestRail route={route} />
         <main id="main" className="main">
-          <PageStage route={route} render={(r) => { const P = PAGES[r]; return <P key={r} />; }} />
+          {/* keyed by the mission too, so switching it mid-practice starts the page fresh with the new category */}
+          <PageStage route={route} render={(r) => { const P = PAGES[r]; return <P key={r === 'today' || r === 'chat' ? r : r + ':' + (mission ?? 'all')} />; }} />
           <footer className="copyright app-copy">© {Math.max(2026, new Date().getFullYear())} Chatchathep Meekaew</footer>
         </main>
       </div>

@@ -3,12 +3,12 @@ import { LEVELS, type Group, type Level } from '../data/content';
 import { Icon } from './Icon';
 import { useProgress } from '../state/progress';
 import { useToast } from '../state/toast';
-import { PAGES, navigate, type Route } from '../lib/router';
+import type { Route } from '../lib/router';
+import { useChooseMission } from './MissionMenu';
 import { activeMission, allMissions, missionStats, type MissionStats } from '../lib/missions';
 import { levelStatus } from '../pages/practice';
 
 const LEVEL_TH: Record<Level, string> = { easy: 'ง่าย', medium: 'กลาง', hard: 'ยาก' };
-const MODES: Route[] = ['listen', 'speak', 'read', 'write'];
 
 /** A mission's progress as one bar in three stages (short, longer, long sentences), each filling in its colour. */
 export function MissionBar({ m }: { m: MissionStats }) {
@@ -59,13 +59,16 @@ export function MissionStrip(_: { route: Route }) {
   );
 }
 
-/** Today page: the seven main categories as mission cards; the chosen one opens listen, speak, read and write. */
+/**
+ * Today page: the seven main categories as mission cards. Tapping one makes it the mission (tap again for
+ * mixed practice); the skills are then opened from the menu or the buttons at the top of the page.
+ */
 export function MissionBoard() {
-  const { state, setSettings } = useProgress();
+  const { state } = useProgress();
   const active = activeMission(state);
   const ms = allMissions(state);
   const passed = ms.filter((m) => m.complete).length;
-  const choose = (c: Group | null) => setSettings({ mission: c });
+  const choose = useChooseMission();
 
   return (
     <section className="card" data-reveal aria-labelledby="mboard-h">
@@ -89,21 +92,14 @@ export function MissionBoard() {
                   <MissionBar m={m} />
                 </span>
               </button>
-              {on ? (
-                <div className="mcard-modes" role="group" aria-label={'ฝึก Mission ' + m.short + ' ด้วย'}>
-                  {MODES.map((r) => (
-                    <button key={r} type="button" className="btn btn-ghost btn-sm" onClick={() => navigate(r)}>
-                      <Icon name={PAGES[r].icon} /> {PAGES[r].short}
-                    </button>
-                  ))}
-                </div>
-              ) : null}
             </li>
           );
         })}
       </ul>
       <p className="muted small">
-        {active ? 'แตะ Mission ที่เลือกอยู่อีกครั้งเพื่อกลับไปฝึกรวมทุกหมวด' : 'ยังไม่ได้เลือก Mission ตอนนี้ฝึกรวมทุกหมวด แตะ Mission เพื่อเริ่ม'}
+        {active
+          ? 'เมนู ฟัง พูด อ่าน เขียน จะฝึกหมวดที่เลือกไว้ แตะการ์ดที่เลือกอยู่อีกครั้งเพื่อกลับไปฝึกรวมทุกหมวด เปลี่ยน Mission จากแถบด้านบนได้ทุกหน้า'
+          : 'ยังไม่ได้เลือก Mission ตอนนี้เมนู ฟัง พูด อ่าน เขียน จะสุ่มจากทุกหมวด แตะการ์ดเพื่อเลือกหมวด หรือเปลี่ยนจากแถบด้านบนได้ทุกหน้า'}
       </p>
     </section>
   );
