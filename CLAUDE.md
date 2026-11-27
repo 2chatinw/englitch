@@ -1,6 +1,6 @@
 # Englitch — notes for Claude
 
-English-practice web app for a Thai beginner who plays games with foreigners. UI text is Thai; reply to the owner in Thai.
+English-practice web app for Thai learners of English (everyday, travel, work, study, pop culture, specific jobs and gaming). UI text is Thai; reply to the owner in Thai. Was gamer-themed until Nov 2026; the owner asked to make it for all English learners.
 
 ## Owner's rules (always follow)
 
@@ -31,9 +31,9 @@ npm run build   # tsc -b && vite build → dist/
 - `src/App.tsx` — Gate (landing vs app) and the app Shell.
 - `src/components/Nav.tsx` — TopBar, QuestRail (desktop icon rail with mission progress rings), BottomBar (phone).
 - `src/components/AccountMenu.tsx` — avatar pill + drop-down (copied from the owner's scholarship project, `C:\ProjectWeb\scholarship`).
-- `src/pages/Landing.tsx` — landing; `HeroKeys.tsx` (interactive WASD keypad hero), `Keypad.tsx` (isometric SVG),
+- `src/pages/Landing.tsx` — landing; `HeroKeys.tsx` (keypad hero: one key per category, shows a sample sentence), `Keypad.tsx` (isometric SVG),
   `SectionNav.tsx` (scroll-spy links), `SignInDrop.tsx` (rope-ladder sign-in badges), `ThemeToggle.tsx` (sun/moon).
-- `src/components/PageStage.tsx` — page-change wipe (keypad taps W-A-S-D-Space).
+- `src/components/PageStage.tsx` — page-change wipe (the same keypad taps four keys and Space).
 - Practice modes = the four skills + AI chat: `pages/Listen.tsx` (hear → type), `Speak.tsx` (mic; Brave blocks web speech
   recognition, so it falls back to keyboard/Win+H voice typing), `Read.tsx` (situations + meanings, multiple choice),
   `Write.tsx` (Thai → type English, two-step hints), `Chat.tsx`. Flashcards were removed (owner's choice, Nov 2026);
@@ -78,4 +78,4 @@ Hidden browser panes throttle animation frames; GSAP animations may look paused 
 
 ## Open questions for the owner
 
-- Keep the WASD keypad in the page-change wipe as well as the hero, or bring back the old wipe?
+- Keep the keypad in the page-change wipe as well as the hero, or bring back the old wipe?

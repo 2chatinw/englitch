@@ -99,7 +99,7 @@ export default function Read() {
         <section className="card done-card" data-reveal>
           <span className="done-badge"><Icon name="book" size={28} /></span>
           <h2>พร้อมเริ่มไหม</h2>
-          <p className="muted">มีทั้งสถานการณ์ในเกม ศัพท์แชต และประโยคที่คุณเคยฝึก</p>
+          <p className="muted">มีทั้งสถานการณ์จริง ความหมายของประโยค และประโยคที่คุณเคยฝึก</p>
           <button type="button" className="btn btn-primary btn-lg" onClick={start}>เริ่มอ่าน <Icon name="arrow" /></button>
         </section>
       </div>

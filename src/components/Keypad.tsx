@@ -1,5 +1,5 @@
 /**
- * A little isometric WASD macro keypad, drawn in SVG for the page-change wipe.
+ * A little isometric macro keypad (one key per category), drawn in SVG for the landing hero and the page wipe.
  * Everything is laid out flat (a top view) and tilted with one isometric matrix; height comes from
  * stacking the same shape a few pixels apart, so the sides read as solid blocks.
  */
@@ -9,14 +9,16 @@ const KEY_H = 18; // keycap height above the base
 const STEP = 3;
 
 type KeyDef = { id: string; label: string; x: number; y: number; w: number; h: number; hot?: boolean };
+// Each key is one of the seven categories, by its English initial (ids stay the key positions, which the
+// page wipe and the landing hero animate): Everyday, Travel, Gaming / Business, Academic, Pop culture, Jobs.
 const KEYS: KeyDef[] = [
-  { id: 'Q', label: 'Q', x: 14, y: 14, w: 56, h: 56 },
-  { id: 'W', label: 'W', x: 78, y: 14, w: 56, h: 56, hot: true },
-  { id: 'A', label: 'A', x: 14, y: 78, w: 56, h: 56, hot: true },
-  { id: 'E', label: 'E', x: 142, y: 14, w: 56, h: 56 },
-  { id: 'S', label: 'S', x: 78, y: 78, w: 56, h: 56, hot: true },
-  { id: 'D', label: 'D', x: 142, y: 78, w: 56, h: 56, hot: true },
-  { id: 'SPACE', label: '', x: 14, y: 142, w: 184, h: 46 },
+  { id: 'Q', label: 'E', x: 14, y: 14, w: 56, h: 56 },
+  { id: 'W', label: 'T', x: 78, y: 14, w: 56, h: 56, hot: true },
+  { id: 'A', label: 'B', x: 14, y: 78, w: 56, h: 56, hot: true },
+  { id: 'E', label: 'G', x: 142, y: 14, w: 56, h: 56 },
+  { id: 'S', label: 'A', x: 78, y: 78, w: 56, h: 56, hot: true },
+  { id: 'D', label: 'P', x: 142, y: 78, w: 56, h: 56, hot: true },
+  { id: 'SPACE', label: 'JOBS', x: 14, y: 142, w: 184, h: 46 },
 ]; // ordered back to front so nearer keys draw over farther ones
 
 // cable path in screen space: starts behind the back-left face, sweeps out and down to the plug

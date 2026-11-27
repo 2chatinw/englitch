@@ -5,8 +5,8 @@ import { prefersReducedMotion } from '../lib/util';
 import { Keypad } from './Keypad';
 
 /**
- * Page transitions: a panel wipes across the content area with a little WASD keypad that taps out
- * W-A-S-D and the spacebar, plus the next mode's name;
+ * Page transitions: a panel wipes across the content area with the little category keypad that taps out
+ * four keys and the spacebar, plus the next mode's name;
  * the page swaps while covered, then the panel exits and the new page's sections rise in.
  */
 export function PageStage({ route, render }: { route: Route; render: (r: Route) => ReactNode }) {

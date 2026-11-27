@@ -26,9 +26,9 @@ gsap.registerPlugin(ScrollTrigger);
 const FEATURES: { icon: IconName; title: string; body: string }[] = [
   { icon: 'headphones', title: 'ฝึกฟัง', body: 'ฟังประโยคแล้วพิมพ์ตาม มีคำใบ้ทีละขั้น และยอมรับการสะกดพลาดเล็กน้อย' },
   { icon: 'mic', title: 'ฝึกพูด', body: 'พูดใส่ไมค์ ระบบบอกว่าคำไหนยังไม่ชัด ใช้ไมค์บนคีย์บอร์ดมือถือก็ได้' },
-  { icon: 'book', title: 'ฝึกอ่าน', body: 'อ่านสถานการณ์และประโยคจาก 7 หมวด ตั้งแต่ในเกม ที่สนามบิน ไปจนถึงห้องประชุม แล้วเลือกคำตอบที่ถูก' },
+  { icon: 'book', title: 'ฝึกอ่าน', body: 'อ่านสถานการณ์และประโยคจาก 7 หมวด ตั้งแต่ร้านอาหาร สนามบิน ไปจนถึงห้องประชุม แล้วเลือกคำตอบที่ถูก' },
   { icon: 'pen', title: 'ฝึกเขียน', body: 'เห็นภาษาไทยแล้วพิมพ์เป็นอังกฤษ ด้วยประโยคที่ใช้จริง ประโยคที่พลาดจะวนกลับมาให้ฝึกอีก' },
-  { icon: 'chat', title: 'คุยกับ AI', body: 'เลือกคนที่จะคุยด้วย เพื่อนในเกม พนักงานโรงแรม คนสัมภาษณ์งาน หมอ ฯลฯ แล้วฝึกแชตจริง AI ช่วยแก้ประโยคเป็นภาษาไทย' },
+  { icon: 'chat', title: 'คุยกับ AI', body: 'เลือกคนที่จะคุยด้วย พนักงานโรงแรม คนสัมภาษณ์งาน เพื่อนร่วมชั้น หมอ ฯลฯ แล้วฝึกแชตจริง AI ช่วยแก้ประโยคเป็นภาษาไทย' },
   { icon: 'lock', title: 'ส่วนตัว 100%', body: 'ฝึกเพื่อตัวเองล้วน ๆ ตามจังหวะของคุณ ความคืบหน้าและชื่อของคุณเห็นได้เฉพาะคุณคนเดียว' },
 ];
 
@@ -36,12 +36,12 @@ const COPYRIGHT_YEAR = Math.max(2026, new Date().getFullYear());
 
 const STEPS = [
   { n: '1', title: 'เข้าสู่ระบบ', body: 'ใช้บัญชี Discord หรือ Google ได้เลย ไม่ต้องตั้งรหัสผ่านใหม่' },
-  { n: '2', title: 'เลือก Mission จาก 7 หมวด', body: 'ทั่วไป เที่ยว เกม งาน วิชาการ บันเทิง และสายอาชีพ ฝึกด้วยการฟัง พูด อ่าน เขียน ตามจังหวะของตัวเอง' },
-  { n: '3', title: 'ไปใช้จริง', body: 'ใช้ประโยคที่ฝึกไว้ ทั้งตอนเที่ยว ทำงาน เรียน หรือเล่นเกมกับเพื่อนต่างชาติ แล้วกลับมาฝึกต่อตามจังหวะของตัวเอง' },
+  { n: '2', title: 'เลือก Mission จาก 7 หมวด', body: 'ทั่วไป เที่ยว งาน วิชาการ บันเทิง สายอาชีพ และเกม ฝึกด้วยการฟัง พูด อ่าน เขียน ตามจังหวะของตัวเอง' },
+  { n: '3', title: 'ไปใช้จริง', body: 'ใช้ประโยคที่ฝึกไว้ ทั้งตอนเที่ยว ทำงาน เรียน หรือคุยกับเพื่อนต่างชาติ แล้วกลับมาฝึกต่อตามจังหวะของตัวเอง' },
 ];
 
 // a few phrases from every main category, in turn
-const TICKER = (['gaming', 'travel', 'general', 'business', 'entertainment', 'academic', 'esp'] as const)
+const TICKER = (['general', 'travel', 'business', 'academic', 'entertainment', 'esp', 'gaming'] as const)
   .flatMap((g) => PHRASES.filter((p) => p.g === g && p.c !== 'slang').slice(0, 3));
 
 export default function Landing() {
@@ -97,10 +97,10 @@ export default function Landing() {
       <main id="top">
         <section className="lp-hero">
           <div className="lp-hero-copy">
-            <span className="kicker">ฟรี · สำหรับเกมเมอร์ที่เพิ่งเริ่มภาษาอังกฤษ</span>
-            <h1>พูดอังกฤษในเกม<br /><span className="hl">ได้แบบไม่เขิน</span></h1>
+            <span className="kicker">ฟรี · สำหรับทุกคนที่อยากเก่งภาษาอังกฤษ</span>
+            <h1>ฝึกอังกฤษทุกวัน<br /><span className="hl">ใช้ได้จริงแบบไม่เขิน</span></h1>
             <p className="lp-lede">
-              Englitch สอนประโยคที่ใช้จริงตอนเล่นกับเพื่อนต่างชาติ ตั้งแต่ทักทาย คอลในเกม ไปจนถึงชวนแอด Discord
+              Englitch รวมประโยคที่ใช้จริงในชีวิตประจำวัน การเที่ยว การทำงาน การเรียน ความบันเทิง และสายอาชีพ ฝึกครบ ฟัง พูด อ่าน เขียน
               ฝึกตามจังหวะของตัวเอง ทั้งบนคอมและมือถือ
             </p>
             <div className="row">
@@ -130,7 +130,7 @@ export default function Landing() {
         <section className="lp-section" id="features">
           <div className="lp-head" data-rise>
             <span className="kicker">Features</span>
-            <h2>ฝึกครบทั้งฟัง พูด อ่าน เขียน แบบเกมเมอร์</h2>
+            <h2>ฝึกครบทั้งฟัง พูด อ่าน เขียน ในที่เดียว</h2>
             <p className="muted">ทุกโหมดใช้ประโยคชุดเดียวกัน ประโยคที่ยังพลาดจะวนกลับมาในการฟัง พูด อ่าน และเขียน ให้จำได้จริง</p>
           </div>
           <div className="lp-grid">
@@ -168,7 +168,7 @@ export default function Landing() {
       </main>
 
       <footer className="lp-foot">
-        <span><b>Englitch</b> · ฝึกภาษาอังกฤษไว้คุยกับเพื่อนต่างชาติในเกม</span>
+        <span><b>Englitch</b> · ฝึกภาษาอังกฤษที่ใช้ได้จริง ตามจังหวะของคุณ</span>
         <a href="./privacy.html">นโยบายความเป็นส่วนตัว</a>
         <p className="copyright">© {COPYRIGHT_YEAR} Chatchathep Meekaew. All rights reserved.</p>
       </footer>

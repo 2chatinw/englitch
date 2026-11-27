@@ -27,7 +27,7 @@ export default function Chat() {
   return (
     <div className="page">
       <PageHead route="chat" aside={<span className="pill num">วันนี้ {day.chat} ข้อความ</span>}>
-        ฝึกคุยจริงกับ AI ฟรี ผ่าน Claude หรือ ChatGPT AI จะเล่นเป็นเพื่อนต่างชาติ และช่วยแก้ประโยคให้เป็นภาษาไทย
+        ฝึกคุยจริงกับ AI ฟรี ผ่าน Claude หรือ ChatGPT AI จะเล่นบทที่คุณเลือก และช่วยแก้ประโยคให้เป็นภาษาไทย
       </PageHead>
 
       <section className="card" data-reveal>

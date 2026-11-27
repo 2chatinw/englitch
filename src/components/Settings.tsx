@@ -35,7 +35,7 @@ export function SettingsSheet({ open, onClose }: { open: boolean; onClose: () =>
                     onClick={() => { setSettings({ rate: r }); }}>{l}</button>
                 ))}
               </div>
-              <button type="button" className="btn btn-ghost btn-sm" onClick={() => say('Good game, well played.')}>
+              <button type="button" className="btn btn-ghost btn-sm" onClick={() => say('Nice to meet you. How are you today?')}>
                 <Icon name="speaker" /> ทดลองฟังเสียง
               </button>
             </>

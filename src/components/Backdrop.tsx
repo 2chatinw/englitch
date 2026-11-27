@@ -128,12 +128,12 @@ function Bubbles() {
 }
 
 const STICKERS: [string, string, string, string, number][] = [
-  ['GG', '2%', '6%', '#FFD3E2', -8],
-  ['Nice shot!', '86%', '4%', '#D9D3FF', 6],
-  ['brb', '93%', '40%', '#CFF3E8', -4],
+  ['Hello!', '2%', '6%', '#FFD3E2', -8],
+  ['Thank you!', '86%', '4%', '#D9D3FF', 6],
+  ['Excuse me', '93%', '40%', '#CFF3E8', -4],
   ['Hi!', '2%', '80%', '#FFE6C7', 5],
   ['You too!', '64%', '84%', '#CFE6FF', -6],
-  ['lol', '28%', '90%', '#FFD3E2', 8],
+  ['Cheers!', '28%', '90%', '#FFD3E2', 8],
   ['Let\'s go!', '88%', '70%', '#CFF3E8', -3],
 ];
 

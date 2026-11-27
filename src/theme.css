@@ -33,7 +33,7 @@ h1, h2, h3, .lp-hero h1, .page-head h1, .lp-head h2, .lp-final h2, .sheet-head h
   backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
 }
 
-/* ---------- Page wipe: a flat sky-blue panel with a WASD keypad tapping out the move ---------- */
+/* ---------- Page wipe: a flat sky-blue panel with the category keypad tapping out the move ---------- */
 .wipe {
   flex-direction: row; align-items: center; justify-content: center; gap: clamp(16px, 4vw, 56px);
   padding: 24px max(24px, 6vw);
@@ -78,7 +78,7 @@ h1, h2, h3, .lp-hero h1, .page-head h1, .lp-head h2, .lp-final h2, .sheet-head h
 .keypad .kp-usb-hole { fill: #15275C; }
 .keypad .kp-key { transform-box: view-box; }
 
-/* ---------- Landing hero: the WASD keypad, each key says an in-game callout ---------- */
+/* ---------- Landing hero: the category keypad, each key shows a sentence from its category ---------- */
 .lp-visual { min-height: 0; }
 .hero-keys { position: relative; display: flex; flex-direction: column; align-items: center; gap: 6px; padding-top: 8px; }
 .hk-bubble {
@@ -98,6 +98,8 @@ h1, h2, h3, .lp-hero h1, .page-head h1, .lp-head h2, .lp-final h2, .sheet-head h
 .hk-line { display: flex; flex-direction: column; min-width: 0; line-height: 1.25; }
 .hk-line b { font-family: "Fredoka", var(--f-display); font-weight: 700; font-size: clamp(1.25rem, 2.6vw, 1.6rem); color: var(--ink); }
 .hk-line span { color: var(--muted); font-size: .98rem; }
+.hk-line .hk-cat { font-size: .78rem; font-weight: 600; color: var(--accent); letter-spacing: .01em; margin-bottom: 2px; }
+.hk-line b { overflow-wrap: anywhere; }
 .hk-pad { width: min(100%, 470px); margin-top: 4px; }
 .hk-pad .keypad { display: block; width: 100%; height: auto; overflow: visible; filter: drop-shadow(0 18px 24px rgba(30, 107, 255, .25)); }
 .hk-pad [data-key] { cursor: pointer; }

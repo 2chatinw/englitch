@@ -537,6 +537,25 @@ export const CATS: Record<Category, string> = {
 export interface Situation { q: string; a: string; o: string[]; say?: string; why?: string }
 
 export const SITUATIONS: Situation[] = [
+  // everyday, travel, work, study, pop culture, jobs
+  { q: 'อยู่ร้านอาหาร กินเสร็จแล้วอยากจ่ายเงิน', a: 'Can I get the bill, please?', o: ['Can I have the menu, please?', 'Is this seat taken?', 'Where is the restroom?'] },
+  { q: 'ลองเสื้อแล้วใหญ่ไป อยากได้ตัวเล็กกว่านี้', a: 'Do you have a smaller size?', o: ['Can I pay by card?', 'How much is this?', "I'm just looking, thanks."] },
+  { q: 'นัดเพื่อนไว้ แต่รถติดจะไปไม่ทันเวลา', a: "I'm running a little late.", o: ['See you at six.', "I'm full.", 'Have a nice day!'] },
+  { q: 'เจ้าหน้าที่ ตม. ถามว่ามาประเทศนี้ทำไม คุณมาเที่ยว', a: "I'm here on vacation.", o: ["I'm here on business.", 'I have nothing to declare.', 'Here is my resume.'] },
+  { q: 'ถึงโรงแรมแล้ว และจองห้องไว้ล่วงหน้า', a: 'I have a reservation.', o: ['Do you have any rooms available?', 'What time is check-out?', 'I lost my room key.'] },
+  { q: 'หลงทางในเมือง อยากให้คนช่วยชี้ทางบนแผนที่', a: 'Could you show me on the map?', o: ['Can I rent a bike here?', 'Please stop here.', 'Where can I exchange money?'] },
+  { q: 'กระเป๋าเงินถูกขโมยระหว่างเที่ยว', a: 'Someone stole my wallet.', o: ['My luggage is missing.', 'I lost my room key.', 'My phone battery is dead.'] },
+  { q: 'ประชุมออนไลน์ เพื่อนร่วมงานพูดอยู่แต่ไม่มีเสียง', a: "You're on mute.", o: ['Can everyone see my screen?', "Let's get started.", 'Good presentation!'] },
+  { q: 'ไม่เห็นด้วยกับหัวหน้าในที่ประชุม อยากแย้งแบบสุภาพ', a: 'I see it a little differently.', o: ["That's not fair!", 'You are wrong.', 'No way!'], why: 'ในที่ทำงานควรแย้งอย่างนุ่มนวล ไม่พูดตรงเกินไป' },
+  { q: 'ตอบอีเมลลูกค้าช้าไปหลายวัน ควรขึ้นต้นว่าอะไร', a: 'Sorry for the late reply.', o: ['Best regards.', 'Thanks in advance.', 'Please find the file attached.'] },
+  { q: 'สัมภาษณ์งาน กรรมการบอกว่า "Tell me about yourself."', a: 'I have three years of experience in marketing.', o: ['I am twenty years old and hungry.', 'Why do you want this job?', 'When can you start?'], why: 'เล่าประวัติการทำงานหรือการเรียนสั้น ๆ ให้ตรงกับงาน' },
+  { q: 'ฟังอาจารย์บรรยายไม่ทัน อยากให้อธิบายซ้ำ', a: 'Could you explain that again?', o: ['Class dismissed.', 'Can I borrow your notes?', 'I passed the exam!'] },
+  { q: 'เขียนเรียงความ อยากเริ่มย่อหน้าสุดท้ายเพื่อสรุป', a: 'In conclusion, ...', o: ['First of all, ...', 'For example, ...', 'On the other hand, ...'], say: 'In conclusion' },
+  { q: 'เพื่อนกำลังจะเล่าตอนจบซีรีส์ที่คุณยังดูไม่จบ', a: 'No spoilers, please!', o: ['Turn up the volume!', 'Is there a sequel?', 'Same here!'] },
+  { q: 'เพื่อนกำลังจะขึ้นเวทีแสดง อยากอวยพรแบบเจ้าของภาษา', a: 'Break a leg!', o: ['Hang in there.', 'Speak of the devil!', 'Easy come, easy go.'], why: 'Break a leg ใช้อวยพรคนที่กำลังจะขึ้นแสดง ไม่ได้แปลว่าขาหัก' },
+  { q: 'ไปหาหมอเพราะปวดหัวมาสองวัน', a: 'I have a headache.', o: ['I have a sore throat.', 'I feel much better now.', 'Get well soon!'] },
+  { q: 'โปรแกรมเมอร์ถามว่าเว็บมีปัญหาอะไร คุณเห็นข้อความแจ้งเตือนสีแดง', a: "I'll send you the error message.", o: ['It works on my machine.', "Let's deploy to production.", 'Bug fixed!'] },
+  // gaming
   { q: 'เพื่อนร่วมทีมพูดเร็วมากจนฟังไม่ทัน ควรพูดว่าอะไร', a: 'Can you speak slowly, please?', o: ['Speak faster, please.', "I'm ready.", 'Nice shot!'] },
   { q: 'จบเกมแล้ว อยากชมทีมตรงข้ามแบบสุภาพ', a: 'Good game, well played.', o: ['ez', 'You are noob.', 'I have to go now.'], why: 'ez กับ noob ฟังดูดูถูกอีกฝ่าย' },
   { q: 'เห็นศัตรูอยู่ข้างหลังเพื่อน ต้องรีบเตือน', a: 'Watch out! Enemy behind you!', o: ['Follow me.', 'Good job!', "I'm hungry."] },
@@ -557,19 +576,19 @@ export const SITUATIONS: Situation[] = [
 
 export interface Scenario { id: string; label: string; blurb: string; role: string; starters: [string, string][] }
 
-export const SCENARIOS: Scenario[] = [
+const ALL_SCENARIOS: Scenario[] = [
   {
-    id: 'team', label: 'เพื่อนร่วมทีมในเกมยิง', blurb: 'Alex จากแคนาดา กำลังรอเริ่มรอบถัดไปกับคุณ',
+    id: 'team', label: 'เพื่อนร่วมทีมในเกมยิง (เกม)', blurb: 'Alex จากแคนาดา กำลังรอเริ่มรอบถัดไปกับคุณ',
     role: 'Alex, a friendly teammate from Canada in an online shooter game. You two are in the same squad, waiting for the next round to start',
     starters: [['Hi! Are you ready?', 'สวัสดี พร้อมยัง'], ['Where should we go?', 'เราควรไปทางไหนดี'], ["Let's go!", 'ลุยกันเลย']],
   },
   {
-    id: 'discord', label: 'เพื่อนใหม่ใน Discord', blurb: 'Mia จากออสเตรเลีย เพิ่งเจอกันในเซิร์ฟเวอร์เกม',
+    id: 'discord', label: 'เพื่อนใหม่ใน Discord (เกม)', blurb: 'Mia จากออสเตรเลีย เพิ่งเจอกันในเซิร์ฟเวอร์เกม',
     role: 'Mia, a friendly gamer from Australia who just met the learner on a Discord server for game fans',
     starters: [['Hi! Nice to meet you.', 'สวัสดี ยินดีที่ได้รู้จัก'], ['What games do you play?', 'คุณเล่นเกมอะไรบ้าง'], ["I'm from Thailand.", 'ฉันมาจากประเทศไทย']],
   },
   {
-    id: 'coach', label: 'ผู้เล่นเก่งช่วยสอนเกม', blurb: 'Leo จากอเมริกา ใจเย็นและชอบสอนมือใหม่',
+    id: 'coach', label: 'ผู้เล่นเก่งช่วยสอนเกม (เกม)', blurb: 'Leo จากอเมริกา ใจเย็นและชอบสอนมือใหม่',
     role: 'Leo, an experienced, patient player from the USA who is happy to help a new player learn the game',
     starters: [["I'm new to this game.", 'ฉันเพิ่งเริ่มเล่นเกมนี้'], ['How do I do this?', 'อันนี้ทำยังไง'], ['Can you teach me?', 'สอนฉันหน่อยได้ไหม']],
   },
@@ -599,11 +618,15 @@ export const SCENARIOS: Scenario[] = [
     starters: [['I have a headache.', 'ฉันปวดหัว'], ['I have a fever.', 'ฉันมีไข้'], ['I feel dizzy.', 'ฉันรู้สึกเวียนหัว']],
   },
   {
-    id: 'free', label: 'คุยเรื่องทั่วไป', blurb: 'Sam ชวนคุยได้ทุกเรื่อง ทั้งเกม อาหาร และชีวิตประจำวัน',
-    role: 'Sam, a friendly English-speaking gamer who likes to chat about games, food, music, daily life and Thailand',
+    id: 'free', label: 'คุยเรื่องทั่วไป (ทั่วไป)', blurb: 'Sam ชวนคุยได้ทุกเรื่อง ทั้งอาหาร เพลง การเที่ยว และชีวิตประจำวัน',
+    role: 'Sam, a friendly English speaker who likes to chat about food, music, travel, daily life and Thailand',
     starters: [['Hi! How are you?', 'สวัสดี สบายดีไหม'], ['What do you do for fun?', 'ปกติชอบทำอะไรสนุก ๆ'], ['Have you been to Thailand?', 'เคยมาประเทศไทยไหม']],
   },
 ];
+
+/** Everyday and work/study roles first, the gaming ones last. */
+const SCENARIO_ORDER = ['free', 'hotel', 'interview', 'classmate', 'popculture', 'doctor', 'discord', 'team', 'coach'];
+export const SCENARIOS: Scenario[] = [...ALL_SCENARIOS].sort((a, b) => SCENARIO_ORDER.indexOf(a.id) - SCENARIO_ORDER.indexOf(b.id));
 
 export function chatPrompt(sc: Scenario): string {
   return 'ช่วยเล่นบทบาทสมมติเพื่อฝึกภาษาอังกฤษให้หน่อย\n\n' +
