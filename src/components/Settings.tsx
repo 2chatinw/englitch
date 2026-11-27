@@ -44,6 +44,10 @@ export function SettingsSheet({ open, onClose }: { open: boolean; onClose: () =>
             <input type="checkbox" checked={st.autoPlay} onChange={(e) => setSettings({ autoPlay: e.target.checked })} />
             <span>เล่นเสียงอัตโนมัติเมื่อขึ้นประโยคใหม่</span>
           </label>
+          <label className="switch">
+            <input type="checkbox" checked={st.autoNext !== false} onChange={(e) => setSettings({ autoNext: e.target.checked })} />
+            <span>ไปข้อต่อไปเองใน 3 วินาทีเมื่อตอบถูก</span>
+          </label>
         </section>
 
         <section className="field">

@@ -1,25 +1,37 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import gsap from 'gsap';
 import type { Phrase } from '../data/content';
 import type { Explanation } from '../lib/explain';
 import { SpeakButton } from './ui';
+import { prefersReducedMotion } from '../lib/util';
 
 /**
- * "อธิบายประโยคนี้" under an answer: meaning, when to use it, how it's built, word meanings and similar sentences.
- * Open by default after a wrong answer; folded after a right one (so the 3-second auto-next stays — opening it,
- * like any other tap, stops the countdown). The explanation code and glossary load on first use.
+ * "อธิบายประโยคนี้", shown beside the story card after an answer (owner: below the card it went unnoticed):
+ * meaning, when to use it, how it's built, word meanings and similar sentences. The explanation code and glossary
+ * load on first use.
  */
-export function Explain({ phrase, open: startOpen }: { phrase: Phrase; open: boolean }) {
+export function Explain({ phrase }: { phrase: Phrase }) {
   const [x, setX] = useState<Explanation | null>(null);
-  const [open, setOpen] = useState(startOpen);
+  const box = useRef<HTMLDivElement>(null);
   useEffect(() => {
     let alive = true;
     import('../lib/explain').then((m) => { if (alive) setX(m.explain(phrase)); });
     return () => { alive = false; };
   }, [phrase]);
+  useLayoutEffect(() => {
+    if (box.current && !prefersReducedMotion()) gsap.fromTo(box.current, { x: 24, autoAlpha: 0 }, { x: 0, autoAlpha: 1, duration: 0.45, ease: 'power3.out' });
+  }, [phrase]);
 
   return (
-    <details className="explain" open={open} onToggle={(e) => setOpen((e.target as HTMLDetailsElement).open)}>
-      <summary><span aria-hidden="true">📖</span> อธิบายประโยคนี้</summary>
+    <div className="explain" ref={box} id="explain" aria-live="polite">
+      <div className="explain-head">
+        <span className="explain-badge" aria-hidden="true">📖</span>
+        <span>
+          <small>อธิบายประโยคนี้</small>
+          <b lang="en">{phrase.e}</b>
+        </span>
+        <SpeakButton text={phrase.s} quiet label="ฟัง" />
+      </div>
       {!x ? <p className="muted small">กำลังโหลด…</p> : (
         <div className="explain-body">
           <section>
@@ -63,6 +75,26 @@ export function Explain({ phrase, open: startOpen }: { phrase: Phrase; open: boo
           ) : null}
         </div>
       )}
-    </details>
+    </div>
+  );
+}
+
+/** Desktop placeholder in the side column before answering, so the layout doesn't jump when the explanation comes. */
+export function ExplainWaiting() {
+  return (
+    <div className="explain explain-wait">
+      <span className="explain-badge" aria-hidden="true">📖</span>
+      <b>คำอธิบายจะขึ้นตรงนี้</b>
+      <span className="muted small">ตอบแล้วจะได้ดูความหมาย วิธีใช้ รูปประโยค คำศัพท์ และประโยคคล้ายกัน</span>
+    </div>
+  );
+}
+
+/** Phones: the explanation sits under the card, so the answer sheet links down to it. */
+export function ExplainJump() {
+  return (
+    <button type="button" className="explain-jump" onClick={() => document.getElementById('explain')?.scrollIntoView({ behavior: prefersReducedMotion() ? 'auto' : 'smooth', block: 'start' })}>
+      <span aria-hidden="true">📖</span> ดูคำอธิบายประโยคนี้ <span aria-hidden="true">↓</span>
+    </button>
   );
 }

@@ -1,10 +1,10 @@
 import { useEffect, useRef } from 'react';
 import { PHRASES } from '../data/content';
 import { Icon } from '../components/Icon';
-import { NextButton, Result, SpeakButton, WordDiff } from '../components/ui';
+import { AutoNextSwitch, NextButton, Result, SpeakButton, WordDiff } from '../components/ui';
 import { useProgress } from '../state/progress';
 import { Story, StoryButton } from '../components/Story';
-import { Explain } from '../components/Explain';
+import { Explain, ExplainJump } from '../components/Explain';
 import { useSession } from '../state/session';
 import { compare, firstLetters, type Comparison } from '../lib/compare';
 import { say } from '../lib/speech';
@@ -53,6 +53,7 @@ export default function Listen() {
   return (
     <div className="page">
       <Story route="listen" set={{ total: SET, done: (s.n ?? 0) % SET }} onSwipeUp={s.result ? next : undefined}
+        side={s.result ? <Explain key={p.e} phrase={p} /> : null}
         sheet={!s.result ? (
           <form className="stack" onSubmit={(e) => { e.preventDefault(); check(); }}>
             {s.hint >= 1 ? (
@@ -79,11 +80,12 @@ export default function Listen() {
               <p>{p.t}</p>
               <div className="row"><SpeakButton text={p.e} label="ฟังอีกครั้ง" /></div>
             </Result>
-            <Explain key={p.e} phrase={p} open={ok === false} />
+            <ExplainJump />
             <div className="story-row">
               <NextButton auto={ok !== false} btnRef={nextBtn} onNext={next}>ประโยคต่อไป <Icon name="arrow" /></NextButton>
               {ok !== true ? <button type="button" className="story-icon-btn" onClick={() => setS({ ...s, result: null })}><Icon name="retry" /> แก้</button> : null}
             </div>
+            <AutoNextSwitch />
           </>
         )}>
         <StoryButton label="ฟังประโยค (แตะค้างเพื่อฟังช้า)" onClick={() => play()} onLongPress={() => play(true)}>

@@ -2,9 +2,9 @@ import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { PHRASES, SITUATIONS } from '../data/content';
 import { Icon } from '../components/Icon';
-import { Kbd, NextButton, Result, SpeakButton } from '../components/ui';
+import { Kbd, AutoNextSwitch, NextButton, Result, SpeakButton } from '../components/ui';
 import { Story, StoryButton } from '../components/Story';
-import { Explain } from '../components/Explain';
+import { Explain, ExplainJump } from '../components/Explain';
 import { useProgress, type State } from '../state/progress';
 import { useSession } from '../state/session';
 import { shuffle, prefersReducedMotion } from '../lib/util';
@@ -96,7 +96,7 @@ export default function Read() {
   if (!s) {
     return (
       <div className="page">
-        <Story route="read" set={{ total: 10, done: 0 }}
+        <Story route="read" set={{ total: 10, done: 0 }} side={false}
           sheet={(
             <>
               <p className="muted small center-text">มีทั้งสถานการณ์จริง ความหมายของประโยค และประโยคที่คุณเคยฝึก รอบละ 10 ข้อ</p>
@@ -115,7 +115,7 @@ export default function Read() {
     const great = s.score >= 8;
     return (
       <div className="page">
-        <Story route="read" set={{ total: s.qs.length, done: s.qs.length }}
+        <Story route="read" set={{ total: s.qs.length, done: s.qs.length }} side={false}
           sheet={(
             <>
               <div className="story-row">
@@ -152,6 +152,12 @@ export default function Read() {
     <div className="page">
       <Story route="read" set={{ total: s.qs.length, done: s.i }} top={<span className="num">· ถูก {s.score} ข้อ</span>}
         onSwipeUp={answered ? next : undefined}
+        side={!answered ? null : q.id && byId.get(q.id) ? <Explain key={q.id} phrase={byId.get(q.id)!} /> : (
+          <div className="explain" id="explain">
+            <div className="explain-head"><span className="explain-badge" aria-hidden="true">📖</span><span><small>อธิบายสถานการณ์นี้</small><b>{q.answer}</b></span></div>
+            <div className="explain-body"><section><h3>ทำไมคำตอบนี้</h3><p>{q.why || 'เป็นคำตอบที่เหมาะกับสถานการณ์ที่สุด ลองจำประโยคนี้ไว้ใช้จริง'}</p></section></div>
+          </div>
+        )}
         sheet={(
           <>
             <div className="opts" ref={optsRef}>
@@ -172,10 +178,11 @@ export default function Read() {
                   {q.why ? <p className="small">{q.why}</p> : null}
                   {q.say ? <div className="row"><SpeakButton text={q.say} label="ฟังคำตอบ" /></div> : null}
                 </Result>
-                {q.id && byId.get(q.id) ? <Explain key={q.id} phrase={byId.get(q.id)!} open={!right} /> : null}
+                {q.id && byId.get(q.id) ? <ExplainJump /> : null}
                 <NextButton auto={right} onNext={next} className="btn btn-primary btn-block" autoFocus>
                   {s.i + 1 >= s.qs.length ? 'ดูผลคะแนน' : 'ข้อต่อไป'} <Icon name="arrow" />
                 </NextButton>
+                <AutoNextSwitch />
               </>
             ) : null}
           </>

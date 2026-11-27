@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
 import { PHRASES } from '../data/content';
 import { Icon } from '../components/Icon';
-import { Kbd, NextButton, Result, WordDiff } from '../components/ui';
+import { Kbd, AutoNextSwitch, NextButton, Result, WordDiff } from '../components/ui';
 import { useProgress } from '../state/progress';
 import { Story } from '../components/Story';
-import { Explain } from '../components/Explain';
+import { Explain, ExplainJump } from '../components/Explain';
 import { useSession } from '../state/session';
 import { compare, type Comparison } from '../lib/compare';
 import { isBrave, listen, micErrorText, micSupported, say, type Listener } from '../lib/speech';
@@ -67,17 +67,19 @@ export default function Speak() {
   return (
     <div className="page">
       <Story route="speak" set={{ total: SET, done: (s.n ?? 0) % SET }} onSwipeUp={s.result ? next : undefined}
+        side={s.result ? <Explain key={p.e} phrase={p} /> : null}
         sheet={s.result ? (
           <>
             <Result ok={pass} title={pass ? 'ชัดเจนดีมาก' : 'ได้ ' + Math.round(s.result.score * 100) + '% ลองฟังตัวอย่างแล้วพูดใหม่'}>
               <WordDiff r={s.result} />
               <p className="small muted">ระบบได้ยินว่า: {s.said || '—'}</p>
             </Result>
-            <Explain key={p.e} phrase={p} open={!pass} />
+            <ExplainJump />
             <div className="story-row">
               <NextButton auto={pass} onNext={next}>ประโยคต่อไป <Icon name="arrow" /></NextButton>
               <button type="button" className="story-icon-btn" onClick={() => { setS({ ...s, result: null, said: '' }); setLive(''); }}><Icon name="retry" /> พูดใหม่</button>
             </div>
+            <AutoNextSwitch />
           </>
         ) : hasMic ? (
           <div className="mic-zone">

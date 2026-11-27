@@ -10,6 +10,8 @@ export interface Settings {
   voiceURI: string;
   rate: number;
   autoPlay: boolean;
+  /** move to the next question by itself 3 seconds after a right answer (owner: needs an on/off switch) */
+  autoNext: boolean;
   theme: 'system' | 'light' | 'dark';
   onboarded: boolean;
   installHintDismissed: boolean;
@@ -38,7 +40,7 @@ const OLD_KEY = 'gg-english-v1'; // before the rename; read once so earlier prog
 const emptyDay = (): DayStats => ({ listen: 0, speak: 0, read: 0, write: 0, xp: 0 });
 const fresh = (): State => ({
   v: 1, xp: 0, streak: 0, lastActive: null, days: {}, srs: {}, updatedAt: 0, owner: null,
-  settings: { voiceURI: '', rate: 0.9, autoPlay: true, theme: 'system', onboarded: false, installHintDismissed: false, level: 'auto', mission: null },
+  settings: { voiceURI: '', rate: 0.9, autoPlay: true, autoNext: true, theme: 'system', onboarded: false, installHintDismissed: false, level: 'auto', mission: null },
 });
 
 /** Combine two copies of the same player's progress without losing work done on either device. */

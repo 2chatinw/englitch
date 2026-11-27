@@ -4,6 +4,7 @@ import { Icon } from './Icon';
 import { say } from '../lib/speech';
 import type { Comparison } from '../lib/compare';
 import { useToast } from '../state/toast';
+import { useProgress } from '../state/progress';
 
 export function SpeakButton({ text, slow, label, quiet }: { text: string; slow?: boolean; label?: string; quiet?: boolean }) {
   const toast = useToast();
@@ -57,6 +58,19 @@ export function Result({ ok, title, children }: { ok: boolean | 'near'; title: s
 
 const AUTO_NEXT_MS = 3000;
 
+/** On/off switch for the 3-second auto-next, shown beside the "next" button (also in Settings). */
+export function AutoNextSwitch() {
+  const { state, setSettings } = useProgress();
+  const on = state.settings.autoNext !== false;
+  return (
+    <label className="auto-switch" title="ไปข้อต่อไปเองใน 3 วินาทีเมื่อตอบถูก">
+      <input type="checkbox" role="switch" checked={on} onChange={(e) => setSettings({ autoNext: e.target.checked })} />
+      <span className="auto-switch-track" aria-hidden="true"><i /></span>
+      <span>ไปข้อต่อไปเอง</span>
+    </label>
+  );
+}
+
 /**
  * The "next" button after an answer. With `auto` (a right answer) it moves on by itself after 3 seconds,
  * with a bar filling across the button as it counts down. Tapping anything else first (listen again,
@@ -69,12 +83,14 @@ export function NextButton({ auto, onNext, className = 'btn btn-primary grow', b
   const own = useRef<HTMLButtonElement | null>(null);
   const next = useRef(onNext);
   next.current = onNext;
-  const counting = auto && !stopped;
+  const autoOn = useProgress().state.settings.autoNext !== false;
+  const counting = auto && autoOn && !stopped;
 
   useEffect(() => {
     if (!counting) return;
     const t = window.setTimeout(() => next.current(), AUTO_NEXT_MS);
-    const onDown = (e: PointerEvent) => { if (!own.current?.contains(e.target as Node)) setStopped(true); };
+    // any other tap stops the countdown, except flipping the auto-next switch itself
+    const onDown = (e: PointerEvent) => { const t = e.target as Element; if (!own.current?.contains(t) && !t.closest?.('.auto-switch')) setStopped(true); };
     document.addEventListener('pointerdown', onDown, true);
     return () => { window.clearTimeout(t); document.removeEventListener('pointerdown', onDown, true); };
   }, [counting]);
