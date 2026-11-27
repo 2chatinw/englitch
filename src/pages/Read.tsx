@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
-import { PHRASES, SITUATIONS } from '../data/content';
+import { PHRASES, SITUATIONS, levelOf, type Level } from '../data/content';
 import { Icon } from '../components/Icon';
 import { Kbd, NextButton, Result, SpeakButton } from '../components/ui';
 import { Story, StoryButton } from '../components/Story';
@@ -14,7 +14,7 @@ import { phrasePool } from './practice';
 import { activeMission } from '../lib/missions';
 
 /** `id` is the phrase a question is about, so a right or wrong answer feeds its review schedule. */
-interface Q { prompt: string; sub?: string; answer: string; options: string[]; say?: string; why?: string; id?: string }
+interface Q { prompt: string; sub?: string; answer: string; options: string[]; say?: string; why?: string; id?: string; l?: Level }
 interface Miss { prompt: string; answer: string; picked: string }
 interface Sess { qs: Q[]; i: number; score: number; picked: string | null; misses: Miss[] }
 
@@ -33,7 +33,7 @@ function makeRound(state: State): Q[] {
   const nSit = inMission ? 0 : 4;
   const qs: Q[] = shuffle(SITUATIONS).slice(0, nSit).map((s) => ({
     prompt: s.q, sub: 'สถานการณ์', answer: s.a, options: shuffle([s.a, ...s.o]),
-    say: s.say || (ascii(s.a) ? s.a : undefined), why: s.why,
+    say: s.say || (ascii(s.a) ? s.a : undefined), why: s.why, l: levelOf(s.a, 'basics'),
   }));
   const n = 10 - nSit;
   const levelPool = phrasePool(state);
@@ -49,11 +49,11 @@ function makeRound(state: State): Q[] {
     const pool = shuffle(PHRASES.filter((x) => x !== p && x.c === p.c)).concat(shuffle(PHRASES.filter((x) => x.c !== p.c)));
     const opts: string[] = [];
     for (const x of pool) { if (opts.length >= 3) break; if (x[key] !== p[key] && !opts.includes(x[key])) opts.push(x[key]); }
-    if (enToTh) qs.push({ prompt: '"' + p.e + '" แปลว่าอะไร', sub: 'ความหมาย', answer: p.t, options: shuffle([p.t, ...opts]), say: p.s, id: p.e });
+    if (enToTh) qs.push({ prompt: '"' + p.e + '" แปลว่าอะไร', sub: 'ความหมาย', answer: p.t, options: shuffle([p.t, ...opts]), say: p.s, id: p.e, l: p.l });
     else qs.push({
       // slang meanings start with the English full form ("got to go = ต้องไปแล้ว"): show only the Thai, or it gives the answer away
       prompt: p.c === 'slang' ? 'ศัพท์แชตไหนหมายถึง "' + p.t.split('=').pop()!.trim() + '"' : 'ถ้าจะบอกว่า "' + p.t + '" พูดว่าอะไร',
-      sub: 'เลือกประโยค', answer: p.e, options: shuffle([p.e, ...opts]), say: p.s, id: p.e,
+      sub: 'เลือกประโยค', answer: p.e, options: shuffle([p.e, ...opts]), say: p.s, id: p.e, l: p.l,
     });
   });
   return shuffle(qs);
@@ -150,7 +150,7 @@ export default function Read() {
   const right = s.picked === q.answer;
   return (
     <div className="page">
-      <Story route="read" set={{ total: s.qs.length, done: s.i }} top={<span className="num">· ถูก {s.score} ข้อ</span>}
+      <Story route="read" set={{ total: s.qs.length, done: s.i }} top={<span className="num">ถูก {s.score} ข้อ</span>} level={q.l}
         onSwipeUp={answered ? next : undefined}
         side={!answered ? null : q.id && byId.get(q.id) ? <Explain key={q.id} phrase={byId.get(q.id)!} /> : (
           <div className="explain" id="explain">

@@ -649,7 +649,32 @@ input[type="email"]:focus, input[type="password"]:focus { outline: none; border-
 .story-bars span.is-done { background: #FFFFFF; }
 .story-bars span.is-now::after { content: ""; position: absolute; inset: 0 50% 0 0; border-radius: inherit; background: #FFFFFF; animation: story-now 1.6s ease-in-out infinite alternate; }
 @keyframes story-now { from { right: 85%; } to { right: 45%; } }
-.story-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.story-top { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 10px; }
+.story-top > .story-meta { justify-self: end; }
+/* level of this question, in the middle of the top row (owner's request): signal-meter bars + ง่าย / กลาง / ยาก */
+.story-lvl { display: inline-flex; align-items: center; gap: 7px; padding: 5px 12px 5px 10px; border-radius: 999px; font-weight: 600; font-size: .9rem;
+  color: #FFFFFF; white-space: nowrap; background: rgba(0, 0, 0, .16); border: 1px solid rgba(255, 255, 255, .28); backdrop-filter: blur(8px);
+  animation: story-lvl-in .4s cubic-bezier(.3, 1.5, .5, 1) both; }
+.story-lvl-bars { display: inline-flex; align-items: flex-end; gap: 2px; height: 13px; }
+.story-lvl-bars i { width: 4px; border-radius: 2px; background: rgba(255, 255, 255, .35); }
+.story-lvl-bars i:nth-child(1) { height: 6px; } .story-lvl-bars i:nth-child(2) { height: 9.5px; } .story-lvl-bars i:nth-child(3) { height: 13px; }
+.story-lvl-bars i.is-on { background: var(--lv); box-shadow: 0 0 6px var(--lv); }
+.story-lvl-easy { --lv: #5BF0A8; } .story-lvl-medium { --lv: #FFD25A; } .story-lvl-hard { --lv: #FF9A4D; }
+@keyframes story-lvl-in { from { transform: scale(.7); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .story-lvl { animation: none; } }
+.story-top > .story-top-l { min-width: auto; } /* the sides never squeeze under their content */
+.story-tag { white-space: nowrap; }
+.story-meta > .story-h + *::before { content: "· "; }
+/* phones: to keep the badge in the middle, the skill's name is hidden (the bottom bar already shows it) and the gaps tighten */
+@media (max-width: 480px) {
+  .story-h { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .story-meta > .story-h + *::before { content: none; }
+  .story-top, .story-top-l { gap: 6px; }
+  .story-top-l .auto-btn { margin-right: 4px; }
+  .story-tag { padding: 5px 10px; }
+  .story-lvl { gap: 5px; padding: 4px 9px 4px 8px; font-size: .85rem; }
+  .story-meta { gap: 4px; font-size: .85rem; }
+}
 .story-tag { display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; border-radius: 999px; font-weight: 600; font-size: .9rem;
   color: #FFFFFF; text-decoration: none; background: rgba(255, 255, 255, .2); border: 1px solid rgba(255, 255, 255, .3); backdrop-filter: blur(8px); }
 .story-tag:hover { background: rgba(255, 255, 255, .3); }
@@ -708,7 +733,7 @@ input[type="email"]:focus, input[type="password"]:focus { outline: none; border-
   .story-wrap.has-side { grid-template-columns: minmax(0, 1fr) minmax(0, 460px) minmax(0, 1fr); gap: 28px; }
   .story-wrap.has-side > .story { grid-column: 2; }
   .story-side { grid-column: 3; width: 100%; max-width: 440px; justify-self: start; position: sticky; top: calc(var(--top-h, 78px) + 12px);
-    max-height: calc(100dvh - var(--top-h, 78px) - 32px); overflow-y: auto; border-radius: 28px; }
+    max-height: calc(100dvh - var(--top-h, 78px) - 32px); overflow-y: auto; overflow-x: hidden; border-radius: 28px; }
 }
 @media (max-width: 1179px) { .story-side.is-waiting { display: none; } }
 

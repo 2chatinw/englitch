@@ -47,6 +47,10 @@ npm run build   # tsc -b && vite build → dist/
   of 10 (`n` in each page's session; Read uses its round), category tag + progress in the top row, big content in the
   middle (`StoryButton`: round play button, long-press = slow), and a white answer sheet at the bottom. Swipe up after
   answering = next. The old page header / mission strip were removed.
+  Top row = 3-column grid: category tag + auto-next | **level badge in the CENTRE** (owner, Nov 2026: Story's `level`
+  prop = the phrase's `l`; signal bars 1 green / 2 yellow / 3 orange + ง่าย/กลาง/ยาก; Read situations get
+  `levelOf(answer, 'basics')`) | skill name · progress. Phones (≤480px) hide the skill name (bottom bar shows it) so the
+  badge stays centred; a long category name (สายอาชีพ ✓) pushes it a little right on narrow phones.
 - After every answer: `components/Explain.tsx` "📖 อธิบายประโยคนี้" (owner's request) — meaning, when to use it
   (per-subtopic `USAGE` + tone + the phrase note), sentence patterns (`PATTERNS` in `lib/explain.ts`, fallback by
   sentence type), word meanings (`data/glossary.ts`: `GLOSS` ~1,130 words + `MULTI` phrases like "check in"), up to 2

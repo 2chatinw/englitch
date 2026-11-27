@@ -4,18 +4,28 @@ import { useProgress } from '../state/progress';
 import { activeMission, allMissions, missionStats } from '../lib/missions';
 import { ExplainWaiting } from './Explain';
 import { AutoNextButton } from './ui';
+import type { Level } from '../data/content';
+
+/** the level badge in the middle of the top row (owner's request): bars fill up like a signal meter */
+const LEVEL_BADGE: Record<Level, { th: string; n: number; hint: string }> = {
+  easy: { th: 'ง่าย', n: 1, hint: 'ประโยคสั้น คำพื้นฐาน' },
+  medium: { th: 'กลาง', n: 2, hint: 'ประโยคยาวขึ้น ไวยากรณ์ระดับกลาง' },
+  hard: { th: 'ยาก', n: 3, hint: 'ประโยคยาว คำทางการ สำนวน หรือศัพท์เฉพาะ' },
+};
 
 /**
  * Practice pages as a social-media "story" (owner's pick, design 4 of 5): one tall card per question with
  * dashes on top for the questions in this set, the category and progress in the top row, the big content in the
  * middle, and a white sheet at the bottom for answering. Swiping up on the card runs `onSwipeUp` (next question).
  */
-export function Story({ route, set, top, children, sheet, onSwipeUp, side }: {
+export function Story({ route, set, top, level, children, sheet, onSwipeUp, side }: {
   route: Route;
   /** dashes on top: how many in this set and how many are done */
   set: { total: number; done: number };
   /** replaces the right side of the top row (default: the mission's progress) */
   top?: ReactNode;
+  /** how hard this question's phrase is, shown in the middle of the top row */
+  level?: Level;
   children: ReactNode;
   sheet: ReactNode;
   onSwipeUp?: () => void;
@@ -53,9 +63,15 @@ export function Story({ route, set, top, children, sheet, onSwipeUp, side }: {
         </a>
         <AutoNextButton />
         </div>
+        {level ? (
+          <span key={level} className={'story-lvl story-lvl-' + level} title={'ระดับ' + LEVEL_BADGE[level].th + ': ' + LEVEL_BADGE[level].hint}>
+            <span className="story-lvl-bars" aria-hidden="true">{[1, 2, 3].map((i) => <i key={i} className={i <= LEVEL_BADGE[level].n ? 'is-on' : undefined} />)}</span>
+            <span><span className="sr-only">ระดับ</span>{LEVEL_BADGE[level].th}</span>
+          </span>
+        ) : <span />}
         <div className="story-meta">
           <h1 id="story-h" className="story-h">{PAGES[route].short}</h1>
-          {top ?? <span className="num">· {m ? m.done + '/' + m.total : done + '/' + total}</span>}
+          {top ?? <span className="num">{m ? m.done + '/' + m.total : done + '/' + total}</span>}
         </div>
       </div>
       <div className="story-mid">{children}</div>

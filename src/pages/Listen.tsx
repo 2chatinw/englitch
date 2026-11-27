@@ -52,7 +52,7 @@ export default function Listen() {
 
   return (
     <div className="page">
-      <Story route="listen" set={{ total: SET, done: (s.n ?? 0) % SET }} onSwipeUp={s.result ? next : undefined}
+      <Story route="listen" set={{ total: SET, done: (s.n ?? 0) % SET }} level={p.l} onSwipeUp={s.result ? next : undefined}
         side={s.result ? <Explain key={p.e} phrase={p} /> : null}
         sheet={!s.result ? (
           <form className="stack" onSubmit={(e) => { e.preventDefault(); check(); }}>

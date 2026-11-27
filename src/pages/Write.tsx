@@ -74,7 +74,7 @@ export default function Write() {
 
   return (
     <div className="page">
-      <Story route="write" set={{ total: SET, done: (s.n ?? 0) % SET }} onSwipeUp={s.result ? next : undefined}
+      <Story route="write" set={{ total: SET, done: (s.n ?? 0) % SET }} level={p.l} onSwipeUp={s.result ? next : undefined}
         side={s.result ? <Explain key={p.e} phrase={p} /> : null}
         sheet={!s.result ? (
           <form className="stack" onSubmit={(e) => { e.preventDefault(); check(); }}>

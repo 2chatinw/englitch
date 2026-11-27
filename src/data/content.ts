@@ -81,7 +81,7 @@ export function difficulty(e: string, c: Category): number {
   const grammar = GRAMMAR.filter((r) => r.test(e)).length + (FORMAL.test(e) ? 1 : 0);
   return 0.55 * n + (n >= 8 ? 1 : 0) + long + 1.3 * grammar + (DOMAIN[c] ?? 0);
 }
-const levelOf = (e: string, c: Category): Level => {
+export const levelOf = (e: string, c: Category): Level => {
   if (c === 'slang') return 'easy';
   const s = difficulty(e, c);
   return s < 3 ? 'easy' : s < 5.2 ? 'medium' : 'hard';
