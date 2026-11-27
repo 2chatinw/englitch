@@ -37,7 +37,12 @@ npm run build   # tsc -b && vite build → dist/
 - `src/components/AccountMenu.tsx` — avatar pill + drop-down (copied from the owner's scholarship project, `C:\ProjectWeb\scholarship`).
 - `src/pages/Landing.tsx` — landing (kept in the app's look: feature cards use the pastel skill keys / level ring, the closing call to action is liquid glass; "How it works" = sign in → tap a category → pick a skill); `HeroKeys.tsx` (keypad hero: one key per category, shows a sample sentence), `Keypad.tsx` (isometric SVG),
   `SectionNav.tsx` (scroll-spy links), `SignInDrop.tsx` (rope-ladder sign-in badges), `ThemeToggle.tsx` (sun/moon).
-- `src/components/PageStage.tsx` — page-change wipe (the same keypad taps four keys and Space).
+- `src/components/PageStage.tsx` — page-change wipe. Going to a skill page shows that skill's mascot (`WipeMascot.tsx`,
+  owner picked from 12 drawings, Nov 2026: speak = yellow podcast mic rocking + sound waves, listen = the cloud with
+  yellow headphones nodding + notes, read = open mint book in glasses with a page flipping, write = pencil scribbling on a
+  lavender notebook). SVG strings + CSS idle wiggle (`.wm-*` in theme.css, quick squash-and-spring like the keypad keys).
+  Other pages (lobby, settings …) keep the keypad tapping four keys and Space. The 12-option picker is the artifact
+  "Englitch wipe mascots".
 - Practice modes = the four skills only: `pages/Listen.tsx` (hear → type), `Speak.tsx` (mic; Brave blocks web speech
   recognition, so it falls back to keyboard/Win+H voice typing), `Read.tsx` (situations + meanings, multiple choice),
   `Write.tsx` (Thai → type English, two-step hints; in the word bank a word already in the answer is greyed out and can't be added again; tapping it again removes it from the answer — owner). Flashcards and the AI chat page were removed (owner's choice, Nov 2026; `#chat` goes to the lobby);
@@ -125,6 +130,3 @@ Hidden browser panes throttle animation frames; GSAP animations may look paused 
 2. Publish `firestore.rules` in the Firebase console (members: owner may read/delete own doc — used by delete-account).
 3. Check the live site (sign-in with Discord / Google / Facebook, dark mode, phone).
 
-## Open questions for the owner
-
-- Keep the keypad in the page-change wipe as well as the hero, or bring back the old wipe?

@@ -42,6 +42,35 @@ h1, h2, h3, .lp-hero h1, .page-head h1, .lp-head h2, .lp-final h2, .sheet-head h
 .wipe::after { display: none; }
 .wipe-pad { flex: none; width: clamp(220px, 36vw, 440px); }
 .wipe-pad .keypad { display: block; width: 100%; height: auto; overflow: visible; }
+/* the skill mascots (WipeMascot.tsx): square, a little narrower than the keypad; idle wiggle = quick squash and spring */
+.wipe-pad.is-mascot { width: clamp(180px, 26vw, 330px); }
+.wipe-mascot { display: block; width: 100%; height: auto; overflow: visible; filter: drop-shadow(0 10px 0 rgba(10, 24, 56, .18)); }
+.wipe-mascot * { transform-box: view-box; }
+.wipe-mascot .wm-o { stroke: #15275C; stroke-width: 4.5; stroke-linejoin: round; stroke-linecap: round; }
+.wm-hop { animation: wm-hop .9s cubic-bezier(.34, 1.6, .64, 1) infinite; }
+.wm-sway { animation: wm-sway 1.4s ease-in-out infinite; }
+.wm-nod { animation: wm-nod 1.2s cubic-bezier(.34, 1.6, .64, 1) infinite; }
+.wm-blink { animation: wm-blink 3.4s infinite; }
+.wm-wave { animation: wm-wave .7s ease-in-out infinite; }
+.wm-wave.wm-rev { animation-direction: reverse; }
+.wm-float { animation: wm-float 2.4s ease-out infinite; opacity: 0; }
+.wm-look { animation: wm-look 2.6s ease-in-out infinite; }
+.wm-ring { animation: wm-ring 1.5s ease-out infinite; opacity: 0; }
+.wm-flip { animation: wm-flip 2.2s cubic-bezier(.6, 0, .4, 1) infinite; }
+.wm-scrib { animation: wm-scrib .45s ease-in-out infinite; }
+.wm-draw { stroke-dasharray: 130; animation: wm-draw 1.8s linear infinite; }
+@keyframes wm-hop { 0%, 100% { transform: translateY(0) scale(1.05, .93); } 35% { transform: translateY(-11px) scale(.96, 1.05); } 60% { transform: translateY(-13px) scale(1, 1); } 85% { transform: translateY(0) scale(1.07, .9); } }
+@keyframes wm-sway { 0%, 100% { transform: rotate(-6deg); } 50% { transform: rotate(6deg); } }
+@keyframes wm-nod { 0%, 100% { transform: rotate(0) translateY(0); } 25% { transform: rotate(-7deg) translateY(3px); } 50% { transform: rotate(0) translateY(0); } 75% { transform: rotate(7deg) translateY(3px); } }
+@keyframes wm-blink { 0%, 91%, 97%, 100% { transform: scaleY(1); } 94% { transform: scaleY(.1); } }
+@keyframes wm-wave { 0%, 100% { transform: rotate(-16deg); } 50% { transform: rotate(20deg); } }
+@keyframes wm-float { 0% { transform: translate(0, 10px) scale(.6); opacity: 0; } 20% { opacity: 1; } 100% { transform: translate(14px, -42px) scale(1); opacity: 0; } }
+@keyframes wm-look { 0%, 18% { transform: translateX(-5px); } 42%, 62% { transform: translateX(5px); } 86%, 100% { transform: translateX(-5px); } }
+@keyframes wm-ring { 0% { transform: scale(.6); opacity: 0; } 30% { opacity: 1; } 100% { transform: scale(1.35); opacity: 0; } }
+@keyframes wm-flip { 0%, 35% { transform: scaleX(1); } 65%, 100% { transform: scaleX(-1); } }
+@keyframes wm-scrib { 0%, 100% { transform: rotate(-7deg) translateX(-8px); } 50% { transform: rotate(7deg) translateX(8px); } }
+@keyframes wm-draw { 0% { stroke-dashoffset: 130; opacity: 1; } 65%, 88% { stroke-dashoffset: 0; opacity: 1; } 100% { stroke-dashoffset: 0; opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .wipe-mascot * { animation: none !important; } .wipe-mascot .wm-float, .wipe-mascot .wm-ring { opacity: 1; } }
 .wipe-text { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
 .wipe-en {
   font-family: "Fredoka", var(--f-display); font-weight: 700; text-transform: none; letter-spacing: 0;
@@ -53,6 +82,7 @@ h1, h2, h3, .lp-hero h1, .page-head h1, .lp-head h2, .lp-final h2, .sheet-head h
 @media (max-width: 640px) {
   .wipe { flex-direction: column; text-align: center; }
   .wipe-pad { width: min(72vw, 300px); }
+  .wipe-pad.is-mascot { width: min(54vw, 230px); }
   .wipe-text { align-items: center; }
 }
 

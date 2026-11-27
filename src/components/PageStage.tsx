@@ -3,10 +3,12 @@ import gsap from 'gsap';
 import { PAGES, type Route } from '../lib/router';
 import { prefersReducedMotion } from '../lib/util';
 import { Keypad } from './Keypad';
+import { WipeMascot, hasMascot } from './WipeMascot';
 
 /**
- * Page transitions: a panel wipes across the content area with the little category keypad that taps out
- * four keys and the spacebar, plus the next mode's name;
+ * Page transitions: a panel wipes across the content area with the next page's picture and name: the skill's
+ * wiggling mascot on the four practice pages (owner's picks), elsewhere the little category keypad that taps
+ * out four keys and the spacebar;
  * the page swaps while covered, then the panel exits and the new page's sections rise in.
  */
 export function PageStage({ route, render }: { route: Route; render: (r: Route) => ReactNode }) {
@@ -91,7 +93,7 @@ export function PageStage({ route, render }: { route: Route; render: (r: Route) 
     <>
       <div className="stage" ref={page}>{render(shown)}</div>
       <div className="wipe" ref={wipe} aria-hidden="true">
-        <div className="wipe-pad" ref={pad}><Keypad /></div>
+        <div className={'wipe-pad' + (hasMascot(route) ? ' is-mascot' : '')} ref={pad}>{hasMascot(route) ? <WipeMascot route={route} /> : <Keypad />}</div>
         <div className="wipe-text">
           <span className="wipe-en" ref={label} />
           <span className="wipe-th" ref={sub} />
