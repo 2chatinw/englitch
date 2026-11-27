@@ -93,6 +93,12 @@ npm run build   # tsc -b && vite build → dist/
   Under the title the ring colours are a bar (`.cp-legend`, owner picked design 3 of 6) that is also the LEVEL PICKER
   (owner): อัตโนมัติ (rainbow) / สั้น / ยาวขึ้น / ยาว = `settings.level`; the chosen one is coloured and larger, the rest grey;
   a hint line under it explains the choice. Same setting as in Settings.
+  Under that: the ACCENT chip (`components/AccentChip.tsx`, owner picked design 4 of 6 in the artifact "Englitch
+  ปุ่มเลือกสำเนียง", Nov 2026): "สำเนียง: อเมริกัน ▾" with a round flag; tap → small menu อเมริกัน / บริทิช / ออสเตรเลีย /
+  อัตโนมัติ, picking one says "Hello! Nice to meet you." in it. `settings.accent` ('auto' = American); `lib/speech.ts`
+  picks a voice of that accent (`bestVoice`, falls back to auto when the device has none) and the mic listens in the
+  same language (`speechLang()`). Accents with no voice on this device are greyed out ("เครื่องนี้ไม่มีเสียงนี้"; the
+  browser pane only has US voices). Picking an accent clears `voiceURI`; picking a voice in Settings sets the accent.
   Skill buttons = design 3 "keyboard keys" made round (owner's pick): raised round keycaps with a number 1-4 (keys 1-4
   press them on a computer), a shaded SVG picture from `components/SkillArt.tsx` (owner wants pictures, not flat icons/emoji)
   and the name; pastel side colours (listen blue, speak pink, read mint, write lavender). Dark mode tints the keycap face

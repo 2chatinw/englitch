@@ -23,16 +23,44 @@ export function englishVoices(): SpeechSynthesisVoice[] {
     .sort((a, b) => Number(/en[-_]US/i.test(b.lang)) - Number(/en[-_]US/i.test(a.lang)));
 }
 
-function bestVoice(uri: string): SpeechSynthesisVoice | null {
-  const en = englishVoices();
-  if (uri) { const chosen = en.find((v) => v.voiceURI === uri); if (chosen) return chosen; }
-  return en.find((v) => /en[-_]US/i.test(v.lang) && /Samantha|Google|Natural|Aria|Jenny|Ava|Allison/i.test(v.name))
-    || en.find((v) => /en[-_]US/i.test(v.lang)) || en[0] || null;
+/** Accent of the reading voice (owner, Nov 2026). 'auto' = American, else any English voice the device has. */
+export type Accent = 'auto' | 'us' | 'uk' | 'au';
+export const ACCENT_LANG: Record<Exclude<Accent, 'auto'>, string> = { us: 'en-US', uk: 'en-GB', au: 'en-AU' };
+const langOf = (v: SpeechSynthesisVoice) => v.lang.replace('_', '-');
+/** The accent a voice speaks, or null for other English voices (Indian, Irish …). */
+export function accentOf(lang: string): Exclude<Accent, 'auto'> | null {
+  const l = lang.replace('_', '-').toLowerCase();
+  return l === 'en-us' ? 'us' : l === 'en-gb' ? 'uk' : l === 'en-au' ? 'au' : null;
+}
+/** Whether this device has a voice for the accent (voices load late on some browsers: use onVoicesChanged). */
+export function hasAccent(a: Accent): boolean {
+  return a === 'auto' || englishVoices().some((v) => accentOf(v.lang) === a);
 }
 
-export interface VoiceSettings { rate: number; voiceURI: string }
-let current: VoiceSettings = { rate: 0.9, voiceURI: '' };
+const NICE = /Samantha|Google|Natural|Aria|Jenny|Ava|Allison|Daniel|Libby|Sonia|Ryan|Natasha|William|Karen|Serena|Kate/i;
+function bestVoice(uri: string, accent: Accent): SpeechSynthesisVoice | null {
+  const en = englishVoices();
+  if (uri) { const chosen = en.find((v) => v.voiceURI === uri); if (chosen) return chosen; }
+  const want = accent === 'auto' ? 'us' : accent;
+  const same = en.filter((v) => accentOf(v.lang) === want);
+  // an accent this device has no voice for falls back to the automatic choice
+  if (!same.length && accent !== 'auto') return bestVoice('', 'auto');
+  return same.find((v) => NICE.test(v.name)) || same[0] || en[0] || null;
+}
+
+export interface VoiceSettings { rate: number; voiceURI: string; accent: Accent }
+let current: VoiceSettings = { rate: 0.9, voiceURI: '', accent: 'auto' };
 export function setVoiceSettings(v: VoiceSettings) { current = v; }
+/** Language code for speaking and for listening to the learner (the chosen accent, else American English). */
+export function speechLang(): string {
+  const v = bestVoice(current.voiceURI, current.accent);
+  return v ? langOf(v) : 'en-US';
+}
+/** Say a short sample in an accent right away (the setting itself reaches setVoiceSettings a render later). */
+export function previewAccent(accent: Accent) {
+  current = { ...current, accent, voiceURI: '' };
+  say('Hello! Nice to meet you.');
+}
 
 export function say(text: string, slow = false): boolean {
   if (!canSpeak) return false;
@@ -40,9 +68,9 @@ export function say(text: string, slow = false): boolean {
     const synth = window.speechSynthesis;
     synth.cancel();
     const u = new SpeechSynthesisUtterance(text);
-    u.lang = 'en-US';
     u.rate = Math.max(0.5, current.rate * (slow ? 0.72 : 1));
-    const v = bestVoice(current.voiceURI);
+    const v = bestVoice(current.voiceURI, current.accent);
+    u.lang = v ? langOf(v) : 'en-US';
     if (v) u.voice = v;
     synth.speak(u);
     return true;
@@ -62,9 +90,9 @@ export function sayTracked(text: string, slow: boolean, onWord: (charIndex: numb
     const synth = window.speechSynthesis;
     synth.cancel();
     const u = new SpeechSynthesisUtterance(text);
-    u.lang = 'en-US';
     u.rate = Math.max(0.5, current.rate * (slow ? 0.72 : 1));
-    const v = bestVoice(current.voiceURI);
+    const v = bestVoice(current.voiceURI, current.accent);
+    u.lang = v ? langOf(v) : 'en-US';
     if (v) u.voice = v;
     u.onboundary = (e) => { if (e.name === 'word' || e.name === undefined) onWord(e.charIndex); };
     u.onend = onEnd;
@@ -122,7 +150,7 @@ export function listen(h: ListenHandlers): Listener | null {
   if (!micSupported()) return null;
   let rec: AnyRec;
   try { rec = new SR(); } catch { broken = true; return null; }
-  rec.lang = 'en-US';
+  rec.lang = speechLang();
   rec.interimResults = true;
   rec.continuous = false;
   rec.maxAlternatives = 1;

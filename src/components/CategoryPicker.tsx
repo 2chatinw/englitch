@@ -4,6 +4,7 @@ import gsap from 'gsap';
 import { Flip } from 'gsap/Flip';
 import { LEVELS, type Group, type Level } from '../data/content';
 import { Icon } from './Icon';
+import { AccentChip } from './AccentChip';
 import { SkillArt, type Skill } from './SkillArt';
 import { useProgress } from '../state/progress';
 import { useChooseMission } from './MissionMenu';
@@ -167,6 +168,7 @@ export function CategoryPicker() {
           ))}
         </div>
         <p key={state.settings.level} className="cp-legend-hint muted small">{LEVEL_PICK.find((x) => x.k === state.settings.level)?.hint}</p>
+        <AccentChip />
         {focus ? <p className="muted small">ฝึกครบทั้ง 4 ทักษะได้ในหมวดเดียวกัน ตอบถูกครบทุกประโยค = ผ่าน Mission</p> : null}
       </div>
       <div className={'cp-stage' + (focus ? ' is-focus' : '')} ref={stage}>

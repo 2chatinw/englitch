@@ -3,7 +3,7 @@ import { Sheet } from './Sheet';
 import { Icon } from './Icon';
 import { useProgress, type Settings as S } from '../state/progress';
 import { useToast } from '../state/toast';
-import { canSpeak, englishVoices, onVoicesChanged, say } from '../lib/speech';
+import { accentOf, canSpeak, englishVoices, onVoicesChanged, say } from '../lib/speech';
 import { copyText } from '../lib/util';
 import { clearSessions } from '../state/session';
 
@@ -25,8 +25,12 @@ export function SettingsSheet({ open, onClose }: { open: boolean; onClose: () =>
           <span className="field-label">เสียงอ่าน</span>
           {canSpeak ? (
             <>
-              <select id="voice" value={st.voiceURI} onChange={(e) => { setSettings({ voiceURI: e.target.value }); }}>
-                <option value="">เลือกให้อัตโนมัติ (แนะนำ)</option>
+              <select id="voice" value={st.voiceURI} onChange={(e) => {
+                // a voice picked here also sets the accent shown on the lobby chip (when it is US / UK / AU)
+                const v = voices.find((x) => x.voiceURI === e.target.value);
+                setSettings({ voiceURI: e.target.value, accent: (v && accentOf(v.lang)) || st.accent });
+              }}>
+                <option value="">ตามสำเนียงที่เลือก (แนะนำ)</option>
                 {voices.map((v) => <option key={v.voiceURI} value={v.voiceURI}>{v.name} · {v.lang}</option>)}
               </select>
               <div className="seg" role="radiogroup" aria-label="ความเร็วเสียง">

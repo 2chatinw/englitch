@@ -1,13 +1,15 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { INTERVALS, type Group, type Kind, type Level } from '../data/content';
 import { addDays, today } from '../lib/util';
-import { setVoiceSettings } from '../lib/speech';
+import { setVoiceSettings, type Accent } from '../lib/speech';
 import { useAuth } from './auth';
 import { saveProgress, watchProgress } from '../lib/cloud';
 
 export interface DayStats { listen: number; speak: number; read: number; write: number; xp: number }
 export interface Settings {
   voiceURI: string;
+  /** reading-voice accent (lobby chip, owner's design 4 of 6); picking one clears voiceURI */
+  accent: Accent;
   rate: number;
   autoPlay: boolean;
   /** move to the next question by itself 3 seconds after a right answer (owner: needs an on/off switch) */
@@ -40,7 +42,7 @@ const OLD_KEY = 'gg-english-v1'; // before the rename; read once so earlier prog
 const emptyDay = (): DayStats => ({ listen: 0, speak: 0, read: 0, write: 0, xp: 0 });
 const fresh = (): State => ({
   v: 1, xp: 0, streak: 0, lastActive: null, days: {}, srs: {}, updatedAt: 0, owner: null,
-  settings: { voiceURI: '', rate: 0.9, autoPlay: true, autoNext: true, theme: 'system', onboarded: false, installHintDismissed: false, level: 'auto', mission: null },
+  settings: { voiceURI: '', accent: 'auto', rate: 0.9, autoPlay: true, autoNext: true, theme: 'system', onboarded: false, installHintDismissed: false, level: 'auto', mission: null },
 });
 
 /** Combine two copies of the same player's progress without losing work done on either device. */
@@ -87,7 +89,11 @@ export function normalize(raw: unknown): State {
     lastActive: typeof s.lastActive === 'string' ? s.lastActive : null,
     days: s.days && typeof s.days === 'object' ? s.days : {},
     srs: s.srs && typeof s.srs === 'object' ? s.srs : {},
-    settings: { ...f.settings, ...(s.settings && typeof s.settings === 'object' ? s.settings : {}) },
+    settings: (() => {
+      const st = { ...f.settings, ...(s.settings && typeof s.settings === 'object' ? s.settings : {}) };
+      if (!['auto', 'us', 'uk', 'au'].includes(st.accent)) st.accent = 'auto';
+      return st;
+    })(),
     updatedAt: Number(s.updatedAt) || 0,
     owner: typeof s.owner === 'string' ? s.owner : null,
   };
@@ -193,8 +199,8 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
   }, [flush]);
 
   useEffect(() => {
-    setVoiceSettings({ rate: state.settings.rate, voiceURI: state.settings.voiceURI });
-  }, [state.settings.rate, state.settings.voiceURI]);
+    setVoiceSettings({ rate: state.settings.rate, voiceURI: state.settings.voiceURI, accent: state.settings.accent });
+  }, [state.settings.rate, state.settings.voiceURI, state.settings.accent]);
 
   useEffect(() => {
     const root = document.documentElement;
