@@ -464,24 +464,30 @@ input[type="email"]:focus, input[type="password"]:focus { outline: none; border-
 .cp-head { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 0 8px; }
 .cp-title { font-size: clamp(1.9rem, 6vw, 2.6rem); font-weight: 700; line-height: 1.1; }
 /* level picker under the title: Auto + the three ring colours; the chosen one is coloured and grows, the rest are grey */
-.cp-legend { display: flex; align-items: flex-end; gap: 8px; width: min(460px, 100%); }
-.cp-legend > button { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px; min-width: 0; padding: 4px 0; border: 0; background: none;
-  font: inherit; cursor: pointer; color: var(--muted); --c: var(--muted); -webkit-tap-highlight-color: transparent; transition: flex-grow .35s cubic-bezier(.22, 1, .36, 1); }
-.cp-legend i { display: block; width: 100%; height: 8px; border-radius: 99px; background: color-mix(in srgb, var(--muted) 35%, transparent);
-  transition: height .3s cubic-bezier(.34, 1.56, .64, 1), background .3s, box-shadow .3s; }
-.cp-legend small { font-size: .9rem; font-weight: 600; line-height: 1.2; transition: font-size .3s, color .3s; white-space: nowrap; }
-.cp-legend > button:hover:not(.is-on) i { background: color-mix(in srgb, var(--muted) 55%, transparent); }
+/* Smooth on purpose (owner: it jerked): nothing changes size in the layout. All four keep equal width; the chosen one
+   grows with transform (GPU only), its colour fades in on a layer (gradients can't be animated directly), and the
+   label scales instead of changing font size. */
+.cp-legend { display: flex; align-items: center; gap: 10px; width: min(460px, 100%); padding-top: 4px; }
+.cp-legend > button { flex: 1 1 0; display: flex; flex-direction: column; align-items: center; gap: 9px; min-width: 0; padding: 4px 0; border: 0; background: none;
+  font: inherit; cursor: pointer; color: var(--muted); --c: var(--muted); -webkit-tap-highlight-color: transparent; }
+.cp-legend i { position: relative; display: block; width: 100%; height: 10px; border-radius: 99px; background: color-mix(in srgb, var(--muted) 35%, transparent);
+  transform: scale(1, 1); transition: transform .45s cubic-bezier(.34, 1.56, .64, 1), box-shadow .45s ease; will-change: transform; }
+.cp-legend i::after { content: ""; position: absolute; inset: 0; border-radius: inherit; background: var(--c); opacity: 0; transition: opacity .35s ease; }
+.cp-legend small { display: block; font-size: .92rem; font-weight: 600; line-height: 1.2; white-space: nowrap; transform-origin: center top;
+  transition: transform .4s cubic-bezier(.34, 1.56, .64, 1), color .3s ease; will-change: transform; }
+.cp-legend > button:hover:not(.is-on) i { transform: scale(1, 1.2); }
+.cp-legend > button:active i { transform: scale(.97, 1.2); }
 .cp-legend > button:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; border-radius: 12px; }
-.cp-legend > button.is-on { flex-grow: 1.6; }
-.cp-legend > button.is-on i { height: 14px; background: var(--c); box-shadow: 0 6px 16px -6px var(--c); }
-.cp-legend > button.is-on small { font-size: 1.08rem; color: var(--c-ink, var(--c)); }
-.cp-legend > .cp-legend-auto { --c: linear-gradient(90deg, var(--good), var(--sun-2), var(--hot)); --c-ink: var(--accent); }
-.cp-legend > button.cp-legend-auto.is-on i { box-shadow: 0 6px 16px -6px var(--sun-2); }
+.cp-legend > button.is-on i { transform: scale(1.08, 1.6); box-shadow: 0 6px 16px -6px var(--c-glow, var(--c)); }
+.cp-legend > button.is-on i::after { opacity: 1; }
+.cp-legend > button.is-on small { transform: scale(1.16); color: var(--c-ink, var(--c)); }
+.cp-legend > .cp-legend-auto { --c: linear-gradient(90deg, var(--good), var(--sun-2), var(--hot)); --c-ink: var(--accent); --c-glow: var(--sun-2); }
 .cp-legend > .cp-legend-easy { --c: var(--good); }
 .cp-legend > .cp-legend-medium { --c: var(--sun-2); --c-ink: var(--lvl-mid-ink); }
 .cp-legend > .cp-legend-hard { --c: var(--hot); }
-.cp-legend-hint { margin: -4px 0 0; }
-@media (prefers-reduced-motion: reduce) { .cp-legend > button, .cp-legend i, .cp-legend small { transition: none; } }
+.cp-legend-hint { margin: -2px 0 0; animation: cp-hint-in .35s ease both; }
+@keyframes cp-hint-in { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .cp-legend i, .cp-legend i::after, .cp-legend small { transition: none; } .cp-legend-hint { animation: none; } }
 .cp-stage { position: relative; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); grid-template-rows: repeat(3, var(--d));
   row-gap: 12px; justify-items: center; align-items: center; max-width: 560px; width: 100%; margin: 0 auto; }
 .cp-stage.is-focus { grid-template-columns: repeat(7, minmax(0, 1fr)); column-gap: 4px; row-gap: 14px;

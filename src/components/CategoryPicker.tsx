@@ -154,7 +154,7 @@ export function CategoryPicker() {
             </button>
           ))}
         </div>
-        <p className="cp-legend-hint muted small">{LEVEL_PICK.find((x) => x.k === state.settings.level)?.hint}</p>
+        <p key={state.settings.level} className="cp-legend-hint muted small">{LEVEL_PICK.find((x) => x.k === state.settings.level)?.hint}</p>
         {focus ? <p className="muted small">ฝึกครบทั้ง 4 ทักษะได้ในหมวดเดียวกัน ตอบถูกครบทุกประโยค = ผ่าน Mission</p> : null}
       </div>
       <div className={'cp-stage' + (focus ? ' is-focus' : '')} ref={stage}>
