@@ -33,6 +33,9 @@ const MOVE = 0.62;
 const SAVE_AFTER = 1100;
 /** where a circle was before a tap, and a copy of how it looked then (for the cross-fade) */
 type Snap = { rect: DOMRect; kind: string; look: HTMLElement };
+/** a name split into letters (Thai vowel and tone marks stay with their letter), so it can appear one letter at a time */
+const SEG = typeof Intl !== 'undefined' && 'Segmenter' in Intl ? new Intl.Segmenter('th', { granularity: 'grapheme' }) : null;
+const letters = (t: string) => (SEG ? Array.from(SEG.segment(t), (x) => x.segment) : Array.from(t));
 const kindOf = (n: Element) => (n.classList.contains('is-chosen') ? 'chosen' : n.classList.contains('is-mini') ? 'mini' : 'grid');
 /** the four skills sit on an arc under the chosen circle: listen on the left, round the bottom, write on the right (degrees clockwise from the top) */
 const SKILLS: { r: Route; a: number }[] = [{ r: 'listen', a: 252 }, { r: 'speak', a: 206 }, { r: 'read', a: 154 }, { r: 'write', a: 108 }];
@@ -163,15 +166,25 @@ export function CategoryPicker() {
         return s && s.kind !== kindOf(n) ? [{ n, s, to: n.getBoundingClientRect() }] : [];
       });
       Flip.from(p.flip, { duration: MOVE, ease: 'sine.inOut', scale: true, onComplete: tidy(nodes) });
+      // Owner's pick ("ตัวอักษรโผล่ทีละตัว", option 6 of the artifact "Englitch circle label"): the old words fade out
+      // at once (the copy of the old look, 0.15 s), the circle travels with its icon, and just before it arrives the
+      // new name appears one letter at a time in a small wave, then the count. Small circles show no words.
       for (const { n, s, to } of swaps) {
         const g = s.look;
         g.removeAttribute('style'); g.removeAttribute('data-flip-id'); g.removeAttribute('aria-label'); g.classList.add('cp-ghost');
         g.tabIndex = -1;
         Object.assign(g.style, { left: s.rect.left - box.left + 'px', top: s.rect.top - box.top + 'px', width: s.rect.width + 'px', height: s.rect.height + 'px' });
         ghostLayer.current?.appendChild(g);
-        gsap.to(g, { x: to.left - s.rect.left, y: to.top - s.rect.top, scale: to.width / s.rect.width, duration: MOVE, ease: 'sine.inOut', onComplete: () => g.remove() });
-        gsap.to(g, { opacity: 0, duration: 0.4, delay: 0.08, ease: 'power1.inOut' });
-        gsap.fromTo(n, { opacity: 0 }, { opacity: 1, duration: 0.42, ease: 'power1.inOut', clearProps: 'opacity' });
+        const ride = gsap.to(g, { x: to.left - s.rect.left, y: to.top - s.rect.top, scale: to.width / s.rect.width, duration: MOVE, ease: 'sine.inOut' });
+        gsap.to(g, { opacity: 0, duration: 0.15, ease: 'power1.in', onComplete: () => { ride.kill(); g.remove(); } });
+        if (kindOf(n) === 'mini') continue;
+        const chars = Array.from(n.querySelectorAll<HTMLElement>('.cp-ch')), count = n.querySelector<HTMLElement>('.cp-count');
+        const words = count ? [...chars, count] : chars;
+        gsap.killTweensOf(words);
+        gsap.set(words, { opacity: 0 });
+        const at = MOVE - 0.12, step = 0.014;
+        gsap.fromTo(chars, { opacity: 0, top: 5 }, { opacity: 1, top: 0, duration: 0.2, stagger: step, delay: at, ease: 'power2.out', clearProps: 'opacity,top' });
+        if (count) gsap.to(count, { opacity: 1, duration: 0.22, delay: at + chars.length * step, ease: 'power1.out', clearProps: 'opacity' });
       }
       // the content under the circles slides from where it was (measured on the content itself, so a change in
       // the heading above counts too — it used to jump by that much on the first frame)
@@ -263,7 +276,7 @@ export function CategoryPicker() {
               <StageRing stages={n.stages} />
               <span className="cp-face">
                 <span className="cp-icon" aria-hidden="true">{n.icon}</span>
-                <span className="cp-name">{isChosen ? n.name : n.short}</span>
+                <span className="cp-name">{letters(isChosen ? n.name : n.short).map((c, k) => <span key={k} className="cp-ch">{c}</span>)}</span>
                 <span className="cp-count num">{n.done === n.total ? '✓ ผ่านแล้ว' : isChosen ? n.done + '/' + n.total : pct + '%'}</span>
               </span>
             </button>

@@ -85,9 +85,13 @@ npm run build   # tsc -b && vite build → dist/
   content below slides with `y` instead of tweening the stage height; inline transform styles are removed on complete
   (a left-over `scale: none` blocks the hover grow). Owner: the chosen circle grows steadily all the way while it moves
   (`sine.inOut`) and nothing may grow past its final size then shrink back — no `back.out` on the skill keys.
-  A circle that changes kind (grid ↔ chosen ↔ small) cross-fades: `capture()` keeps a copy of its old look, which rides
-  the same path on `.cp-ghosts` and fades out while the new look fades in (scaling the small look up showed a huge bare
-  icon — owner's Medal video). Switching straight to another category leaves the skill keys in place (`prevFocus`).
+  A circle that changes kind (grid ↔ chosen ↔ small): `capture()` keeps a copy of its old look on `.cp-ghosts`, which
+  fades out in 0.15 s (its old words go at once; scaling the small look up showed a huge bare icon — owner's Medal
+  video); the circle travels with its icon, and just before it arrives its new name appears one letter at a time in a
+  small wave, then the count (owner picked option 6 "ตัวอักษรโผล่ทีละตัว" from the artifact "Englitch circle label";
+  names render as `.cp-ch` letter spans via `Intl.Segmenter`, inline so Thai still breaks between words). Small circles
+  show no words. Switching straight to another category leaves the skill keys in place (`prevFocus`); going back fades
+  out the skill keys / back link / label (`.cp-exit`). The tip line under the title always keeps its place (`.cp-tip`).
   Resizing the circles for real costs ~10 ms a frame (text reflow) — keep transforms. A tap changes only the picker's
   own `picked` state; the mission (a setting the whole app reads → full redraw, ~25-35 ms in dev, the jerk the owner
   felt while signed in) is saved `SAVE_AFTER` 1.1 s later, or at once when a skill key is pressed / the lobby unmounts.
