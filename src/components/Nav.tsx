@@ -8,7 +8,7 @@ import { prefersReducedMotion } from '../lib/util';
 import { Brand, useScrolled } from './Brand';
 import { ThemeToggle } from './ThemeToggle';
 import { AccountMenu } from './AccountMenu';
-import { MissionMenu, MissionTag } from './MissionMenu';
+import { MissionTag } from './MissionMenu';
 
 function Streak({ n }: { n: number }) {
   return (
@@ -116,7 +116,6 @@ export function TopBar({ onSettings, onAccount }: { onSettings: () => void; onAc
         <a className="brand brand-sm" href="#today" aria-label="Englitch หน้าแรก">
           <Brand size="sm" />
         </a>
-        <MissionMenu />
         <div className="top-hud">
           <Streak n={streak} />
         </div>

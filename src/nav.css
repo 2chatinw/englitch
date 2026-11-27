@@ -355,49 +355,7 @@ html { scroll-padding-top: 88px; }
 .acct-out:hover, .acct-out:focus-visible { background: var(--bad-soft); }
 @media (prefers-reduced-motion: reduce) { .acct-chev, .qring-fill, .rail-item { transition: none; } }
 
-/* ---------- Mission switcher in the top bar, and the labels by the practice menus ---------- */
-.mm { position: relative; flex: none; min-width: 0; }
-.mm-btn {
-  display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 10px 0 6px; border-radius: 14px;
-  border: 1px solid var(--line); background: color-mix(in srgb, var(--surface) 72%, transparent); color: var(--ink); cursor: pointer;
-  transition: border-color .2s, box-shadow .2s, background-color .2s;
-}
-.mm-btn:hover, .mm-btn[aria-expanded="true"] {
-  background: var(--surface); border-color: color-mix(in srgb, var(--accent) 45%, var(--line)); box-shadow: 0 6px 18px -8px rgba(30, 107, 255, .45);
-}
-.mm-btn:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
-.mm-icon { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 10px; background: var(--accent-soft); font-size: 1.1rem; }
-.mm-text { display: flex; flex-direction: column; align-items: flex-start; line-height: 1.1; text-align: left; }
-.mm-text small { font-family: var(--f-display); font-size: .62rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--hot); }
-.mm-text b { font-size: .92rem; font-weight: 600; white-space: nowrap; }
-.mm-chev { flex: none; color: var(--muted); transition: transform .25s ease; }
-.mm-btn[aria-expanded="true"] .mm-chev { transform: rotate(180deg); }
-@media (max-width: 430px) { .mm-text { display: none; } .mm-btn { padding-right: 6px; gap: 4px; } }
-
-.mm-menu {
-  position: absolute; left: 0; top: calc(100% + 10px); z-index: 60; width: 320px; max-height: min(70vh, 560px); overflow-y: auto;
-  padding: 6px; border-radius: 16px; background: var(--surface); border: 1px solid var(--line);
-  box-shadow: 0 20px 44px -14px rgba(21, 39, 92, .38); transform-origin: top left;
-}
-@media (max-width: 600px) {
-  .mm-menu { position: fixed; left: 12px; right: 12px; width: auto; top: calc(var(--top-h, 64px) + env(safe-area-inset-top)); }
-}
-.mm-item {
-  display: flex; align-items: center; gap: 12px; width: 100%; padding: 9px 10px; border: 0; border-radius: 11px;
-  background: transparent; color: var(--ink); text-align: left; cursor: pointer;
-}
-.mm-item + .mm-item { margin-top: 2px; }
-.mm-item:hover, .mm-item:focus-visible { background: var(--surface-2); outline: none; }
-.mm-item[aria-checked="true"] { background: var(--accent-soft); box-shadow: inset 3px 0 0 var(--accent); }
-.mm-item-icon { display: grid; place-items: center; width: 36px; height: 36px; flex: none; border-radius: 11px; background: var(--surface-2); font-size: 1.15rem; }
-.mm-item[aria-checked="true"] .mm-item-icon { background: var(--surface); }
-.mm-item-body { display: flex; flex-direction: column; min-width: 0; line-height: 1.3; }
-.mm-item-body b { font-weight: 600; font-size: .95rem; }
-.mm-item-body small { font-size: .78rem; color: var(--muted); }
-.mm-item.is-done .mm-item-body small { color: var(--good); font-weight: 600; }
-.mm-sep { border: 0; border-top: 1px solid var(--line); margin: 6px 4px; }
-
-/* label under the desktop rail / above the phone tab bar: which mission the menu practises */
+/* ---------- Labels by the practice menus: which category they practise (tap = back to the category circles) ---------- */
 .mtag {
   display: flex; flex-direction: column; align-items: center; gap: 1px; border: 1px solid var(--line); cursor: pointer;
   background: color-mix(in srgb, var(--surface) 88%, transparent); color: var(--ink); line-height: 1.2; text-align: center;
