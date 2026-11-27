@@ -91,7 +91,7 @@ export function normalize(raw: unknown): State {
     srs: s.srs && typeof s.srs === 'object' ? s.srs : {},
     settings: (() => {
       const st = { ...f.settings, ...(s.settings && typeof s.settings === 'object' ? s.settings : {}) };
-      if (!['auto', 'us', 'uk', 'au'].includes(st.accent)) st.accent = 'auto';
+      if (!['auto', 'us', 'uk', 'au', 'in'].includes(st.accent)) st.accent = 'auto';
       return st;
     })(),
     updatedAt: Number(s.updatedAt) || 0,

@@ -11,6 +11,7 @@ const ACCENTS: { k: Accent; label: string }[] = [
   { k: 'us', label: 'อเมริกัน' },
   { k: 'uk', label: 'บริทิช' },
   { k: 'au', label: 'ออสเตรเลีย' },
+  { k: 'in', label: 'อินเดีย' },
   { k: 'auto', label: 'อัตโนมัติ' },
 ];
 
@@ -37,8 +38,17 @@ export function AccentFlag({ k }: { k: Accent }) {
   }
   return (
     <span className="ac-flag" aria-hidden="true">
-      <svg viewBox={k === 'us' ? '8 0 40 40' : k === 'uk' ? '10 0 40 40' : '0 0 40 40'} preserveAspectRatio="xMidYMid slice">
-        {k === 'us' ? (
+      <svg viewBox={k === 'us' ? '8 0 40 40' : k === 'uk' || k === 'in' ? '10 0 40 40' : '0 0 40 40'} preserveAspectRatio="xMidYMid slice">
+        {k === 'in' ? (
+          <>
+            <rect width="60" height="13.4" fill="#FF9933" />
+            <rect y="13.3" width="60" height="13.4" fill="#FFFFFF" />
+            <rect y="26.6" width="60" height="13.4" fill="#138808" />
+            <circle cx="30" cy="20" r="5" fill="none" stroke="#0B2A8A" strokeWidth="1.2" />
+            <circle cx="30" cy="20" r="1.1" fill="#0B2A8A" />
+            <path d="M30 15V25M25 20H35M26.5 16.5L33.5 23.5M33.5 16.5L26.5 23.5" stroke="#0B2A8A" strokeWidth=".6" />
+          </>
+        ) : k === 'us' ? (
           <>
             <rect width="60" height="40" fill="#FFFFFF" />
             {[0, 2, 4, 6, 8, 10, 12].map((i) => <rect key={i} y={(i * 40) / 13} width="60" height="3.08" fill="#C8313E" />)}

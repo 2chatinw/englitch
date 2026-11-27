@@ -24,20 +24,20 @@ export function englishVoices(): SpeechSynthesisVoice[] {
 }
 
 /** Accent of the reading voice (owner, Nov 2026). 'auto' = American, else any English voice the device has. */
-export type Accent = 'auto' | 'us' | 'uk' | 'au';
-export const ACCENT_LANG: Record<Exclude<Accent, 'auto'>, string> = { us: 'en-US', uk: 'en-GB', au: 'en-AU' };
+export type Accent = 'auto' | 'us' | 'uk' | 'au' | 'in';
+export const ACCENT_LANG: Record<Exclude<Accent, 'auto'>, string> = { us: 'en-US', uk: 'en-GB', au: 'en-AU', in: 'en-IN' };
 const langOf = (v: SpeechSynthesisVoice) => v.lang.replace('_', '-');
-/** The accent a voice speaks, or null for other English voices (Indian, Irish …). */
+/** The accent a voice speaks, or null for other English voices (Irish, South African …). */
 export function accentOf(lang: string): Exclude<Accent, 'auto'> | null {
   const l = lang.replace('_', '-').toLowerCase();
-  return l === 'en-us' ? 'us' : l === 'en-gb' ? 'uk' : l === 'en-au' ? 'au' : null;
+  return l === 'en-us' ? 'us' : l === 'en-gb' ? 'uk' : l === 'en-au' ? 'au' : l === 'en-in' ? 'in' : null;
 }
 /** Whether this device has a voice for the accent (voices load late on some browsers: use onVoicesChanged). */
 export function hasAccent(a: Accent): boolean {
   return a === 'auto' || englishVoices().some((v) => accentOf(v.lang) === a);
 }
 
-const NICE = /Samantha|Google|Natural|Aria|Jenny|Ava|Allison|Daniel|Libby|Sonia|Ryan|Natasha|William|Karen|Serena|Kate/i;
+const NICE = /Samantha|Google|Natural|Aria|Jenny|Ava|Allison|Daniel|Libby|Sonia|Ryan|Natasha|William|Karen|Serena|Kate|Neerja|Prabhat|Heera|Ravi|Rishi|Veena/i;
 function bestVoice(uri: string, accent: Accent): SpeechSynthesisVoice | null {
   const en = englishVoices();
   if (uri) { const chosen = en.find((v) => v.voiceURI === uri); if (chosen) return chosen; }

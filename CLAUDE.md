@@ -94,7 +94,7 @@ npm run build   # tsc -b && vite build → dist/
   (owner): อัตโนมัติ (rainbow) / สั้น / ยาวขึ้น / ยาว = `settings.level`; the chosen one is coloured and larger, the rest grey;
   a hint line under it explains the choice. Same setting as in Settings.
   Under that: the ACCENT chip (`components/AccentChip.tsx`, owner picked design 4 of 6 in the artifact "Englitch
-  ปุ่มเลือกสำเนียง", Nov 2026): "สำเนียง: อเมริกัน ▾" with a round flag; tap → small menu อเมริกัน / บริทิช / ออสเตรเลีย /
+  ปุ่มเลือกสำเนียง", Nov 2026): "สำเนียง: อเมริกัน ▾" with a round flag; tap → small menu อเมริกัน / บริทิช / ออสเตรเลีย / อินเดีย (owner asked to add it) /
   อัตโนมัติ, picking one says "Hello! Nice to meet you." in it. `settings.accent` ('auto' = American); `lib/speech.ts`
   picks a voice of that accent (`bestVoice`, falls back to auto when the device has none) and the mic listens in the
   same language (`speechLang()`). Accents with no voice on this device are greyed out ("เครื่องนี้ไม่มีเสียงนี้"; the
