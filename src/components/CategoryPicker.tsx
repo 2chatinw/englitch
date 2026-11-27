@@ -31,14 +31,20 @@ export function StageRing({ stages }: { stages: Node['stages'] }) {
   const sum = stages.reduce((a, s) => a + s.total, 0) || 1;
   // round caps reach past each arc's end by about 1.3 units, so this leaves a clear ~3-unit gap between arcs
   const gap = stages.length > 1 ? 5.6 : 0;
+  // every level gets at least a short visible arc: a level with only a few sentences would otherwise shrink
+  // below the gap and show up as a dot jammed against its neighbour
+  const MIN = 10;
+  const raw = stages.map((s) => Math.max((s.total / sum) * 100, MIN));
+  const scale = 100 / raw.reduce((a, x) => a + x, 0);
   let at = 0;
   return (
     <svg className="sring" viewBox="0 0 100 100" aria-hidden="true">
-      {stages.map((s) => {
-        const len = Math.max(0.5, (s.total / sum) * 100 - gap);
+      {stages.map((s, i) => {
+        const share = raw[i] * scale;
+        const len = Math.max(0.5, share - gap);
         const fill = s.total ? (s.done / s.total) * len : 0;
         const off = -(at + gap / 2);
-        at += (s.total / sum) * 100;
+        at += share;
         return (
           <g key={s.k} className={'sring-' + s.k}>
             <circle className="sring-track" cx="50" cy="50" r="45" pathLength="100" strokeDasharray={len + ' ' + (100 - len)} strokeDashoffset={off} />

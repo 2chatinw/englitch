@@ -48,7 +48,8 @@ npm run build   # tsc -b && vite build → dist/
   and listen/speak/read/write pop out on an arc around it. A full reload starts back at the 8 circles.
   The side rail / bottom bar are hidden in the whole lobby and slide in only on the practice (quiz) pages
   (`data-menus` on `.shell`; owner's choice). `lib/lobby.ts` remembers the opened category for the session.
-  Ring style (owner's sketch): rounded arcs with clear gaps, a little space, then the outlined inner circle.
+  Ring style (owner's sketch): rounded arcs with clear gaps, a little space, then the outlined inner circle. Each level
+  gets at least 10% of the ring (`MIN` in `StageRing`) so a level with few sentences is not a dot touching its neighbour.
   Under the title the ring colours are a three-part bar with labels (`.cp-legend`, owner picked design 3 of 6).
   Skill buttons = design 3 "keyboard keys" made round (owner's pick): raised round keycaps with a number 1-4 (keys 1-4
   press them on a computer), a shaded SVG picture from `components/SkillArt.tsx` (owner wants pictures, not flat icons/emoji)
