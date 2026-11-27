@@ -17,6 +17,7 @@
   --glass-1: rgba(255, 255, 255, .66); --glass-2: rgba(255, 255, 255, .26); --glass-line: rgba(255, 255, 255, .9); --glass-hi: rgba(255, 255, 255, .95); --glass-shine: .32;
   --blob-a: #8DB6FF; --blob-b: #FFA3C2; --blob-c: #BBA6FF; --blob-op: .6;
   --ring-track: .3; /* opacity of the not-yet-done part of the category rings */
+  --lvl-mid-ink: #B87300; /* readable yellow for the "longer" label on light backgrounds */
   --navy: #1B3A8C;
   --sun: #FFC53D;
   --sun-2: #FFB01F;
@@ -40,7 +41,7 @@
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #000000; --surface: #121212; --surface-2: #1C1C1E; --ink: #FFFFFF; --muted: #A0A0A8; --line: #2A2A2E; --cap-mix: 52%; --glass-1: rgba(255, 255, 255, .11); --glass-2: rgba(255, 255, 255, .03); --glass-line: rgba(255, 255, 255, .18); --glass-hi: rgba(255, 255, 255, .4); --blob-op: .42; --glass-shine: .07; --ring-track: .5;
+    --bg: #000000; --surface: #121212; --surface-2: #1C1C1E; --ink: #FFFFFF; --muted: #A0A0A8; --line: #2A2A2E; --cap-mix: 52%; --glass-1: rgba(255, 255, 255, .11); --glass-2: rgba(255, 255, 255, .03); --glass-line: rgba(255, 255, 255, .18); --glass-hi: rgba(255, 255, 255, .4); --blob-op: .42; --glass-shine: .07; --ring-track: .5; --lvl-mid-ink: #FFBE2E;
     --accent: #7DB0FF; --accent-ink: #000000; --accent-soft: #172338; --navy: #000000;
     --sun: #FFD25A; --sun-2: #FFBE2E; --sun-edge: #C98200; --sun-ink: #1B2A5E;
     --hot: #FF9A4D; --hot-soft: #3D2313; --good: #3FD08F; --good-soft: #0F3A2A; --bad: #FF7C80; --bad-soft: #43181C;
@@ -50,7 +51,7 @@
   }
 }
 :root[data-theme="dark"] {
-  --bg: #000000; --surface: #121212; --surface-2: #1C1C1E; --ink: #FFFFFF; --muted: #A0A0A8; --line: #2A2A2E; --cap-mix: 52%; --glass-1: rgba(255, 255, 255, .11); --glass-2: rgba(255, 255, 255, .03); --glass-line: rgba(255, 255, 255, .18); --glass-hi: rgba(255, 255, 255, .4); --blob-op: .42; --glass-shine: .07; --ring-track: .5;
+  --bg: #000000; --surface: #121212; --surface-2: #1C1C1E; --ink: #FFFFFF; --muted: #A0A0A8; --line: #2A2A2E; --cap-mix: 52%; --glass-1: rgba(255, 255, 255, .11); --glass-2: rgba(255, 255, 255, .03); --glass-line: rgba(255, 255, 255, .18); --glass-hi: rgba(255, 255, 255, .4); --blob-op: .42; --glass-shine: .07; --ring-track: .5; --lvl-mid-ink: #FFBE2E;
   --accent: #7DB0FF; --accent-ink: #000000; --accent-soft: #172338; --navy: #000000;
   --sun: #FFD25A; --sun-2: #FFBE2E; --sun-edge: #C98200; --sun-ink: #1B2A5E;
   --hot: #FF9A4D; --hot-soft: #3D2313; --good: #3FD08F; --good-soft: #0F3A2A; --bad: #FF7C80; --bad-soft: #43181C;
@@ -489,8 +490,15 @@ input[type="email"]:focus, input[type="password"]:focus { outline: none; border-
 /* ---------- Lobby category picker: eight circles in three-level rings; the chosen one moves to the middle ---------- */
 .cp { --d: min(136px, 27vw); --D: min(214px, 42vw); --m: min(60px, 11.4vw); --R: calc(var(--D) / 2 + min(62px, 14vw));
   display: flex; flex-direction: column; gap: clamp(20px, 4vw, 32px); padding: 6px 0 clamp(24px, 5vw, 40px); }
-.cp-head { text-align: center; display: flex; flex-direction: column; gap: 4px; padding: 0 8px; }
-.cp-title { font-size: clamp(1.6rem, 5vw, 2.2rem); font-weight: 700; }
+.cp-head { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 0 8px; }
+.cp-title { font-size: clamp(1.9rem, 6vw, 2.6rem); font-weight: 700; line-height: 1.1; }
+.cp-legend { display: flex; gap: 6px; width: min(360px, 100%); }
+.cp-legend > span { flex: 1; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.cp-legend i { display: block; height: 8px; border-radius: 99px; }
+.cp-legend small { font-size: .92rem; font-weight: 600; line-height: 1.2; }
+.cp-legend-easy i { background: var(--good); } .cp-legend-easy small { color: var(--good); }
+.cp-legend-medium i { background: var(--sun-2); } .cp-legend-medium small { color: var(--lvl-mid-ink); }
+.cp-legend-hard i { background: var(--hot); } .cp-legend-hard small { color: var(--hot); }
 .cp-stage { position: relative; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); grid-template-rows: repeat(3, var(--d));
   row-gap: 12px; justify-items: center; align-items: center; max-width: 560px; width: 100%; margin: 0 auto; }
 .cp-stage.is-focus { grid-template-columns: repeat(7, minmax(0, 1fr)); column-gap: 4px; row-gap: 14px;

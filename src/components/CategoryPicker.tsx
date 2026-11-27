@@ -128,11 +128,13 @@ export function CategoryPicker() {
     <section className="cp" data-reveal aria-labelledby="cp-h">
       <div className="cp-head">
         <h1 id="cp-h" className="cp-title">{focus ? 'เลือกทักษะที่จะฝึก' : 'เลือกหมวดหมู่'}</h1>
-        <p className="muted small">
-          {focus
-            ? 'ฝึกครบทั้ง 4 ทักษะได้ในหมวดเดียวกัน ตอบถูกครบทุกประโยค = ผ่าน Mission'
-            : 'วงแหวนรอบปุ่มบอกความคืบหน้า สีเขียว = ประโยคสั้น เหลือง = ยาวขึ้น ส้ม = ยาว'}
-        </p>
+        {/* the ring colours as a three-part bar under the title (owner's pick, design 3) */}
+        <div className="cp-legend" role="list" aria-label="สีวงแหวนรอบปุ่มบอกความคืบหน้า">
+          <span role="listitem" className="cp-legend-easy"><i aria-hidden="true" /><small><span className="sr-only">สีเขียว: </span>สั้น</small></span>
+          <span role="listitem" className="cp-legend-medium"><i aria-hidden="true" /><small><span className="sr-only">สีเหลือง: </span>ยาวขึ้น</small></span>
+          <span role="listitem" className="cp-legend-hard"><i aria-hidden="true" /><small><span className="sr-only">สีส้ม: </span>ยาว</small></span>
+        </div>
+        {focus ? <p className="muted small">ฝึกครบทั้ง 4 ทักษะได้ในหมวดเดียวกัน ตอบถูกครบทุกประโยค = ผ่าน Mission</p> : null}
       </div>
       <div className={'cp-stage' + (focus ? ' is-focus' : '')} ref={stage}>
         {focus ? (
