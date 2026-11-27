@@ -84,7 +84,12 @@ npm run build   # tsc -b && vite build → dist/
   Smoothness (owner said it stuttered, fixed Nov 2026): Flip uses `scale: true` (transforms only, no `absolute`) and the
   content below slides with `y` instead of tweening the stage height; inline transform styles are removed on complete
   (a left-over `scale: none` blocks the hover grow). Owner: the chosen circle grows steadily all the way while it moves
-  (`sine.inOut`) and nothing may grow past its final size then shrink back — no `back.out` on the skill keys. Measure with the `preview` launch config (production build) —
+  (`sine.inOut`) and nothing may grow past its final size then shrink back — no `back.out` on the skill keys.
+  A circle that changes kind (grid ↔ chosen ↔ small) cross-fades: `capture()` keeps a copy of its old look, which rides
+  the same path on `.cp-ghosts` and fades out while the new look fades in (scaling the small look up showed a huge bare
+  icon — owner's Medal video). Switching straight to another category leaves the skill keys in place (`prevFocus`).
+  Resizing the circles for real costs ~10 ms a frame (text reflow) — keep transforms. Owner records clips with Medal
+  (`C:\Medal\…\exports\*.mp4`, 144 fps): read them with ffmpeg (`-vf fps=…,crop,scale,tile`; no drawtext, it crashes). Measure with the `preview` launch config (production build) —
   dev mode is ~2× slower; a hidden browser pane runs no animation frames (advance `gsap.globalTimeline` by hand).
   The phone bottom bar is hidden in the whole lobby and slides in only on the practice (quiz) pages
   (`data-menus` on `.shell`; owner's choice). `lib/lobby.ts` remembers the opened category for the session.

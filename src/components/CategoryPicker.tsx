@@ -27,6 +27,11 @@ type Id = Group | 'all';
 interface Node { id: Id; icon: string; name: string; short: string; done: number; total: number; stages: { k: Level; total: number; done: number }[] }
 
 const LEVEL_TH: Record<Level, string> = { easy: 'ง่าย', medium: 'กลาง', hard: 'ยาก' };
+/** how long a circle takes to move to its new place (seconds) */
+const MOVE = 0.62;
+/** where a circle was before a tap, and a copy of how it looked then (for the cross-fade) */
+type Snap = { rect: DOMRect; kind: string; look: HTMLElement };
+const kindOf = (n: Element) => (n.classList.contains('is-chosen') ? 'chosen' : n.classList.contains('is-mini') ? 'mini' : 'grid');
 /** the four skills sit on an arc under the chosen circle: listen on the left, round the bottom, write on the right (degrees clockwise from the top) */
 const SKILLS: { r: Route; a: number }[] = [{ r: 'listen', a: 252 }, { r: 'speak', a: 206 }, { r: 'read', a: 154 }, { r: 'write', a: 108 }];
 
@@ -91,14 +96,19 @@ export function CategoryPicker() {
   // remembered while the app is open: coming back from a practice page shows the chosen category again
   const focus = useCategoryOpen();
   const stage = useRef<HTMLDivElement>(null);
-  const pending = useRef<{ flip: Flip.FlipState; h: number } | null>(null);
+  const ghostLayer = useRef<HTMLDivElement>(null);
+  const pending = useRef<{ flip: Flip.FlipState; h: number; snaps: Map<string, Snap> } | null>(null);
+  const prevFocus = useRef<boolean | null>(null);
 
   const setFocus = setCategoryOpen;
-  /** record where every circle is now, so the layout change can be animated from there */
+  /** record where every circle is now (and how it looks), so the layout change can be animated from there */
   const capture = () => {
     const el = stage.current;
     if (!el || prefersReducedMotion()) return;
-    pending.current = { flip: Flip.getState(el.querySelectorAll('.cp-node')), h: el.offsetHeight };
+    ghostLayer.current?.replaceChildren(); // a tap during the last move: drop its leftover ghosts
+    const nodes = Array.from(el.querySelectorAll<HTMLElement>('.cp-node'));
+    const snaps = new Map(nodes.map((n) => [n.dataset.flipId ?? '', { rect: n.getBoundingClientRect(), kind: kindOf(n), look: n.cloneNode(true) as HTMLElement }]));
+    pending.current = { flip: Flip.getState(nodes), h: el.offsetHeight, snaps };
   };
   const pick = (id: Id) => {
     capture();
@@ -121,13 +131,36 @@ export function CategoryPicker() {
       const tidy = (els: Element[]) => () => els.forEach((t) => ['transform', 'translate', 'rotate', 'scale'].forEach((k) => (t as HTMLElement).style.removeProperty(k)));
       // owner: the chosen circle grows steadily all the way while it travels, and nothing goes past its final size —
       // so a gentle in-out ease (power3 left it small for the first 0.15 s, then grew it all at once) and no overshoot
-      Flip.from(p.flip, { duration: 0.62, ease: 'sine.inOut', scale: true, stagger: 0.015, onComplete: tidy(Array.from(el.querySelectorAll('.cp-node'))) });
+      const nodes = Array.from(el.querySelectorAll<HTMLElement>('.cp-node'));
+      // A circle that changes kind (grid ↔ chosen ↔ small) also changes what it shows (a small one hides its name),
+      // so scaling its new look from the old size showed e.g. a huge bare icon in the middle (owner's video). Those
+      // cross-fade: a copy of the old look rides the same path and fades out while the new look fades in.
+      const box = stage.current!.getBoundingClientRect();
+      const swaps = nodes.flatMap((n) => {
+        const s = p.snaps.get(n.dataset.flipId ?? '');
+        return s && s.kind !== kindOf(n) ? [{ n, s, to: n.getBoundingClientRect() }] : [];
+      });
+      Flip.from(p.flip, { duration: MOVE, ease: 'sine.inOut', scale: true, onComplete: tidy(nodes) });
+      for (const { n, s, to } of swaps) {
+        const g = s.look;
+        g.removeAttribute('style'); g.removeAttribute('data-flip-id'); g.removeAttribute('aria-label'); g.classList.add('cp-ghost');
+        g.tabIndex = -1;
+        Object.assign(g.style, { left: s.rect.left - box.left + 'px', top: s.rect.top - box.top + 'px', width: s.rect.width + 'px', height: s.rect.height + 'px' });
+        ghostLayer.current?.appendChild(g);
+        gsap.to(g, { x: to.left - s.rect.left, y: to.top - s.rect.top, scale: to.width / s.rect.width, duration: MOVE, ease: 'sine.inOut', onComplete: () => g.remove() });
+        gsap.to(g, { opacity: 0, duration: 0.4, delay: 0.08, ease: 'power1.inOut' });
+        gsap.fromTo(n, { opacity: 0 }, { opacity: 1, duration: 0.42, ease: 'power1.inOut', clearProps: 'opacity' });
+      }
       const dh = p.h - el.offsetHeight;
       const below: Element[] = [];
       for (let n = el.closest('.cp')?.nextElementSibling; n; n = n.nextElementSibling) below.push(n);
-      if (dh && below.length) gsap.fromTo(below, { y: dh }, { y: 0, duration: 0.62, ease: 'sine.inOut', onComplete: tidy(below) });
+      if (dh && below.length) gsap.fromTo(below, { y: dh }, { y: 0, duration: MOVE, ease: 'sine.inOut', onComplete: tidy(below) });
     }
-    if (focus && !prefersReducedMotion()) {
+    // the skill keys and the back link appear when the category opens; switching straight to another category
+    // leaves them in place (they used to vanish and pop out again on every switch)
+    const opened = focus && prevFocus.current !== true;
+    prevFocus.current = focus;
+    if (opened && !prefersReducedMotion()) {
       // the skill keys grow out to their size and stop there (they used to pop to 111 % and settle back)
       gsap.fromTo(el.querySelectorAll('.cp-skill'), { scale: 0.4, autoAlpha: 0 },
         { scale: 1, autoAlpha: 1, duration: 0.4, stagger: 0.06, delay: p ? 0.45 : 0.1, ease: 'power2.out' });
@@ -219,6 +252,8 @@ export function CategoryPicker() {
             <span className="cp-strip-label muted small">หมวดอื่น</span>
           </>
         ) : null}
+        {/* copies of circles fading out while they change kind (filled by the layout effect, never by React) */}
+        <div className="cp-ghosts" ref={ghostLayer} aria-hidden="true" />
       </div>
     </section>
   );
