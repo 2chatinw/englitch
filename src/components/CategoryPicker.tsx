@@ -114,7 +114,7 @@ export function CategoryPicker() {
   const focus = useCategoryOpen();
   const stage = useRef<HTMLDivElement>(null);
   const ghostLayer = useRef<HTMLDivElement>(null);
-  const pending = useRef<{ flip: Flip.FlipState; h: number; snaps: Map<string, Snap> } | null>(null);
+  const pending = useRef<{ flip: Flip.FlipState; belowTop: number | null; snaps: Map<string, Snap>; extras: Snap[] } | null>(null);
   const prevFocus = useRef<boolean | null>(null);
 
   const setFocus = setCategoryOpen;
@@ -124,8 +124,12 @@ export function CategoryPicker() {
     if (!el || prefersReducedMotion()) return;
     ghostLayer.current?.replaceChildren(); // a tap during the last move: drop its leftover ghosts
     const nodes = Array.from(el.querySelectorAll<HTMLElement>('.cp-node'));
-    const snaps = new Map(nodes.map((n) => [n.dataset.flipId ?? '', { rect: n.getBoundingClientRect(), kind: kindOf(n), look: n.cloneNode(true) as HTMLElement }]));
-    pending.current = { flip: Flip.getState(nodes), h: el.offsetHeight, snaps };
+    const snap = (n: HTMLElement): Snap => ({ rect: n.getBoundingClientRect(), kind: kindOf(n), look: n.cloneNode(true) as HTMLElement });
+    const snaps = new Map(nodes.map((n) => [n.dataset.flipId ?? '', snap(n)]));
+    // the skill keys, the back link and the "other categories" label: faded out when going back to the eight circles
+    const extras = Array.from(el.querySelectorAll<HTMLElement>('.cp-skills, .cp-back, .cp-strip-label')).map(snap);
+    const below = el.closest('.cp')?.nextElementSibling;
+    pending.current = { flip: Flip.getState(nodes), belowTop: below ? below.getBoundingClientRect().top : null, snaps, extras };
   };
   const pick = (id: Id) => {
     capture();
@@ -169,10 +173,22 @@ export function CategoryPicker() {
         gsap.to(g, { opacity: 0, duration: 0.4, delay: 0.08, ease: 'power1.inOut' });
         gsap.fromTo(n, { opacity: 0 }, { opacity: 1, duration: 0.42, ease: 'power1.inOut', clearProps: 'opacity' });
       }
-      const dh = p.h - el.offsetHeight;
+      // the content under the circles slides from where it was (measured on the content itself, so a change in
+      // the heading above counts too — it used to jump by that much on the first frame)
       const below: Element[] = [];
       for (let n = el.closest('.cp')?.nextElementSibling; n; n = n.nextElementSibling) below.push(n);
-      if (dh && below.length) gsap.fromTo(below, { y: dh }, { y: 0, duration: MOVE, ease: 'sine.inOut', onComplete: tidy(below) });
+      const dh = below.length && p.belowTop !== null ? p.belowTop - below[0].getBoundingClientRect().top : 0;
+      if (Math.abs(dh) > 0.5) gsap.fromTo(below, { y: dh }, { y: 0, duration: MOVE, ease: 'sine.inOut', onComplete: tidy(below) });
+      // going back: the skill keys, back link and label fade out where they were instead of vanishing in one frame
+      if (!focus) {
+        for (const x of p.extras) {
+          const g = x.look;
+          g.classList.add('cp-exit'); g.setAttribute('aria-hidden', 'true'); g.removeAttribute('data-key');
+          Object.assign(g.style, { left: x.rect.left - box.left + 'px', top: x.rect.top - box.top + 'px', width: x.rect.width + 'px', height: x.rect.height + 'px' });
+          ghostLayer.current?.prepend(g);
+          gsap.to(g, { opacity: 0, scale: 0.94, duration: 0.24, ease: 'power1.out', onComplete: () => g.remove() });
+        }
+      }
     }
     // the skill keys and the back link appear when the category opens; switching straight to another category
     // leaves them in place (they used to vanish and pop out again on every switch)
@@ -220,7 +236,8 @@ export function CategoryPicker() {
         </div>
         <p key={state.settings.level} className="cp-legend-hint muted small">{LEVEL_PICK.find((x) => x.k === state.settings.level)?.hint}</p>
         <AccentChip />
-        {focus ? <p className="muted small">ฝึกครบทั้ง 4 ทักษะได้ในหมวดเดียวกัน ตอบถูกครบทุกประโยค = ผ่าน Mission</p> : null}
+        {/* always in the layout (only faded), so opening a category doesn't push everything down a line in one frame */}
+        <p className={'cp-tip muted small' + (focus ? ' is-on' : '')} aria-hidden={!focus}>ฝึกครบทั้ง 4 ทักษะได้ในหมวดเดียวกัน ตอบถูกครบทุกประโยค = ผ่าน Mission</p>
       </div>
       <div className={'cp-stage' + (focus ? ' is-focus' : '')} ref={stage}>
         {focus ? (

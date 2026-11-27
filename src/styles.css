@@ -532,7 +532,11 @@ input[type="email"]:focus, input[type="password"]:focus { outline: none; border-
 .cp-node.is-mini { width: var(--m); height: var(--m); }
 /* a circle changing kind cross-fades: a copy of its old look rides the same path on this layer (CategoryPicker) */
 .cp-ghosts { position: absolute; inset: 0; z-index: 2; pointer-events: none; }
-.cp-ghost { position: absolute; margin: 0; transform-origin: 0 0; pointer-events: none; transition: none; }
+/* (the big circle's 14px top margin must not carry over to its copy — that made it drop on the first frame) */
+.cp-ghosts > .cp-node.cp-ghost { position: absolute; margin: 0; transform-origin: 0 0; pointer-events: none; transition: none; }
+.cp-ghosts > .cp-exit { position: absolute; margin: 0; pointer-events: none; transform-origin: 50% 50%; }
+.cp-tip { margin: 0; opacity: 0; transition: opacity .3s ease; }
+.cp-tip.is-on { opacity: 1; }
 .sring { position: absolute; inset: 0; width: 100%; height: 100%; rotate: -90deg; overflow: visible; }
 .sring circle { fill: none; stroke-width: 7; stroke-linecap: round; transition: stroke-dasharray .7s cubic-bezier(.22, 1, .36, 1); }
 .sring-track { stroke-opacity: var(--ring-track); }
