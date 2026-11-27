@@ -133,6 +133,13 @@ export function CategoryPicker() {
     const extras = Array.from(el.querySelectorAll<HTMLElement>('.cp-skills, .cp-back, .cp-strip-label')).map(snap);
     const below = el.closest('.cp')?.nextElementSibling;
     pending.current = { flip: Flip.getState(nodes), belowTop: below ? below.getBoundingClientRect().top : null, snaps, extras };
+    // The circle under the mouse has the hover grow (CSS `scale: 1.05`, eased by a transition). Reading it, GSAP
+    // moves that `scale` into an inline `transform`, which then stayed on as part of the END size: the chosen circle
+    // swelled past its final size and dropped back when tidy() took it off (owner's video). The start spot is already
+    // recorded above, so drop GSAP's copy and keep the hover grow off until tidy() (no paint before the move starts).
+    gsap.killTweensOf(nodes); // a tap during the last move: stop it, the new move starts from the spot recorded above
+    gsap.set(nodes, { clearProps: 'transform,translate,rotate,scale' });
+    nodes.forEach((n) => { n.style.transition = 'none'; n.style.scale = 'none'; });
   };
   const pick = (id: Id) => {
     capture();
@@ -153,7 +160,7 @@ export function CategoryPicker() {
       // cost ~20 ms before the first frame. The stage takes its new height at once and the content under it
       // slides from the old spot instead of the stage's height being tweened.
       // afterwards take GSAP's inline transform styles off again (a left-over `scale: none` stopped the hover grow)
-      const tidy = (els: Element[]) => () => els.forEach((t) => ['transform', 'translate', 'rotate', 'scale'].forEach((k) => (t as HTMLElement).style.removeProperty(k)));
+      const tidy = (els: Element[]) => () => els.forEach((t) => ['transform', 'translate', 'rotate', 'scale', 'transition'].forEach((k) => (t as HTMLElement).style.removeProperty(k)));
       // owner: the chosen circle grows steadily all the way while it travels, and nothing goes past its final size —
       // so a gentle in-out ease (power3 left it small for the first 0.15 s, then grew it all at once) and no overshoot
       const nodes = Array.from(el.querySelectorAll<HTMLElement>('.cp-node'));

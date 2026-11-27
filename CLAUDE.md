@@ -85,6 +85,9 @@ npm run build   # tsc -b && vite build → dist/
   content below slides with `y` instead of tweening the stage height; inline transform styles are removed on complete
   (a left-over `scale: none` blocks the hover grow). Owner: the chosen circle grows steadily all the way while it moves
   (`sine.inOut`) and nothing may grow past its final size then shrink back — no `back.out` on the skill keys.
+  The hover grow (`scale: 1.05`) on the tapped circle made it swell ~10% past its final size: GSAP moves a CSS
+  `scale` into its inline transform, which stayed in the end size. `capture()` clears that after `Flip.getState` and
+  keeps hover off until tidy(). Tests must HOVER before tapping (a mouse always does) — a plain `.click()` hid this.
   A circle that changes kind (grid ↔ chosen ↔ small): `capture()` keeps a copy of its old look on `.cp-ghosts`, which
   fades out in 0.15 s (its old words go at once; scaling the small look up showed a huge bare icon — owner's Medal
   video); the circle travels with its icon, and just before it arrives its new name appears one letter at a time in a
