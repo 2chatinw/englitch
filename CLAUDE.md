@@ -55,7 +55,8 @@ npm run build   # tsc -b && vite build → dist/
   more (`--cap-mix`) so the pictures stay visible. Owner wants roomy spacing around the circles (gap in `.cp`).
   Below the circles: a bento (owner picked design 1) — `components/DailyPhrase.tsx` is the phrase of the day as an audio
   player (design 3: big yellow play, words light up with the voice via `sayTracked` in `lib/speech.ts` or a timed
-  fallback, waveform, 1×/ช้า toggle) in a blue-purple gradient card (`--pod-a/b/c`), beside tiles for learned (ring),
+  fallback, waveform, 1×/ช้า toggle) in a "liquid glass" card (owner's choice: frosted glass `--glass-*` over slowly
+  drifting pastel blobs `.dp-liquid`, `--blob-*`; a subtle shine on top), beside tiles for learned (ring),
   solid and due counts.
 - Missions (no daily missions, owner's choice): one mission per main category (`lib/missions.ts`,
   `components/Missions.tsx`), each practised by listen/speak/read/write. Passed when every phrase in it was answered

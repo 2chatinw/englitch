@@ -62,6 +62,7 @@ export function DailyPhrase({ phrase }: { phrase: Phrase }) {
 
   return (
     <article className={'dp' + (playing ? ' is-playing' : '')} aria-labelledby="dp-h">
+      <span className="dp-liquid" aria-hidden="true"><i /><i /><i /></span>
       <span className="dp-tag" id="dp-h">✦ ประโยคประจำวัน · {date}</span>
       <div className="dp-main">
         <button type="button" className="dp-play" onClick={play} aria-label={(playing ? 'หยุด' : slow ? 'ฟังช้า' : 'ฟัง') + ' ' + phrase.e}>
