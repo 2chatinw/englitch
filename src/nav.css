@@ -358,23 +358,6 @@ html { scroll-padding-top: 88px; }
 .acct-out:hover, .acct-out:focus-visible { background: var(--bad-soft); }
 @media (prefers-reduced-motion: reduce) { .acct-chev, .qring-fill, .rail-item { transition: none; } }
 
-/* ---------- Labels by the practice menus: which category they practise (tap = back to the category circles) ---------- */
-.mtag {
-  display: flex; flex-direction: column; align-items: center; gap: 1px; border: 1px solid var(--line); cursor: pointer;
-  background: color-mix(in srgb, var(--surface) 88%, transparent); color: var(--ink); line-height: 1.2; text-align: center;
-  backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); transition: border-color .2s, transform .2s;
-}
-.mtag:hover { border-color: var(--accent); }
-.mtag:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
-.mtag small { font-size: .66rem; color: var(--muted); }
-.mtag > span { font-size: .8rem; font-weight: 600; }
-.mtag-rail { width: 100%; margin-top: 10px; padding: 8px 4px; border-radius: 16px; box-shadow: var(--shadow); overflow-wrap: anywhere; }
-.mtag-bottom {
-  position: absolute; left: 50%; bottom: calc(100% + 6px); translate: -50% 0; flex-direction: row; gap: 6px;
-  padding: 5px 12px; border-radius: 999px; box-shadow: 0 6px 16px -8px rgba(21, 39, 92, .4); white-space: nowrap;
-}
-/* room for the mission label that floats above the phone tab bar */
-@media (max-width: 899px) { .main { padding-bottom: calc(var(--bottom-h) + 72px + env(safe-area-inset-bottom)); } }
 
 /* The practice menus (side rail, bottom bar) are hidden in the lobby and slide in on the practice (quiz) pages.
  */

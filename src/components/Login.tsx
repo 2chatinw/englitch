@@ -30,7 +30,7 @@ export function SignInOptions() {
   const [busy, setBusy] = useState<'' | 'google' | 'facebook' | 'discord'>('');
   return (
     <div className="signin">
-      <p className="muted">เข้าสู่ระบบเพื่อเริ่มฝึก ความคืบหน้าจะเก็บในบัญชี เล่นต่อได้ทุกเครื่อง</p>
+      <p className="muted">เข้าสู่ระบบเพื่อเริ่มฝึก ความคืบหน้าจะเก็บในบัญชี ฝึกต่อได้ทุกเครื่อง</p>
       <div className="login-actions">
         <button type="button" className="btn btn-lg btn-block btn-discord" disabled={!!busy}
           onClick={() => { setBusy('discord'); discord(); }}>

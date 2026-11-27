@@ -48,7 +48,7 @@ function toUser(u: import('firebase/auth').User): CloudUser {
   const p = u.providerData[0]?.providerId;
   return {
     uid: u.uid,
-    name: u.displayName || (u.email ? u.email.split('@')[0] : 'ผู้เล่น'),
+    name: u.displayName || (u.email ? u.email.split('@')[0] : 'ผู้ฝึก'),
     email: u.email,
     photo: u.photoURL,
     provider: u.uid.startsWith('discord:') ? 'discord' : p === 'google.com' ? 'google' : p === 'facebook.com' ? 'facebook' : p === 'password' ? 'password' : 'other',

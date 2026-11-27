@@ -2,7 +2,9 @@ import { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
-import { Icon, type IconName } from '../components/Icon';
+import { Icon } from '../components/Icon';
+import { SkillArt, type Skill } from '../components/SkillArt';
+import { StageRing } from '../components/CategoryPicker';
 import { Brand, useScrolled } from '../components/Brand';
 import { HeroKeys } from '../components/HeroKeys';
 import { SectionNav } from '../components/SectionNav';
@@ -23,26 +25,40 @@ function initialBackdrop(): { kind: BackdropKind | null; picker: boolean } {
 
 gsap.registerPlugin(ScrollTrigger);
 
-const FEATURES: { icon: IconName; title: string; body: string }[] = [
-  { icon: 'headphones', title: 'ฝึกฟัง', body: 'ฟังประโยคแล้วพิมพ์ตาม มีคำใบ้ทีละขั้น และยอมรับการสะกดพลาดเล็กน้อย' },
-  { icon: 'mic', title: 'ฝึกพูด', body: 'พูดใส่ไมค์ ระบบบอกว่าคำไหนยังไม่ชัด ใช้ไมค์บนคีย์บอร์ดมือถือก็ได้' },
-  { icon: 'book', title: 'ฝึกอ่าน', body: 'อ่านสถานการณ์และประโยคจาก 7 หมวด ตั้งแต่ร้านอาหาร สนามบิน ไปจนถึงห้องประชุม แล้วเลือกคำตอบที่ถูก' },
-  { icon: 'pen', title: 'ฝึกเขียน', body: 'เห็นภาษาไทยแล้วพิมพ์เป็นอังกฤษ ด้วยประโยคที่ใช้จริง ประโยคที่พลาดจะวนกลับมาให้ฝึกอีก' },
-  { icon: 'target', title: 'Mission ทีละหมวด', body: 'เลือกหมวดที่อยากเก่ง เช่น ท่องเที่ยว การทำงาน วิชาการ แล้วฝึกครบ 4 ทักษะ วงแหวนสามสีบอกว่าผ่านไปถึงไหนแล้ว' },
-  { icon: 'lock', title: 'ส่วนตัว 100%', body: 'ฝึกเพื่อตัวเองล้วน ๆ ตามจังหวะของคุณ ความคืบหน้าและชื่อของคุณเห็นได้เฉพาะคุณคนเดียว' },
+/**
+ * Features in the app's own look: the four skills as the same pastel round keys with pictures as in the lobby,
+ * the mission card with the three-colour level ring, and a plain key for privacy.
+ */
+type Art = Skill | 'ring' | 'lock';
+const FEATURES: { art: Art; title: string; body: string }[] = [
+  { art: 'listen', title: 'ฝึกฟัง', body: 'ฟังประโยคแล้วพิมพ์ตาม มีคำใบ้ทีละขั้น และยอมรับการสะกดพลาดเล็กน้อย' },
+  { art: 'speak', title: 'ฝึกพูด', body: 'พูดใส่ไมค์ ระบบบอกว่าคำไหนยังไม่ชัด ใช้ไมค์บนคีย์บอร์ดมือถือก็ได้' },
+  { art: 'read', title: 'ฝึกอ่าน', body: 'อ่านสถานการณ์และประโยคจาก 7 หมวด ตั้งแต่ร้านอาหาร สนามบิน ไปจนถึงห้องประชุม แล้วเลือกคำตอบที่ถูก' },
+  { art: 'write', title: 'ฝึกเขียน', body: 'เห็นภาษาไทยแล้วพิมพ์เป็นอังกฤษ ด้วยประโยคที่ใช้จริง ประโยคที่พลาดจะวนกลับมาให้ฝึกอีก' },
+  { art: 'ring', title: 'Mission ทีละหมวด', body: 'เลือกหมวดที่อยากเก่ง เช่น ท่องเที่ยว การทำงาน วิชาการ แล้วฝึกครบ 4 ทักษะ วงแหวนสามสีบอกว่าผ่านประโยคสั้น ยาวขึ้น และยาวไปถึงไหนแล้ว' },
+  { art: 'lock', title: 'ส่วนตัว 100%', body: 'ฝึกเพื่อตัวเองล้วน ๆ ตามจังหวะของคุณ ความคืบหน้าและชื่อของคุณเห็นได้เฉพาะคุณคนเดียว' },
 ];
 
 const COPYRIGHT_YEAR = Math.max(2026, new Date().getFullYear());
 
 const STEPS = [
   { n: '1', title: 'เข้าสู่ระบบ', body: 'ใช้บัญชี Discord หรือ Google ได้เลย ไม่ต้องตั้งรหัสผ่านใหม่' },
-  { n: '2', title: 'เลือก Mission จาก 7 หมวด', body: 'ทั่วไป เที่ยว งาน วิชาการ บันเทิง สายอาชีพ และเกม ฝึกด้วยการฟัง พูด อ่าน เขียน ตามจังหวะของตัวเอง' },
-  { n: '3', title: 'ไปใช้จริง', body: 'ใช้ประโยคที่ฝึกไว้ ทั้งตอนเที่ยว ทำงาน เรียน หรือคุยกับเพื่อนต่างชาติ แล้วกลับมาฝึกต่อตามจังหวะของตัวเอง' },
+  { n: '2', title: 'แตะเลือกหมวด', body: 'ทั่วไป เที่ยว งาน วิชาการ บันเทิง สายอาชีพ เกม หรือรวมทุกหมวด วงแหวนสามสีรอบปุ่มบอกว่าฝึกไปถึงไหนแล้ว' },
+  { n: '3', title: 'เลือกทักษะแล้วฝึกเลย', body: 'กดปุ่ม ฟัง พูด อ่าน เขียน (บนคอมกด 1–4 ได้) ตอบถูกครบทุกประโยคในหมวด = ผ่าน Mission ไม่มีจับเวลา ฝึกตามจังหวะของตัวเอง' },
 ];
 
 // a few phrases from every main category, in turn
 const TICKER = (['general', 'travel', 'business', 'academic', 'entertainment', 'esp', 'gaming'] as const)
   .flatMap((g) => PHRASES.filter((p) => p.g === g && p.c !== 'slang').slice(0, 3));
+
+// a sample ring for the mission card: some short sentences done, a few longer ones
+const SAMPLE_RING = [{ k: 'easy' as const, total: 10, done: 6 }, { k: 'medium' as const, total: 7, done: 2 }, { k: 'hard' as const, total: 3, done: 0 }];
+
+function FeatureArt({ art }: { art: Art }) {
+  if (art === 'ring') return <span className="lp-art lp-art-ring" aria-hidden="true"><StageRing stages={SAMPLE_RING} /></span>;
+  if (art === 'lock') return <span className="lp-art lp-art-plain" aria-hidden="true"><Icon name="lock" /></span>;
+  return <span className={'lp-art cp-skill-' + art} aria-hidden="true"><SkillArt kind={art} size={34} /></span>;
+}
 
 export default function Landing() {
   const { error } = useAuth();
@@ -136,7 +152,7 @@ export default function Landing() {
           <div className="lp-grid">
             {FEATURES.map((f) => (
               <article key={f.title} className="lp-feature">
-                <span className="lp-feature-ic"><Icon name={f.icon} /></span>
+                <FeatureArt art={f.art} />
                 <h3>{f.title}</h3>
                 <p className="muted">{f.body}</p>
               </article>
@@ -161,9 +177,10 @@ export default function Landing() {
         </section>
 
         <section className="lp-final" data-rise>
+          <span className="dp-liquid" aria-hidden="true"><i /><i /><i /></span>
           <h2>พร้อมเริ่มฝึกวันแรกหรือยัง</h2>
           <p>ฟรีทั้งหมด ใช้บัญชี Discord หรือ Google เข้าสู่ระบบได้ง่าย ๆ</p>
-          <button type="button" className="btn btn-lg lp-final-btn" onClick={signIn}>เข้าสู่ระบบแล้วเริ่มเลย <Icon name="arrow" /></button>
+          <button type="button" className="btn btn-primary btn-lg lp-final-btn" onClick={signIn}>เข้าสู่ระบบแล้วเริ่มเลย <Icon name="arrow" /></button>
         </section>
       </main>
 

@@ -5,7 +5,7 @@ export const ROUTES = ['today', 'listen', 'speak', 'read', 'write'] as const;
 export type Route = (typeof ROUTES)[number];
 
 export const PAGES: Record<Route, { th: string; short: string; en: string; icon: IconName }> = {
-  today: { th: 'ล็อบบี้วันนี้', short: 'วันนี้', en: 'Lobby', icon: 'home' },
+  today: { th: 'หน้าหลัก', short: 'หน้าหลัก', en: 'Home', icon: 'home' },
   listen: { th: 'ฝึกฟัง', short: 'ฟัง', en: 'Listen', icon: 'headphones' },
   speak: { th: 'ฝึกพูด', short: 'พูด', en: 'Speak', icon: 'mic' },
   read: { th: 'ฝึกอ่าน', short: 'อ่าน', en: 'Read', icon: 'book' },

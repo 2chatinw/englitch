@@ -56,7 +56,7 @@ export function AccountSheet({ open, onClose }: { open: boolean; onClose: () => 
             </form>
           </section>
           <section className="field">
-            <p className="muted small">ความคืบหน้าของคุณเป็นส่วนตัว เห็นได้เฉพาะคุณ และเก็บอยู่ในบัญชีครบ เข้าสู่ระบบใหม่เมื่อไหร่ก็เล่นต่อได้</p>
+            <p className="muted small">ความคืบหน้าของคุณเป็นส่วนตัว เห็นได้เฉพาะคุณ และเก็บอยู่ในบัญชีครบ เข้าสู่ระบบใหม่เมื่อไหร่ก็ฝึกต่อได้</p>
             <button type="button" className="btn btn-ghost" disabled={busy} onClick={async () => {
               setBusy(true);
               try { await auth.signOut(); onClose(); toast('ออกจากระบบแล้ว'); }

@@ -8,7 +8,6 @@ import { prefersReducedMotion } from '../lib/util';
 import { Brand, useScrolled } from './Brand';
 import { ThemeToggle } from './ThemeToggle';
 import { AccountMenu } from './AccountMenu';
-import { MissionTag } from './MissionMenu';
 
 /** Middle of the top bar (owner's pick): "ฝึกต่อเนื่องวันที่ N", shortened to "วันที่ N" on narrow phones. */
 function Streak({ n }: { n: number }) {
@@ -104,7 +103,6 @@ export function QuestRail({ route }: { route: Route }) {
           );
         })}
       </nav>
-      <MissionTag place="rail" />
     </aside>
   );
 }
@@ -137,7 +135,6 @@ export function BottomBar({ route }: { route: Route }) {
   const { list, ind } = useIndicator(route, 'x');
   return (
     <nav className="bottombar" aria-label="โหมดฝึก">
-      <MissionTag place="bottom" />
       <div className="bottombar-list" ref={list as RefObject<HTMLDivElement>}>
         <span className="bottom-ind" ref={ind} aria-hidden="true" />
         {ROUTES.map((r) => {

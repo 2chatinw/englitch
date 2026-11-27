@@ -33,9 +33,9 @@ npm run build   # tsc -b && vite build → dist/
 ## Where things are
 
 - `src/App.tsx` — Gate (landing vs app) and the app Shell.
-- `src/components/Nav.tsx` — TopBar: three columns — logo left, "ฝึกต่อเนื่องวันที่ N" centred (plain text, "วันที่ N" on phones; owner's pick), theme + account right (the Mission button was removed, owner's choice — categories are picked only in the lobby). In the lobby the hidden rail takes no width so the page centre matches the bar's centre. QuestRail (desktop icon rail) and BottomBar (phone), each with a `MissionTag` (`MissionMenu.tsx`) saying which category the menu practises; tapping it goes back to the 8 circles. Changing mission restarts the open practice page (App keys it by mission).
+- `src/components/Nav.tsx` — TopBar: three columns — logo left, "ฝึกต่อเนื่องวันที่ N" centred (plain text, "วันที่ N" on phones; owner's pick), theme + account right (the Mission button was removed, owner's choice — categories are picked only in the lobby). In the lobby the hidden rail takes no width so the page centre matches the bar's centre. QuestRail (desktop icon rail) and BottomBar (phone). The category label by the menus was removed (owner: the practice page header already shows the category). `MissionMenu.tsx` only keeps `useChooseMission`. Changing mission restarts the open practice page (App keys it by mission).
 - `src/components/AccountMenu.tsx` — avatar pill + drop-down (copied from the owner's scholarship project, `C:\ProjectWeb\scholarship`).
-- `src/pages/Landing.tsx` — landing; `HeroKeys.tsx` (keypad hero: one key per category, shows a sample sentence), `Keypad.tsx` (isometric SVG),
+- `src/pages/Landing.tsx` — landing (kept in the app's look: feature cards use the pastel skill keys / level ring, the closing call to action is liquid glass; "How it works" = sign in → tap a category → pick a skill); `HeroKeys.tsx` (keypad hero: one key per category, shows a sample sentence), `Keypad.tsx` (isometric SVG),
   `SectionNav.tsx` (scroll-spy links), `SignInDrop.tsx` (rope-ladder sign-in badges), `ThemeToggle.tsx` (sun/moon).
 - `src/components/PageStage.tsx` — page-change wipe (the same keypad taps four keys and Space).
 - Practice modes = the four skills only: `pages/Listen.tsx` (hear → type), `Speak.tsx` (mic; Brave blocks web speech
