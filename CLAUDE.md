@@ -88,7 +88,11 @@ npm run build   # tsc -b && vite build → dist/
   A circle that changes kind (grid ↔ chosen ↔ small) cross-fades: `capture()` keeps a copy of its old look, which rides
   the same path on `.cp-ghosts` and fades out while the new look fades in (scaling the small look up showed a huge bare
   icon — owner's Medal video). Switching straight to another category leaves the skill keys in place (`prevFocus`).
-  Resizing the circles for real costs ~10 ms a frame (text reflow) — keep transforms. Owner records clips with Medal
+  Resizing the circles for real costs ~10 ms a frame (text reflow) — keep transforms. A tap changes only the picker's
+  own `picked` state; the mission (a setting the whole app reads → full redraw, ~25-35 ms in dev, the jerk the owner
+  felt while signed in) is saved `SAVE_AFTER` 1.1 s later, or at once when a skill key is pressed / the lobby unmounts.
+  Testing tip: another browser-pane tab on localhost:5173 (e.g. another session's) shares localStorage and overwrites
+  `englitch-v1`, so check the mission on screen, not in localStorage; a hidden pane pauses the page-change wipe. Owner records clips with Medal
   (`C:\Medal\…\exports\*.mp4`, 144 fps): read them with ffmpeg (`-vf fps=…,crop,scale,tile`; no drawtext, it crashes). Measure with the `preview` launch config (production build) —
   dev mode is ~2× slower; a hidden browser pane runs no animation frames (advance `gsap.globalTimeline` by hand).
   The phone bottom bar is hidden in the whole lobby and slides in only on the practice (quiz) pages

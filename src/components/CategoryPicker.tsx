@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { setCategoryOpen, useCategoryOpen } from '../lib/lobby';
 import gsap from 'gsap';
 import { Flip } from 'gsap/Flip';
@@ -29,6 +29,8 @@ interface Node { id: Id; icon: string; name: string; short: string; done: number
 const LEVEL_TH: Record<Level, string> = { easy: 'ง่าย', medium: 'กลาง', hard: 'ยาก' };
 /** how long a circle takes to move to its new place (seconds) */
 const MOVE = 0.62;
+/** when the picked category is saved as the mission: after the circle and the skill keys have finished moving (ms) */
+const SAVE_AFTER = 1100;
 /** where a circle was before a tap, and a copy of how it looked then (for the cross-fade) */
 type Snap = { rect: DOMRect; kind: string; look: HTMLElement };
 const kindOf = (n: Element) => (n.classList.contains('is-chosen') ? 'chosen' : n.classList.contains('is-mini') ? 'mini' : 'grid');
@@ -92,7 +94,22 @@ export function CategoryPicker() {
       }, { k, total: 0, done: 0 })).filter((s) => s.total > 0),
     },
   ];
-  const current: Id = activeMission(state) ?? 'all';
+  // A tap first changes only this picker (`picked`), so the move starts at once; the mission itself — a setting
+  // the whole app reads, so saving it redraws every part of the page (~25-35 ms in dev, the jerk the owner saw
+  // when signed in) — is saved after the move (`SAVE_AFTER`), or straight away when a skill key is pressed first.
+  const [picked, setPicked] = useState<Id | null>(null);
+  const saveTimer = useRef<number | undefined>(undefined);
+  const saved: Id = activeMission(state) ?? 'all';
+  const current: Id = picked ?? saved;
+  const commit = useRef<() => void>(() => {});
+  commit.current = () => {
+    window.clearTimeout(saveTimer.current);
+    if (picked === null) return;
+    if (picked !== saved) choose(picked === 'all' ? null : picked);
+    if (!state.settings.onboarded) setSettings({ onboarded: true });
+    setPicked(null); // same batch as the save, so `current` never flickers back
+  };
+  useEffect(() => () => commit.current(), []); // leaving the lobby mid-move still saves the pick
   // remembered while the app is open: coming back from a practice page shows the chosen category again
   const focus = useCategoryOpen();
   const stage = useRef<HTMLDivElement>(null);
@@ -112,9 +129,10 @@ export function CategoryPicker() {
   };
   const pick = (id: Id) => {
     capture();
-    if (id !== current) choose(id === 'all' ? null : id);
-    if (!state.settings.onboarded) setSettings({ onboarded: true });
+    setPicked(id);
     setFocus(true);
+    window.clearTimeout(saveTimer.current);
+    saveTimer.current = window.setTimeout(() => commit.current(), SAVE_AFTER);
   };
   const back = () => { capture(); setFocus(false); };
 
@@ -238,7 +256,7 @@ export function CategoryPicker() {
           <>
             <div className="cp-skills" role="group" aria-label={'ฝึก ' + chosen.name}>
               {SKILLS.map(({ r, a }, i) => (
-                <button key={r} type="button" className={'cp-skill cp-skill-' + r} data-key={i + 1} onClick={() => navigate(r)}
+                <button key={r} type="button" className={'cp-skill cp-skill-' + r} data-key={i + 1} onClick={() => { commit.current(); navigate(r); }}
                   aria-label={PAGES[r].th} aria-keyshortcuts={String(i + 1)}
                   style={{ ['--sx' as string]: Math.sin((a * Math.PI) / 180).toFixed(3), ['--sy' as string]: (-Math.cos((a * Math.PI) / 180)).toFixed(3) }}>
                   <span className="cp-cap">
