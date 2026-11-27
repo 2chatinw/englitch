@@ -42,6 +42,10 @@ npm run build   # tsc -b && vite build → dist/
   academic, entertainment, esp (medical / IT / aviation). Each phrase has a subtopic `c` and its main category `g`
   (`GROUP_OF`). Gaming/everyday phrases live in `data/content.ts`, the other categories in `data/more.ts`.
   English and Thai must stay unique (Write shows the Thai as the question).
+- Lobby (`pages/Today.tsx`) = `components/CategoryPicker.tsx` (owner's sketch, Nov 2026): 8 circles in a 3-2-3 grid
+  (7 categories + "รวมทุกหมวด"), each in a 3-colour level ring (`StageRing`: green easy, yellow medium, orange hard).
+  Tapping one sets the mission; GSAP Flip slides it to the middle and grows it, the others drop into a row below,
+  and listen/speak/read/write pop out on an arc around it. A full reload starts back at the 8 circles.
 - Missions (no daily missions, owner's choice): one mission per main category (`lib/missions.ts`,
   `components/Missions.tsx`), each practised by listen/speak/read/write. Passed when every phrase in it was answered
   right once, in any mode. The active mission is `settings.mission`; practice then draws only from that category,

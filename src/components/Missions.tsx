@@ -4,7 +4,6 @@ import { Icon } from './Icon';
 import { useProgress } from '../state/progress';
 import { useToast } from '../state/toast';
 import type { Route } from '../lib/router';
-import { useChooseMission } from './MissionMenu';
 import { activeMission, allMissions, missionStats, type MissionStats } from '../lib/missions';
 import { levelStatus } from '../pages/practice';
 
@@ -56,52 +55,6 @@ export function MissionStrip(_: { route: Route }) {
         </div>
       ) : null}
     </div>
-  );
-}
-
-/**
- * Today page: the seven main categories as mission cards. Tapping one makes it the mission (tap again for
- * mixed practice); the skills are then opened from the menu or the buttons at the top of the page.
- */
-export function MissionBoard() {
-  const { state } = useProgress();
-  const active = activeMission(state);
-  const ms = allMissions(state);
-  const passed = ms.filter((m) => m.complete).length;
-  const choose = useChooseMission();
-
-  return (
-    <section className="card" data-reveal aria-labelledby="mboard-h">
-      <div className="section-head">
-        <h2 id="mboard-h">Mission</h2>
-        <span className="muted small">ผ่านแล้ว <b className="num">{passed}</b> จาก {ms.length}</span>
-      </div>
-      <ul className="mboard">
-        {ms.map((m) => {
-          const on = m.c === active;
-          return (
-            <li key={m.c} className={'mcard' + (on ? ' is-on' : '') + (m.complete ? ' is-done' : '')}>
-              <button type="button" className="mcard-pick" aria-pressed={on} onClick={() => choose(on ? null : m.c)}>
-                <span className="mcard-icon" aria-hidden="true">{m.icon}</span>
-                <span className="mcard-body">
-                  <span className="mcard-title">{m.name} <small className="mcard-en">{m.en}</small></span>
-                  <span className="mcard-blurb">{m.blurb}</span>
-                  <span className="mcard-meta">
-                    {m.complete ? <><Icon name="check" /> ผ่านแล้ว</> : <>ผ่าน <b className="num">{m.done}/{m.total}</b> ประโยค · ขั้น{LEVEL_TH[m.stage ?? 'easy']}</>}
-                  </span>
-                  <MissionBar m={m} />
-                </span>
-              </button>
-            </li>
-          );
-        })}
-      </ul>
-      <p className="muted small">
-        {active
-          ? 'เมนู ฟัง พูด อ่าน เขียน จะฝึกหมวดที่เลือกไว้ แตะการ์ดที่เลือกอยู่อีกครั้งเพื่อกลับไปฝึกรวมทุกหมวด เปลี่ยน Mission จากแถบด้านบนได้ทุกหน้า'
-          : 'ยังไม่ได้เลือก Mission ตอนนี้เมนู ฟัง พูด อ่าน เขียน จะสุ่มจากทุกหมวด แตะการ์ดเพื่อเลือกหมวด หรือเปลี่ยนจากแถบด้านบนได้ทุกหน้า'}
-      </p>
-    </section>
   );
 }
 
