@@ -58,16 +58,31 @@ export function Result({ ok, title, children }: { ok: boolean | 'near'; title: s
 
 const AUTO_NEXT_MS = 3000;
 
-/** On/off switch for the 3-second auto-next, shown beside the "next" button (also in Settings). */
-export function AutoNextSwitch() {
+/**
+ * Auto-next on/off (owner's pick): a round cyan→magenta play button in the story's top row. Off = faded; on = a
+ * glowing halo of colour light flows around it (after the "radiate in the darkness" ring the owner shared), with a
+ * short burst at the moment it's switched on. Same setting as the switch in Settings.
+ */
+export function AutoNextButton() {
   const { state, setSettings } = useProgress();
+  const toast = useToast();
   const on = state.settings.autoNext !== false;
+  const [burst, setBurst] = useState(0);
   return (
-    <label className="auto-switch" title="ไปข้อต่อไปเองใน 3 วินาทีเมื่อตอบถูก">
-      <input type="checkbox" role="switch" checked={on} onChange={(e) => setSettings({ autoNext: e.target.checked })} />
-      <span className="auto-switch-track" aria-hidden="true"><i /></span>
-      <span>ไปข้อต่อไปเอง</span>
-    </label>
+    <button type="button" role="switch" aria-checked={on} className={'auto-btn' + (on ? ' is-on' : '')}
+      title={on ? 'ไปข้อต่อไปเองใน 3 วินาที: เปิดอยู่' : 'ไปข้อต่อไปเองใน 3 วินาที: ปิดอยู่'}
+      aria-label="ไปข้อต่อไปเองใน 3 วินาทีเมื่อตอบถูก"
+      onClick={() => {
+        setSettings({ autoNext: !on });
+        if (!on) setBurst((n) => n + 1);
+        toast(on ? 'ปิดแล้ว: กดไปข้อต่อไปเอง' : 'เปิดแล้ว: ตอบถูกจะไปข้อต่อไปเองใน 3 วินาที');
+      }}>
+      <span className="auto-btn-halo" aria-hidden="true"><i /><i /></span>
+      {burst ? <span key={burst} className="auto-btn-burst" aria-hidden="true" /> : null}
+      <span className="auto-btn-core" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><path d="M8.6 5.2c-.6-.4-1.4 0-1.4.8v12c0 .8.8 1.2 1.4.8l9.4-6a.9.9 0 0 0 0-1.6z" /></svg>
+      </span>
+    </button>
   );
 }
 
@@ -90,7 +105,7 @@ export function NextButton({ auto, onNext, className = 'btn btn-primary grow', b
     if (!counting) return;
     const t = window.setTimeout(() => next.current(), AUTO_NEXT_MS);
     // any other tap stops the countdown, except flipping the auto-next switch itself
-    const onDown = (e: PointerEvent) => { const t = e.target as Element; if (!own.current?.contains(t) && !t.closest?.('.auto-switch')) setStopped(true); };
+    const onDown = (e: PointerEvent) => { const t = e.target as Element; if (!own.current?.contains(t) && !t.closest?.('.auto-btn')) setStopped(true); };
     document.addEventListener('pointerdown', onDown, true);
     return () => { window.clearTimeout(t); document.removeEventListener('pointerdown', onDown, true); };
   }, [counting]);

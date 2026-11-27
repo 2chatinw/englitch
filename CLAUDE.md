@@ -53,7 +53,10 @@ npm run build   # tsc -b && vite build → dist/
   sentences. Shown in `Story`'s `side` slot: on screens ≥1180px the card stays CENTRED (owner) and the explanation sits in
   the space to its right (practice pages widen the frame; a dashed placeholder waits there before answering); narrower,
   it goes under the card and the answer sheet has a "ดูคำอธิบาย ↓" jump button. Loaded lazily. New words need a GLOSS line.
-- Auto-next switch: `settings.autoNext` (default on), `AutoNextSwitch` under the next button + in Settings; `NextButton` honours it.
+- Auto-next on/off: `settings.autoNext` (default on). `AutoNextButton` (ui.tsx) = round cyan→magenta play button right of the
+  category tag in the story top row (owner's design); off = faded grey, on = a flowing glowing colour ring (owner's reference:
+  "Newgrade.gif" by Damian Kidd on Pinterest), bursts once when switched on, toast says on/off. Also a checkbox in Settings.
+  `NextButton` honours it; tapping the button doesn't cancel a running countdown.
 - Content: 7 main categories (`Group` in `data/content.ts`, owner's list): general, travel, gaming, business,
   academic, entertainment, esp (medical / IT / aviation). Each phrase has a subtopic `c` and its main category `g`
   (`GROUP_OF`). Gaming/everyday phrases live in `data/content.ts`, the other categories in `data/more.ts`.

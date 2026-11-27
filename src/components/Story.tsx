@@ -3,6 +3,7 @@ import { PAGES, type Route } from '../lib/router';
 import { useProgress } from '../state/progress';
 import { activeMission, allMissions, missionStats } from '../lib/missions';
 import { ExplainWaiting } from './Explain';
+import { AutoNextButton } from './ui';
 
 /**
  * Practice pages as a social-media "story" (owner's pick, design 4 of 5): one tall card per question with
@@ -46,9 +47,12 @@ export function Story({ route, set, top, children, sheet, onSwipeUp, side }: {
         {Array.from({ length: set.total }, (_, i) => <span key={i} className={i < set.done ? 'is-done' : i === set.done ? 'is-now' : undefined} />)}
       </div>
       <div className="story-top">
+        <div className="story-top-l">
         <a className="story-tag" href="#today" title="เปลี่ยนหมวด">
           <span aria-hidden="true">{m ? m.icon : '🌏'}</span> {m ? m.short : 'ทุกหมวด'}{m?.complete ? ' ✓' : ''}
         </a>
+        <AutoNextButton />
+        </div>
         <div className="story-meta">
           <h1 id="story-h" className="story-h">{PAGES[route].short}</h1>
           {top ?? <span className="num">· {m ? m.done + '/' + m.total : done + '/' + total}</span>}

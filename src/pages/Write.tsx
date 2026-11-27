@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef } from 'react';
 import { PHRASES } from '../data/content';
 import { Icon } from '../components/Icon';
-import { AutoNextSwitch, NextButton, Result, SpeakButton, WordDiff } from '../components/ui';
+import { NextButton, Result, SpeakButton, WordDiff } from '../components/ui';
 import { useProgress } from '../state/progress';
 import { Story } from '../components/Story';
 import { Explain, ExplainJump } from '../components/Explain';
@@ -98,7 +98,6 @@ export default function Write() {
               <NextButton auto={ok !== false} btnRef={nextBtn} onNext={next}>ประโยคต่อไป <Icon name="arrow" /></NextButton>
               {ok !== true ? <button type="button" className="story-icon-btn" onClick={() => setS({ ...s, result: null })}><Icon name="retry" /> แก้</button> : null}
             </div>
-            <AutoNextSwitch />
           </>
         )}>
         <span className="kicker">เขียนเป็นภาษาอังกฤษ</span>

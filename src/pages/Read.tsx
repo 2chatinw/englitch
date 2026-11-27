@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { PHRASES, SITUATIONS } from '../data/content';
 import { Icon } from '../components/Icon';
-import { Kbd, AutoNextSwitch, NextButton, Result, SpeakButton } from '../components/ui';
+import { Kbd, NextButton, Result, SpeakButton } from '../components/ui';
 import { Story, StoryButton } from '../components/Story';
 import { Explain, ExplainJump } from '../components/Explain';
 import { useProgress, type State } from '../state/progress';
@@ -182,7 +182,6 @@ export default function Read() {
                 <NextButton auto={right} onNext={next} className="btn btn-primary btn-block" autoFocus>
                   {s.i + 1 >= s.qs.length ? 'ดูผลคะแนน' : 'ข้อต่อไป'} <Icon name="arrow" />
                 </NextButton>
-                <AutoNextSwitch />
               </>
             ) : null}
           </>

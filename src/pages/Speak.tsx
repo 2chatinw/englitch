@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { PHRASES } from '../data/content';
 import { Icon } from '../components/Icon';
-import { Kbd, AutoNextSwitch, NextButton, Result, WordDiff } from '../components/ui';
+import { Kbd, NextButton, Result, WordDiff } from '../components/ui';
 import { useProgress } from '../state/progress';
 import { Story } from '../components/Story';
 import { Explain, ExplainJump } from '../components/Explain';
@@ -79,7 +79,6 @@ export default function Speak() {
               <NextButton auto={pass} onNext={next}>ประโยคต่อไป <Icon name="arrow" /></NextButton>
               <button type="button" className="story-icon-btn" onClick={() => { setS({ ...s, result: null, said: '' }); setLive(''); }}><Icon name="retry" /> พูดใหม่</button>
             </div>
-            <AutoNextSwitch />
           </>
         ) : hasMic ? (
           <div className="mic-zone">
