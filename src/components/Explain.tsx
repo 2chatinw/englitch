@@ -62,11 +62,11 @@ export function Explain({ phrase }: { phrase: Phrase }) {
           ) : null}
           {x.more.length ? (
             <section>
-              <h3>ประโยคคล้ายกันที่ใช้ได้</h3>
+              <h3>ประโยคคล้ายกัน</h3>
               <ul className="explain-more">
                 {x.more.map((m) => (
                   <li key={m.e}>
-                    <span><b lang="en">{m.e}</b><small>{m.t}</small></span>
+                    <span><b lang="en">{m.e}</b><small>{m.t}</small><em className="explain-why">{m.why}</em></span>
                     <SpeakButton text={m.s} quiet label="ฟัง" />
                   </li>
                 ))}

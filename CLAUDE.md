@@ -49,8 +49,10 @@ npm run build   # tsc -b && vite build → dist/
   answering = next. The old page header / mission strip were removed.
 - After every answer: `components/Explain.tsx` "📖 อธิบายประโยคนี้" (owner's request) — meaning, when to use it
   (per-subtopic `USAGE` + tone + the phrase note), sentence patterns (`PATTERNS` in `lib/explain.ts`, fallback by
-  sentence type), word meanings (`data/glossary.ts`: `GLOSS` ~1,130 words + `MULTI` phrases like "check in"), 2 similar
-  sentences. Shown in `Story`'s `side` slot: on screens ≥1180px the card stays CENTRED (owner) and the explanation sits in
+  sentence type), word meanings (`data/glossary.ts`: `GLOSS` ~1,130 words + `MULTI` phrases like "check in"), up to 2
+  similar sentences (`similar()` in `lib/explain.ts`; owner: must really be alike, not just the same topic): scored by
+  close Thai meaning (letter pairs, little words like คุณ/ไหม ignored), shared English words and the same specific pattern,
+  each shown with its reason tag; slang only matches slang; nothing close → the section is hidden (~16% of phrases). Shown in `Story`'s `side` slot: on screens ≥1180px the card stays CENTRED (owner) and the explanation sits in
   the space to its right (practice pages widen the frame; a dashed placeholder waits there before answering); narrower,
   it goes under the card and the answer sheet has a "ดูคำอธิบาย ↓" jump button. Loaded lazily. New words need a GLOSS line.
 - Auto-next on/off: `settings.autoNext` (default on). `AutoNextButton` (ui.tsx) = round cyan→magenta play button right of the

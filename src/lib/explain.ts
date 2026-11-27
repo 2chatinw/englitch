@@ -13,7 +13,7 @@ export interface Explanation {
   note: string | null;
   patterns: { title: string; body: string }[];
   words: { w: string; th: string }[];
-  more: Phrase[];
+  more: Similar[];
 }
 
 /** When each kind of sentence is used. */
@@ -123,7 +123,72 @@ function tone(p: Phrase): string | null {
   return null;
 }
 
-const hash = (s: string) => { let h = 0; for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) | 0; return Math.abs(h); };
+/**
+ * "Similar sentences" (owner: they must really be alike, not just any two from the same topic). Each candidate is
+ * scored by how close the Thai meaning is (shared Thai letter pairs), shared English content words and the same
+ * sentence pattern. Only ones that pass get shown, each with the reason; none pass → the section is hidden.
+ */
+export interface Similar extends Phrase { why: string }
+/** Common words that don't make two sentences alike. */
+const WEAK = new Set('about please thanks thank ok okay yeah really like know think want need now well good great nice right sure lot much more time way thing things today'.split(' '));
+const enWords = (s: string) => {
+  const out = new Set<string>();
+  for (const raw of s.toLowerCase().replace(/’/g, "'").replace(/[^a-z' -]/g, ' ').split(/[\s-]+/)) {
+    const w = raw.replace(/^'+|'+$/g, '');
+    if (w.length < 2 || STOP.has(w) || WEAK.has(w)) continue;
+    out.add(w.length > 3 && w.endsWith('s') && !w.endsWith('ss') ? w.slice(0, -1) : w);
+  }
+  return out;
+};
+/** Thai little words (you, I, question endings, "is at" …) that make unrelated sentences look close. */
+const TH_FILLER = /คุณ|ฉัน|เรา|ไหม|มั้ย|หรือเปล่า|อยู่|ที่ไหน|อะไร|ยังไง|อย่างไร|หน่อย|ได้|ครับ|ค่ะ|เลย|แล้ว|จะ|ให้|กับ|เป็น|ไม่|นี้|นั้น/g;
+const thPairs = (s: string) => {
+  const t = s.replace(/\(.*?\)/g, '').replace(TH_FILLER, ' ').replace(/[^฀-๿ ]/g, '');
+  const out = new Set<string>();
+  for (let i = 0; i < t.length - 1; i++) if (t[i] !== ' ' && t[i + 1] !== ' ') out.add(t.slice(i, i + 2));
+  return out;
+};
+type Keys = { en: Set<string>; th: Set<string>; pat: number };
+const keyCache = new Map<string, Keys>();
+const keysOf = (x: Phrase): Keys => {
+  let k = keyCache.get(x.e);
+  if (!k) {
+    const e = x.e.replace(/’/g, "'");
+    // only patterns specific enough to mean "built the same way" (not the generic Wh-/statement/past ones)
+    const pat = PATTERNS.findIndex((y) => y.re.test(e));
+    k = { en: enWords(x.e), th: thPairs(x.t), pat: pat >= 0 && !GENERIC.test(PATTERNS[pat].title) ? pat : -1 };
+    keyCache.set(x.e, k);
+  }
+  return k;
+};
+/** Patterns too general to count as "built the same way" (tense, linking words, plain statements …). */
+const GENERIC = /^(คำถามขึ้นต้นด้วย Wh-|will|need \+|should|ประโยคเงื่อนไข|would \+|Present Perfect|Passive|กำลัง|อดีต|บอกเหตุผล|แย้ง|คำเชื่อม|บอกความเห็น|can't|Is \/ Are \+ ประธาน|Can \/ Will|like \/ love|ประธาน \+ be|It's|have \+|ประโยคคำสั่ง|please)/;
+
+function similar(p: Phrase): Similar[] {
+  const a = keysOf(p);
+  const scored: { x: Phrase; s: number; why: string }[] = [];
+  for (const x of PHRASES) {
+    // chat slang only goes with chat slang (an abbreviation isn't a good model for a normal sentence)
+    if (x.e === p.e || (x.c === 'slang') !== (p.c === 'slang')) continue;
+    const b = keysOf(x);
+    let inTh = 0;
+    for (const g of a.th) if (b.th.has(g)) inTh++;
+    const dice = a.th.size && b.th.size ? (2 * inTh) / (a.th.size + b.th.size) : 0;
+    const shared = [...a.en].filter((w) => b.en.has(w));
+    const samePat = a.pat >= 0 && a.pat === b.pat;
+    const near = dice >= 0.45;
+    if (!near && !shared.length && !samePat) continue;
+    // a shared word or pattern alone is weak: also need some closeness in meaning or the same topic
+    if (!near && !(shared.length >= 2) && !(dice >= 0.2 || x.c === p.c)) continue;
+    const s = dice * 6 + shared.length * 2 + (samePat ? 1.5 : 0) + (x.c === p.c ? 1 : 0) + (x.g === p.g ? 0.5 : 0);
+    const why = near ? 'ความหมายใกล้กัน'
+      : shared.length ? `ใช้คำว่า ${shared.slice(0, 2).join(', ')} เหมือนกัน`
+      : 'รูปประโยคเดียวกัน: ' + PATTERNS[a.pat].title;
+    scored.push({ x, s, why });
+  }
+  scored.sort((m, n) => n.s - m.s);
+  return scored.slice(0, 2).map(({ x, why }) => ({ ...x, why }));
+}
 
 export function explain(p: Phrase): Explanation {
   const e = p.e.replace(/’/g, "'");
@@ -159,13 +224,7 @@ export function explain(p: Phrase): Explanation {
       if (words.length >= 8) break;
     }
   }
-  // two other sentences from the same topic, preferring ones built the same way
-  const first = PATTERNS.find((x) => x.re.test(e));
-  const same = PHRASES.filter((x) => x.c === p.c && x.e !== p.e);
-  const alike = first ? same.filter((x) => first.re.test(x.e.replace(/’/g, "'"))) : [];
-  const pool = (alike.length >= 2 ? alike : [...alike, ...same.filter((x) => !alike.includes(x))]);
-  const start = hash(p.e) % Math.max(1, pool.length);
-  const more = [pool[start], pool[(start + 1) % pool.length]].filter((x, i, a) => x && a.indexOf(x) === i).slice(0, 2);
+  const more = similar(p);
   return {
     meaning: p.t,
     when: CATS[p.c] + ' · ' + USAGE[p.c],

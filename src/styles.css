@@ -743,6 +743,9 @@ input[type="email"]:focus, input[type="password"]:focus { outline: none; border-
 .explain-more li > span { display: flex; flex-direction: column; min-width: 0; }
 .explain-more b { font-family: var(--f-display); font-weight: 600; overflow-wrap: anywhere; }
 .explain-more small { color: var(--muted); }
+/* why it counts as similar (same meaning / shared word / same pattern) */
+.explain-why { align-self: flex-start; margin-top: 4px; padding: 1px 8px; border-radius: 99px; font-style: normal; font-size: .75rem;
+  color: var(--accent); background: color-mix(in srgb, var(--accent) 10%, transparent); }
 /* before answering (desktop): where the explanation will appear */
 .explain-wait { align-items: center; justify-content: center; text-align: center; min-height: 260px; gap: 8px; background: none; backdrop-filter: none; -webkit-backdrop-filter: none;
   border: 2px dashed var(--line); box-shadow: none; }
