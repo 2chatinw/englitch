@@ -29,6 +29,14 @@ export default function Write() {
   const nextBtn = useRef<HTMLButtonElement>(null);
   // words without end punctuation, so the last word isn't given away by its full stop
   const bank = useMemo(() => shuffle(p.e.split(/\s+/).map((w) => w.replace(/[.,!?]+$/, ''))), [p.e]);
+  // a word chip is used up once the answer already has that word as many times as the chips before it (owner: a
+  // word can't be added twice); deleting it from the answer frees the chip again
+  const norm = (w: string) => w.toLowerCase().replace(/[’]/g, "'").replace(/[^a-z0-9']/g, '');
+  const used = useMemo(() => {
+    const have = new Map<string, number>();
+    for (const w of s.typed.split(/\s+/).map(norm).filter(Boolean)) have.set(w, (have.get(w) ?? 0) + 1);
+    return bank.map((w) => { const k = norm(w), n = have.get(k) ?? 0; if (n > 0) { have.set(k, n - 1); return true; } return false; });
+  }, [bank, s.typed]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (s.result) nextBtn.current?.focus();
@@ -69,7 +77,10 @@ export default function Write() {
                 <span className="hint-letters">{firstLetters(p.e)}</span>
                 {s.hint >= 2 ? (
                   <div className="word-bank" role="group" aria-label="คำที่ใช้ในประโยค แตะเพื่อเติม">
-                    {bank.map((w, i) => <button key={w + i} type="button" className="chip" onClick={() => addWord(w)}>{w}</button>)}
+                    {bank.map((w, i) => (
+                      <button key={w + i} type="button" className={'chip' + (used[i] ? ' is-used' : '')} disabled={used[i]}
+                        aria-label={used[i] ? w + ' (ใช้แล้ว)' : 'เติมคำ ' + w} onClick={() => addWord(w)}>{w}</button>
+                    ))}
                   </div>
                 ) : null}
               </div>
