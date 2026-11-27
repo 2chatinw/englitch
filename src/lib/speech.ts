@@ -51,6 +51,38 @@ export function say(text: string, slow = false): boolean {
   }
 }
 
+/**
+ * Like `say`, but reports progress: `onWord` gets the character index of each word as it is spoken (from the
+ * voice's word-boundary events), `onEnd` fires when it stops. Some voices send no boundary events, so callers
+ * should also time the words themselves. Returns false when this device can't speak.
+ */
+export function sayTracked(text: string, slow: boolean, onWord: (charIndex: number) => void, onEnd: () => void): boolean {
+  if (!canSpeak) return false;
+  try {
+    const synth = window.speechSynthesis;
+    synth.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'en-US';
+    u.rate = Math.max(0.5, current.rate * (slow ? 0.72 : 1));
+    const v = bestVoice(current.voiceURI);
+    if (v) u.voice = v;
+    u.onboundary = (e) => { if (e.name === 'word' || e.name === undefined) onWord(e.charIndex); };
+    u.onend = onEnd;
+    u.onerror = onEnd;
+    synth.speak(u);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+export function stopSpeaking() {
+  try { if (canSpeak) window.speechSynthesis.cancel(); } catch { /* ignore */ }
+}
+
+/** Speaking rate the voice will use (1 = normal), for timing word highlights without boundary events. */
+export const speechRate = (slow: boolean) => Math.max(0.5, current.rate * (slow ? 0.72 : 1));
+
 /* ---- Speech recognition ---- */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRec = any;
