@@ -49,6 +49,8 @@ npm run build   # tsc -b && vite build → dist/
   The side rail / bottom bar are hidden in the whole lobby and slide in only on the practice (quiz) pages
   (`data-menus` on `.shell`; owner's choice). `lib/lobby.ts` remembers the opened category for the session.
   Ring style (owner's sketch): rounded arcs with clear gaps, a little space, then the outlined inner circle.
+  Skill buttons = design 1 "candy orbs": glossy ball in the skill's colour (listen blue, speak pink, read green, write
+  orange) holding a shaded SVG picture from `components/SkillArt.tsx` (owner wants pictures, not flat line icons/emoji).
 - Missions (no daily missions, owner's choice): one mission per main category (`lib/missions.ts`,
   `components/Missions.tsx`), each practised by listen/speak/read/write. Passed when every phrase in it was answered
   right once, in any mode. The active mission is `settings.mission`; practice then draws only from that category,

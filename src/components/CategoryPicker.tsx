@@ -4,6 +4,7 @@ import gsap from 'gsap';
 import { Flip } from 'gsap/Flip';
 import { LEVELS, type Group, type Level } from '../data/content';
 import { Icon } from './Icon';
+import { SkillArt, type Skill } from './SkillArt';
 import { useProgress } from '../state/progress';
 import { useChooseMission } from './MissionMenu';
 import { activeMission, allMissions } from '../lib/missions';
@@ -153,10 +154,10 @@ export function CategoryPicker() {
           <>
             <div className="cp-skills" role="group" aria-label={'ฝึก ' + chosen.name}>
               {SKILLS.map(({ r, a }) => (
-                <button key={r} type="button" className="cp-skill" onClick={() => navigate(r)}
+                <button key={r} type="button" className={'cp-skill cp-skill-' + r} onClick={() => navigate(r)} aria-label={PAGES[r].th}
                   style={{ ['--sx' as string]: Math.sin((a * Math.PI) / 180).toFixed(3), ['--sy' as string]: (-Math.cos((a * Math.PI) / 180)).toFixed(3) }}>
-                  <span className="cp-skill-ic"><Icon name={PAGES[r].icon} /></span>
-                  <span>{PAGES[r].short}</span>
+                  <span className="cp-orb"><SkillArt kind={r as Skill} /></span>
+                  <span className="cp-skill-lbl">{PAGES[r].short}</span>
                 </button>
               ))}
             </div>

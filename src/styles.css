@@ -489,14 +489,14 @@ input[type="email"]:focus, input[type="password"]:focus { outline: none; border-
 .qring.is-plain { border-radius: 50%; background: color-mix(in srgb, var(--surface-2) 70%, transparent); }
 
 /* ---------- Lobby category picker: eight circles in three-level rings; the chosen one moves to the middle ---------- */
-.cp { --d: min(136px, 27vw); --D: min(214px, 42vw); --m: min(60px, 11.4vw); --R: calc(var(--D) / 2 + 56px);
+.cp { --d: min(136px, 27vw); --D: min(214px, 42vw); --m: min(60px, 11.4vw); --R: calc(var(--D) / 2 + min(62px, 14vw));
   display: flex; flex-direction: column; gap: 10px; padding: 6px 0 4px; }
 .cp-head { text-align: center; display: flex; flex-direction: column; gap: 4px; padding: 0 8px; }
 .cp-title { font-size: clamp(1.6rem, 5vw, 2.2rem); font-weight: 700; }
 .cp-stage { position: relative; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); grid-template-rows: repeat(3, var(--d));
   row-gap: 12px; justify-items: center; align-items: center; max-width: 560px; width: 100%; margin: 0 auto; }
 .cp-stage.is-focus { grid-template-columns: repeat(7, minmax(0, 1fr)); column-gap: 4px; row-gap: 6px;
-  grid-template-rows: auto calc(14px + var(--D) / 2 + var(--R) * .9 + 42px) auto var(--m); }
+  grid-template-rows: auto calc(14px + var(--D) / 2 + var(--R) * .9 + 64px) auto var(--m); }
 
 .cp-node { position: relative; width: var(--d); height: var(--d); border-radius: 50%; padding: 0; border: 0; background: none; color: var(--ink);
   cursor: pointer; container-type: size; transition: scale .2s; -webkit-tap-highlight-color: transparent; }
@@ -526,14 +526,29 @@ input[type="email"]:focus, input[type="password"]:focus { outline: none; border-
 .cp-back .icon { width: 17px; height: 17px; scale: -1 1; }
 .cp-back:hover { color: var(--accent); }
 .cp-skills { grid-column: 1 / -1; grid-row: 2; align-self: stretch; justify-self: stretch; position: relative; pointer-events: none; }
-.cp-skill { position: absolute; width: 66px; height: 70px; margin: -35px 0 0 -33px; pointer-events: auto;
+/* skill orbs (owner picked design 1): a glossy ball in the skill's colour holding a small shaded picture */
+.cp-skill { position: absolute; width: 84px; margin: -36px 0 0 -42px; pointer-events: auto; padding: 0; border: 0; background: none;
   left: calc(50% + var(--R) * var(--sx)); top: calc(14px + var(--D) / 2 + var(--R) * var(--sy));
-  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
-  border: 2px solid var(--line); border-radius: 18px; background: var(--surface); color: var(--ink); font: inherit; font-size: .88rem; font-weight: 600;
-  box-shadow: var(--shadow); cursor: pointer; transition: border-color .2s, translate .2s; }
-.cp-skill:hover { border-color: var(--accent); translate: 0 -3px; }
-.cp-skill:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
-.cp-skill-ic { width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; background: var(--accent-soft); color: var(--accent); }
-.cp-skill-ic .icon { width: 19px; height: 19px; }
+  display: flex; flex-direction: column; align-items: center; gap: 7px; color: var(--ink); font: inherit; cursor: pointer;
+  -webkit-tap-highlight-color: transparent; }
+.cp-skill-listen { --o: #1E6BFF; --o2: #6FA6FF; --oe: #0F47B8; }
+.cp-skill-speak { --o: #FF4F8B; --o2: #FF9BBE; --oe: #C42260; }
+.cp-skill-read { --o: #12A867; --o2: #55DDA0; --oe: #0A7445; }
+.cp-skill-write { --o: #FF8A1F; --o2: #FFBF70; --oe: #C45F00; }
+.cp-orb { position: relative; width: 72px; height: 72px; border-radius: 50%; display: grid; place-items: center;
+  background: radial-gradient(circle at 32% 26%, var(--o2), var(--o) 64%);
+  box-shadow: 0 5px 0 var(--oe), 0 14px 22px -10px var(--o), inset 0 -5px 10px rgba(0, 0, 0, .14), inset 0 2px 0 rgba(255, 255, 255, .35);
+  transition: translate .15s, box-shadow .15s; animation: cp-bob 3.2s ease-in-out infinite; }
+.cp-orb::after { content: ""; position: absolute; left: 13px; top: 8px; width: 20px; height: 11px; border-radius: 50%; background: rgba(255, 255, 255, .5); rotate: -25deg; pointer-events: none; }
+.cp-orb .skill-art { position: relative; z-index: 1; }
+.cp-skill-speak .cp-orb { animation-delay: -.8s; }
+.cp-skill-read .cp-orb { animation-delay: -1.6s; }
+.cp-skill-write .cp-orb { animation-delay: -2.4s; }
+@keyframes cp-bob { 50% { transform: translateY(-4px); } }
+.cp-skill-lbl { font-weight: 600; font-size: .98rem; line-height: 1; }
+.cp-skill:hover .cp-orb { translate: 0 -3px; box-shadow: 0 8px 0 var(--oe), 0 18px 26px -10px var(--o), inset 0 -5px 10px rgba(0, 0, 0, .14), inset 0 2px 0 rgba(255, 255, 255, .35); }
+.cp-skill:active .cp-orb { translate: 0 4px; box-shadow: 0 1px 0 var(--oe), 0 5px 10px -6px var(--o), inset 0 -5px 10px rgba(0, 0, 0, .14), inset 0 2px 0 rgba(255, 255, 255, .35); }
+.cp-skill:focus-visible { outline: none; }
+.cp-skill:focus-visible .cp-orb { outline: 3px solid var(--accent); outline-offset: 4px; }
 .cp-strip-label { grid-column: 1 / -1; grid-row: 3; }
-@media (prefers-reduced-motion: reduce) { .cp-node, .cp-skill, .sring circle { transition: none; } }
+@media (prefers-reduced-motion: reduce) { .cp-node, .cp-orb, .sring circle { transition: none; } .cp-orb { animation: none; } }
