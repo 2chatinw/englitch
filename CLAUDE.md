@@ -54,7 +54,8 @@ npm run build   # tsc -b && vite build → dist/
   close Thai meaning (letter pairs, little words like คุณ/ไหม ignored), shared English words and the same specific pattern,
   each shown with its reason tag; slang only matches slang; nothing close → the section is hidden (~16% of phrases). Shown in `Story`'s `side` slot: on screens ≥1180px the card stays CENTRED (owner) and the explanation sits in
   the space to its right (practice pages widen the frame; a dashed placeholder waits there before answering); narrower,
-  it goes under the card and the answer sheet has a "ดูคำอธิบาย ↓" jump button. Loaded lazily. New words need a GLOSS line.
+  it goes under the card and the answer sheet has a "ดูคำอธิบาย ↓" jump button. Loaded lazily. New words need a GLOSS line. Names keep their capital in the word list (Mike); a capital "May"
+  mid-sentence = the month. Don't give names radio-alphabet meanings (mike/tango/oscar were wrong before).
 - Auto-next on/off: `settings.autoNext` (default on). `AutoNextButton` (ui.tsx) = round cyan→magenta play button right of the
   category tag in the story top row (owner's design); off = faded grey, on = a flowing glowing colour ring (owner's reference:
   "Newgrade.gif" by Damian Kidd on Pinterest), bursts once when switched on, toast says on/off. Also a checkbox in Settings.

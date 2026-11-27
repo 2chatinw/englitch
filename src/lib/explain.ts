@@ -215,12 +215,16 @@ export function explain(p: Phrase): Explanation {
     }
     // "I'd like" / "would like" is a polite "want", not "like"
     if (/\b(i'd|would|you'd|we'd) like\b/.test(low)) seen.add('like');
+    // "May" with a capital in the middle of a sentence is the month, not "may" (= might / can I)
+    if (/\S\s+May\b/.test(e)) { words.push({ w: 'May', th: 'เดือนพฤษภาคม' }); seen.add('may'); }
     for (const raw of low.split(' ')) {
       const w = raw.replace(/^'+|'+$/g, '');
       if (!w || STOP.has(w) || seen.has(w)) continue;
       seen.add(w);
       const th = gloss(w);
-      if (th) words.push({ w, th });
+      // names / places keep their capital as written in the sentence (Mike, not mike)
+      const cap = w[0].toUpperCase() + w.slice(1);
+      if (th) words.push({ w: new RegExp(`\\S\\s+${cap}\\b`).test(e) ? cap : w, th });
       if (words.length >= 8) break;
     }
   }
